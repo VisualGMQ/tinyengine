@@ -1,0 +1,24 @@
+#include "engine/core/glhelper.hpp"
+
+namespace engine {
+
+#define CASE(e) case e: return #e;
+
+const char* GLGetErrorString(GLenum err) {
+    switch (err) {
+        CASE(GL_NO_ERROR)
+        CASE(GL_INVALID_ENUM)
+        CASE(GL_INVALID_VALUE)
+        CASE(GL_INVALID_OPERATION)
+        CASE(GL_OUT_OF_MEMORY)
+        CASE(GL_INVALID_FRAMEBUFFER_OPERATION)
+        default:
+            return "Unknown OpenGL Error";
+    }
+    return "Unknown Error";
+}
+
+#undef CASE
+
+}
+

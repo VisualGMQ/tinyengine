@@ -12,6 +12,8 @@ public:
     DLLEXPORT static void SwapBuffers();
     DLLEXPORT static bool ShouldClose();
 
+    DLLEXPORT static GLFWwindow* GetWindow();
+
 private:
     static GLFWwindow* window_;
 };
