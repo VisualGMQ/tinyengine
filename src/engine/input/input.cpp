@@ -43,7 +43,7 @@ bool Input::IsKeyPressed(KeyCode code) {
 }
 
 bool Input::IsKeyPressing(KeyCode code) {
-    return oldKeyState[code] && keyState[code];
+    return oldKeyState[code] && keyState[code] || IsKeyPressed(code);
 }
 
 bool Input::IsKeyReleased(KeyCode code) {
@@ -51,7 +51,7 @@ bool Input::IsKeyReleased(KeyCode code) {
 }
 
 bool Input::IsKeyReleasing(KeyCode code) {
-    return !oldKeyState[code] && !keyState[code];
+    return !oldKeyState[code] && !keyState[code] || IsKeyReleased(code);
 }
 
 bool Input::IsButtonPressed(MouseButton button) {
@@ -59,7 +59,7 @@ bool Input::IsButtonPressed(MouseButton button) {
 }
 
 bool Input::IsButtonPressing(MouseButton button) {
-    return oldBtnState[button] && btnState[button];
+    return oldBtnState[button] && btnState[button] || IsButtonPressed(button);
 }
 
 bool Input::IsButtonReleased(MouseButton button) {
@@ -67,7 +67,7 @@ bool Input::IsButtonReleased(MouseButton button) {
 }
 
 bool Input::IsButtonReleasing(MouseButton button) {
-    return !oldBtnState[button] && !btnState[button];
+    return !oldBtnState[button] && !btnState[button] || IsButtonReleasing(button);
 }
 
 const Vec2& Input::MousePoition() {

@@ -56,9 +56,35 @@ void Mesh::Update2GPU() {
 }
 
 Mesh::~Mesh() {
+    GL_CALL(glDeleteVertexArrays(1, &vao_));
     GL_CALL(glDeleteBuffers(1, &vbo_));
     GL_CALL(glDeleteBuffers(1, &ebo_));
-    GL_CALL(glDeleteVertexArrays(1, &vao_));
+}
+
+std::shared_ptr<Mesh> CreateCubeMesh() {
+    return std::shared_ptr<Mesh>(new Mesh({
+
+            },
+            {
+
+            }));
+}
+
+std::shared_ptr<Mesh> CreateTriangularPyramid() {
+    float sqrt3 = std::sqrt(3),
+          sqrt13 = std::sqrt(13);
+    return std::shared_ptr<Mesh>(new Mesh({
+            Vertex(Vec3(-0.5, -sqrt13 / 16.0, sqrt3 / 6.0)),
+            Vertex(Vec3(0.5, -sqrt13 / 16.0, sqrt3 / 6.0)),
+            Vertex(Vec3(0, -sqrt13 / 16.0, -sqrt3 / 6.0)),
+            Vertex(Vec3(0, 3 * sqrt13 / 16.0, 0)),
+            },
+            {
+                0, 1, 3,
+                1, 2, 3,
+                2, 0, 3,
+                0, 1, 2,
+            }));
 }
 
 }

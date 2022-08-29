@@ -1,4 +1,3 @@
-* 测试PerspCamera是否可行
 * 完成SRT矩阵
 
 * GUI界面制作

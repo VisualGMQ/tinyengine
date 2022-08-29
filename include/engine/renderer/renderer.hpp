@@ -27,8 +27,17 @@ public:
     static void Clear();
     static void SetDrawColor(const Color&);
 
+    static void SetOrthoCamera(const std::shared_ptr<OrthoCamera>&);
+    static void SetPerspCamera(const std::shared_ptr<PerspCamera>&);
+    static std::shared_ptr<OrthoCamera>& GetOrthoCamera();
+    static std::shared_ptr<PerspCamera>& GetPerspCamera();
+
+    static void Begin2D();
+    static void Begin3D();
+
     // 3D draw functions
-    static void DrawMesh(const Mesh&, DrawType, const Mat4&, Camera* camera, const Texture* texture = nullptr);
+    static void DrawMeshFrame(const Mesh&, const Mat4&, const Texture* = nullptr);
+    static void DrawMeshSolid(const Mesh&, const Mat4&, const Texture* = nullptr);
 
     // 2D draw functions
     static void DrawRect(const Rect&);
@@ -46,11 +55,11 @@ public:
             vertices[i].texcoord.Set(0, 0);
         }
         mesh_->Update2GPU();
-        DrawMesh(*mesh_, DrawType::LineLoop, CreateIdentityMat<4>(), orthoCamera_.get());
+        drawMeshSolid(*mesh_, DrawType::LineLoop, CreateIdentityMat<4>(), orthoCamera_.get());
     }
 
     static void FillRect(const Rect& rect);
-    static void DrawTexture(const Texture& texture, Rect* src, const Rect& dst, const Color& color = Color(1, 1, 1));
+    static void DrawTexture(const Texture& texture, Rect* src, const Rect& dst, const Color& color = Color(1, 1, 1), const Mat4& transform = CreateIdentityMat<4>());
 
 private:
     static std::unique_ptr<Shader> shader_;
@@ -59,13 +68,18 @@ private:
     static Texture* whiteTexture_;
     static Color currentColor_;
     static std::unique_ptr<Mesh> mesh_;
-    static std::unique_ptr<OrthoCamera> orthoCamera_;
-    static std::unique_ptr<PerspCamera> perspCamera_;
+    static std::shared_ptr<OrthoCamera> orthoCamera_;
+    static std::shared_ptr<PerspCamera> perspCamera_;
 
     // some staging state
     static Mat4 oldProjectMat_;
     static Mat4 oldViewMat_;
     static Mat4 oldModelMat_;
+    static GLenum oldPolygonMode_;
+
+    static void drawMesh(const Mesh&, DrawType, const Mat4&, Camera* camera, const Texture* texture);
+    static void drawMeshFrame(const Mesh&, DrawType, const Mat4&, Camera*, const Texture* = nullptr);
+    static void drawMeshSolid(const Mesh&, DrawType, const Mat4&, Camera*, const Texture* = nullptr);
 };
 
 }

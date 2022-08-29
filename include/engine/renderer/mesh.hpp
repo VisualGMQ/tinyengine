@@ -27,18 +27,24 @@ public:
     Mesh(const std::vector<Vertex>&, const std::vector<uint32_t>&);
     ~Mesh();
 
+    Mesh(const Mesh&) = delete;
+    Mesh& operator=(const Mesh&) = delete;
+
     std::vector<Vertex>& GetVertices() { return vertices_; }
     std::vector<uint32_t>& GetIndices() { return indices_; }
     const std::vector<Vertex>& GetVertices() const { return vertices_; }
     const std::vector<uint32_t>& GetIndices() const { return indices_; }
     void Update2GPU();
 
-// private:
+private:
     std::vector<Vertex> vertices_;
     std::vector<uint32_t> indices_;
     GLuint vao_;
     GLuint vbo_;
     GLuint ebo_;
 };
+
+std::shared_ptr<Mesh> CreateCube();
+std::shared_ptr<Mesh> CreateTriangularPyramid();
 
 }

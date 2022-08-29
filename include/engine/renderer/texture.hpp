@@ -10,7 +10,10 @@ namespace engine {
 class Texture final {
 public:
     Texture(unsigned char* data, int w, int h);
+    Texture(const Texture&) = delete;
     ~Texture();
+
+    Texture& operator=(const Texture&) = delete;
 
     float Width() const { return w_; }
     float Height() const { return h_; }

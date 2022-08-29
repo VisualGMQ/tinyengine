@@ -22,7 +22,7 @@ public:
         } else {
             for (int i = 0; i < H; i++) {
                 for (int j = 0; j < W; j++) {
-                    Get(j, i) = *(list.begin() + j * H + i);
+                    Get(j, i) = *(list.begin() + i * W + j);
                 }
             }
         }
@@ -184,6 +184,11 @@ auto operator*(const Mat<T, W, H>& m, const Mat<U, UW, W>& o) {
 }
 
 template <typename T, unsigned int W, unsigned int H>
+auto operator-(const Mat<T, W, H>& m) {
+    return m * -1;
+}
+
+template <typename T, unsigned int W, unsigned int H>
 std::ostream& operator<<(std::ostream& o, const Mat<T, W, H>& m) {
     o << "[" << std::endl;
     for (int i = 0 ; i < H; i++) {
@@ -256,6 +261,9 @@ public:
     const T& Get(unsigned int x, unsigned int y) const {
         return data_[y + x * 3];
     }
+
+    T* Data() { return data_; }
+    const T* Data() const { return data_; }
 
     unsigned int Height() const { return 3; }
     unsigned int Width() const { return 1; }
@@ -341,6 +349,9 @@ public:
         return data_[y + x * 2];
     }
 
+    T* Data() { return data_; }
+    const T* Data() const { return data_; }
+
     unsigned int Height() const { return 2; }
     unsigned int Width() const { return 1; }
 
@@ -425,6 +436,9 @@ public:
     const T& Get(unsigned int x, unsigned int y) const {
         return data_[y + x * 4];
     }
+
+    T* Data() { return data_; }
+    const T* Data() const { return data_; }
 
     unsigned int Height() const { return 4; }
     unsigned int Width() const { return 1; }
@@ -525,20 +539,20 @@ auto Transpose(const Mat<T, W, H>& m) {
 
 inline Mat4 CreateOrtho(float w, float h, float depth) {
     return Mat4({
-        2 / w,     0,         0,  0,
-            0,-2 / h,         0,  0,
+        2 / w,     0,         0, -1,
+            0,-2 / h,         0,  1,
             0,     0, 2 / depth,  0,
-           -1,     1,         0,  1,
+            0,     0,         0,  1,
         });
 }
 
 inline Mat4 CreatePersp(float fov, float aspect, float near, float far) {
-    float half_fov = tan(0.5 * fov);
+    float half_fov = std::tan(0.5 * fov);
     return Mat4({
-            1 / (aspect * half_fov), 0,                           0,                             0,
-            0,            1 / half_fov,                           0,                             0,
-            0,                       0, (near + far) / (near - far), 2 * far * near / (near - far),
-            0,                       0,                          -1,                             0,
+            1 / (aspect * half_fov), 0,                             0,  0,
+            0,            1 / half_fov,                             0,  0,
+            0,                       0,   (near + far) / (near - far), 2 * near * far / (near - far),
+            0,                       0,  -1,  0,
         });
 }
 
@@ -607,12 +621,12 @@ public:
 // Hamilton Product
 template <typename T, typename U>
 auto operator*(const Quaternion<T>& q1, const Quaternion<U>& q2) {
-    return Quaternion<std::common_type_t<T, U>(q1.v * q2.s + q1.s * q2.v + Cross(q1.v, q2.v), q1.s * q2.s - Dot(q1.v, q2.v));
+    return Quaternion<std::common_type_t<T, U>>(q1.v * q2.s + q1.s * q2.v + Cross(q1.v, q2.v), q1.s * q2.s - Dot(q1.v, q2.v));
 }
 
 template <typename T, typename U>
 auto operator*(const U& value, const Quaternion<U>& q2) {
-    return Quaternion<std::common_type_t<T, U>(q2.v * value, q2.s * value);
+    return Quaternion<std::common_type_t<T, U>>(q2.v * value, q2.s * value);
 }
 
 template <typename T, typename U>
@@ -622,7 +636,7 @@ auto operator*(const Quaternion<U>& q2, const U& value) {
 
 template <typename T, typename U>
 auto operator/(const Quaternion<U>& q2, const U& value) {
-    return Quaternion<std::common_type_t<T, U>(q2.v / value, q2.s / value);
+    return Quaternion<std::common_type_t<T, U>>(q2.v / value, q2.s / value);
 }
 
 template <typename T, typename U>
@@ -632,12 +646,12 @@ auto Dot(const Quaternion<T>& q1, const Quaternion<T>& q2) {
 
 template <typename T, typename U>
 auto operator+(const Quaternion<T>& q1, const Quaternion<U>& q2) {
-    return Quaternion<std::common_type_t<T, U>(q1.v + q2.v, q1.s + q2.s);
+    return Quaternion<std::common_type_t<T, U>>(q1.v + q2.v, q1.s + q2.s);
 }
 
 template <typename T, typename U>
 auto operator-(const Quaternion<T>& q1, const Quaternion<U>& q2) {
-    return Quaternion<std::common_type_t<T, U>(q1.v - q2.v, q1.s - q2.s);
+    return Quaternion<std::common_type_t<T, U>>(q1.v - q2.v, q1.s - q2.s);
 }
 
 template <typename T>
@@ -663,6 +677,24 @@ auto Inverse(const Quaternion<T>& q) {
 template <typename T>
 auto Normalize(const Quaternion<T>& q) {
     return q / Length(q);
+}
+
+inline Mat4 CreateTranslate(const Vec3& translate) {
+    return Mat4{
+        1, 0, 0, translate.x,
+        0, 1, 0, translate.y,
+        0, 0, 1, translate.z,
+        0, 0, 0,           1,
+    };
+}
+
+inline Mat4 CreateScale(const Vec3& scale) {
+    return Mat4{
+        scale.x, 0, 0, 0,
+        0, scale.y, 0, 0,
+        0, 0, scale.z, 0,
+        0, 0, 0, 1,
+    };
 }
 
 }

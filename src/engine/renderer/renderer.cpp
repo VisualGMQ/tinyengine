@@ -7,11 +7,12 @@ Texture* Renderer::blackTexture_ = nullptr;
 Texture* Renderer::whiteTexture_ = nullptr;
 Color Renderer::currentColor_(0, 0, 0, 1);
 std::unique_ptr<Mesh> Renderer::mesh_ = nullptr;
-std::unique_ptr<OrthoCamera> Renderer::orthoCamera_ = nullptr;
-std::unique_ptr<PerspCamera> Renderer::perspCamera_ = nullptr;
+std::shared_ptr<OrthoCamera> Renderer::orthoCamera_ = nullptr;
+std::shared_ptr<PerspCamera> Renderer::perspCamera_ = nullptr;
 Mat4 Renderer::oldProjectMat_;
 Mat4 Renderer::oldViewMat_;
 Mat4 Renderer::oldModelMat_;
+GLenum Renderer::oldPolygonMode_ = GL_FILL;
 
 enum RenderInnerTextureID {
     Black = -1,
@@ -31,10 +32,13 @@ void Renderer::Init(int orthoW, int orthoH) {
     mesh_ = std::make_unique<Mesh>();
 
     orthoCamera_ = std::make_unique<OrthoCamera>(orthoW, orthoH, 1.0f);
-    perspCamera_ = std::make_unique<PerspCamera>(Radians(45), 1024 / 720.0f, 0.01f, 100.f);
+    perspCamera_ = std::make_unique<PerspCamera>(Radians(45), 1024 / 720.0f, 0.1f, 100.f);
 
     GL_CALL(glEnable(GL_BLEND));
     GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+    // GL_CALL(glEnable(GL_CULL_FACE));
+    // GL_CALL(glCullFace(GL_BACK));
+    // GL_CALL(glFrontFace(GL_CW));
 }
 
 void Renderer::Quit() {
@@ -47,7 +51,7 @@ void Renderer::SetClearColor(const Color& color) {
 }
 
 void Renderer::Clear() {
-    GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
+    GL_CALL(glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT));
 }
 
 void Renderer::SetDrawColor(const Color& color) {
@@ -58,7 +62,39 @@ void Renderer::SetDrawColor(const Color& color) {
     }
 }
 
-void Renderer::DrawMesh(const Mesh& mesh,
+void Renderer::SetOrthoCamera(const std::shared_ptr<OrthoCamera>& camera) {
+    orthoCamera_ = camera;
+}
+
+void Renderer::SetPerspCamera(const std::shared_ptr<PerspCamera>& camera) {
+    perspCamera_ = camera;
+}
+
+std::shared_ptr<OrthoCamera>& Renderer::GetOrthoCamera() {
+    return orthoCamera_;
+}
+
+std::shared_ptr<PerspCamera>& Renderer::GetPerspCamera() {
+    return perspCamera_;
+}
+
+void Renderer::Begin2D() {
+    GL_CALL(glDisable(GL_DEPTH_TEST));
+}
+
+void Renderer::Begin3D() {
+    GL_CALL(glEnable(GL_DEPTH_TEST));
+}
+
+void Renderer::DrawMeshSolid(const Mesh& mesh, const Mat4& transform, const Texture* texture) {
+    drawMeshSolid(mesh, DrawType::Triangles, transform, perspCamera_.get(), texture);
+}
+
+void Renderer::DrawMeshFrame(const Mesh& mesh, const Mat4& transform, const Texture* texture) {
+    drawMeshFrame(mesh, DrawType::Triangles, transform, perspCamera_.get(), texture);
+}
+
+void Renderer::drawMesh(const Mesh& mesh,
                         DrawType type,
                         const Mat4& transform,
                         Camera* camera,
@@ -99,6 +135,22 @@ void Renderer::DrawMesh(const Mesh& mesh,
     }
 }
 
+void Renderer::drawMeshFrame(const Mesh& mesh, DrawType type, const Mat4& transform, Camera* camera, const Texture* texture) {
+    if (oldPolygonMode_ != GL_LINE) {
+        GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
+        oldPolygonMode_ = GL_LINE;
+    }
+    drawMesh(mesh, type, transform, camera, texture);
+}
+
+void Renderer::drawMeshSolid(const Mesh& mesh, DrawType type, const Mat4& transform, Camera* camera, const Texture* texture) {
+    if (oldPolygonMode_ != GL_FILL) {
+        GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
+        oldPolygonMode_ = GL_FILL;
+    }
+    drawMesh(mesh, type, transform, camera, texture);
+}
+
 void Renderer::DrawRect(const Rect& rect) {
     std::array<Vec2, 4> points{{
         Vec2(rect.position.x, rect.position.y),
@@ -114,7 +166,7 @@ void Renderer::DrawRect(const Rect& rect) {
         vertices[i].texcoord.Set(0, 0);
     }
     mesh_->Update2GPU();
-    DrawMesh(*mesh_, DrawType::LineLoop, CreateIdentityMat<4>(), orthoCamera_.get());
+    drawMeshSolid(*mesh_, DrawType::LineLoop, CreateIdentityMat<4>(), orthoCamera_.get());
 }
 
 void Renderer::DrawLine(const Vec2& p1, const Vec2& p2) {
@@ -128,7 +180,7 @@ void Renderer::DrawLine(const Vec2& p1, const Vec2& p2) {
         p.texcoord.Set(0, 0);
     }
     mesh_->Update2GPU();
-    DrawMesh(*mesh_, DrawType::Lines, CreateIdentityMat<4>(), orthoCamera_.get());
+    drawMeshSolid(*mesh_, DrawType::Lines, CreateIdentityMat<4>(), orthoCamera_.get());
 }
 
 void Renderer::FillRect(const Rect& rect) {
@@ -153,7 +205,7 @@ void Renderer::FillRect(const Rect& rect) {
         p.texcoord.Set(0, 0);
     }
     mesh_->Update2GPU();
-    DrawMesh(*mesh_, DrawType::Triangles, CreateIdentityMat<4>(), orthoCamera_.get());
+    drawMeshSolid(*mesh_, DrawType::Triangles, CreateIdentityMat<4>(), orthoCamera_.get());
 }
 
 void Renderer::DrawLines(const std::vector<Vec2>& points) {
@@ -165,10 +217,10 @@ void Renderer::DrawLines(const std::vector<Vec2>& points) {
         vertices[i].texcoord.Set(0, 0);
     }
     mesh_->Update2GPU();
-    DrawMesh(*mesh_, DrawType::LineStrip, CreateIdentityMat<4>(), orthoCamera_.get());
+    drawMeshSolid(*mesh_, DrawType::LineStrip, CreateIdentityMat<4>(), orthoCamera_.get());
 }
 
-void Renderer::DrawTexture(const Texture& texture, Rect* src, const Rect& dst, const Color& color) {
+void Renderer::DrawTexture(const Texture& texture, Rect* src, const Rect& dst, const Color& color, const Mat4& transform) {
     auto& vertices = mesh_->GetVertices();
     vertices.clear();
     vertices.resize(6);
@@ -194,15 +246,15 @@ void Renderer::DrawTexture(const Texture& texture, Rect* src, const Rect& dst, c
     vertices[2].position = posLeftBottom;
     vertices[2].texcoord = texLeftTop;
 
-    vertices[3] = vertices[1];
-    vertices[4] = vertices[2];
+    vertices[3] = vertices[2];
+    vertices[4] = vertices[1];
 
     vertices[5].position = posRightBottom;
     vertices[5].texcoord = texRightTop;
 
     mesh_->Update2GPU();
     SetDrawColor(color);
-    DrawMesh(*mesh_, DrawType::Triangles, CreateIdentityMat<4>(), orthoCamera_.get(), &texture);
+    drawMeshSolid(*mesh_, DrawType::Triangles, transform, orthoCamera_.get(), &texture);
 }
 
 }
