@@ -9,6 +9,8 @@
 #include <fstream>
 #include <initializer_list>
 #include <streambuf>
+#include <variant>
+#include <optional>
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
@@ -17,3 +19,4 @@
 
 #include "engine/core/dllexport.hpp"
 #include "engine/core/log.hpp"
+#include "engine/core/vmath.hpp"

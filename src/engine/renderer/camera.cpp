@@ -2,15 +2,6 @@
 
 namespace engine {
 
-EmptyCamera::EmptyCamera(): project_(CreateIdentityMat<4>()), transform_(CreateIdentityMat<4>()) {}
-const Mat4& EmptyCamera::GetProject() const {
-    return project_;
-}
-
-const Mat4& EmptyCamera::GetView() const {
-    return transform_;
-}
-
 OrthoCamera::OrthoCamera(float w, float h, float near) {
     project_ = CreateOrtho(w, h, near);
     transform_ = CreateIdentityMat<4>();

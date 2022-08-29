@@ -31,7 +31,8 @@ target_include_directories(${ENGINE_NAME} PUBLIC include)
 target_compile_definitions(${ENGINE_NAME} PRIVATE SHOULD_EXPORT)
 target_compile_options(
     ${ENGINE_NAME}
-    PUBLIC $<$<STREQUAL:$<UPPER_CASE:"${CMAKE_BUILD_TYPE}">,"RELEASE">:-Os> -fno-rtti -fno-exceptions
+    PUBLIC $<$<STREQUAL:$<UPPER_CASE:"${CMAKE_BUILD_TYPE}">,"Release">:-Os> -fno-rtti -fno-exceptions /GR-
+           $<$<STREQUAL:$<UPPER_CASE:"${CMAKE_BUILD_TYPE}">,"MinSizeRel">:-Os> -fno-rtti -fno-exceptions /GR-
 )
 target_precompile_headers(${ENGINE_NAME} PUBLIC "include/engine/core/pch.hpp")
 

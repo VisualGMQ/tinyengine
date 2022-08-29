@@ -1,3 +1,6 @@
-* 测试完毕后可以去掉EmptyCamera了
 * 测试PerspCamera是否可行
 * 完成SRT矩阵
+
+* GUI界面制作
+* 2D物理引擎制作
+* ECS系统制作

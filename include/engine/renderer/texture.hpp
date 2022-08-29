@@ -12,16 +12,16 @@ public:
     Texture(unsigned char* data, int w, int h);
     ~Texture();
 
-    int Width() const { return w_; }
-    int Height() const { return h_; }
+    float Width() const { return w_; }
+    float Height() const { return h_; }
 
-    void Bind(uint32_t slot = 0);
-    void Unbind();
+    void Bind(uint32_t slot = 0) const;
+    void Unbind() const;
 
 private:
     GLuint id_;
-    int w_;
-    int h_;
+    float w_;
+    float h_;
 };
 
 class TextureFactory final {

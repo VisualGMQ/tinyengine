@@ -12,18 +12,6 @@ public:
     virtual const Mat4& GetView() const = 0;
 };
 
-// for debug
-class EmptyCamera: public Camera {
-public:
-    EmptyCamera();
-    const Mat4& GetProject() const override;
-    const Mat4& GetView() const override;
-
-private:
-    Mat4 project_;
-    Mat4 transform_;
-};
-
 class OrthoCamera: public Camera {
 public:
     OrthoCamera(float w, float h, float near);

@@ -9,7 +9,6 @@ Color Renderer::currentColor_(0, 0, 0, 1);
 std::unique_ptr<Mesh> Renderer::mesh_ = nullptr;
 std::unique_ptr<OrthoCamera> Renderer::orthoCamera_ = nullptr;
 std::unique_ptr<PerspCamera> Renderer::perspCamera_ = nullptr;
-std::unique_ptr<EmptyCamera> Renderer::emptyCamera_ = nullptr;
 Mat4 Renderer::oldProjectMat_;
 Mat4 Renderer::oldViewMat_;
 Mat4 Renderer::oldModelMat_;
@@ -22,8 +21,8 @@ enum RenderInnerTextureID {
 
 void Renderer::Init(int orthoW, int orthoH) {
     stbi_set_flip_vertically_on_load(true);
-    ShaderModule vertexModule(readWholeFile("shader/shader.vert"), ShaderModule::Type::Vertex);
-    ShaderModule fragModule(readWholeFile("shader/shader.frag"), ShaderModule::Type::Fragment);
+    ShaderModule vertexModule(ReadWholeFile("shader/shader.vert"), ShaderModule::Type::Vertex);
+    ShaderModule fragModule(ReadWholeFile("shader/shader.frag"), ShaderModule::Type::Fragment);
     shader_ = std::make_unique<Shader>(vertexModule, fragModule);
     unsigned char value[4] = {0x00, 0x00, 0x00, 0xFF};
     blackTexture_ = TextureFactory::Create(Black, value, 1, 1);
@@ -31,24 +30,11 @@ void Renderer::Init(int orthoW, int orthoH) {
     whiteTexture_ = TextureFactory::Create(White, value, 1, 1);
     mesh_ = std::make_unique<Mesh>();
 
-    orthoCamera_ = std::make_unique<OrthoCamera>(orthoW, orthoH, 1);
-    emptyCamera_ = std::make_unique<EmptyCamera>();
-    perspCamera_ = std::make_unique<PerspCamera>(Radians(45), 1024 / 720.0, 0.01, 100);
+    orthoCamera_ = std::make_unique<OrthoCamera>(orthoW, orthoH, 1.0f);
+    perspCamera_ = std::make_unique<PerspCamera>(Radians(45), 1024 / 720.0f, 0.01f, 100.f);
 
     GL_CALL(glEnable(GL_BLEND));
     GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-}
-
-std::string Renderer::readWholeFile(const std::string& filename) {
-    std::ifstream file(filename);
-    if (file.fail()) {
-        Loge("%s don't exists", filename.c_str());
-        return "";
-    }
-    std::string code((std::istreambuf_iterator<char>(file)),
-                     std::istreambuf_iterator<char>());
-    file.close();
-    return code;
 }
 
 void Renderer::Quit() {
@@ -76,7 +62,7 @@ void Renderer::DrawMesh(const Mesh& mesh,
                         DrawType type,
                         const Mat4& transform,
                         Camera* camera,
-                        Texture* texture) {
+                        const Texture* texture) {
     if(!camera) {
         Loge("camera not exists");
         return ;
@@ -150,16 +136,19 @@ void Renderer::FillRect(const Rect& rect) {
     mesh_->GetIndices().clear();
     vertices.clear();
     vertices.resize(6);
-    vertices[0].position.Set(rect.position.x, rect.position.y, 0);
-    vertices[1].position.Set(rect.position.x + rect.size.w,
-                             rect.position.y, 0);
-    vertices[2].position.Set(rect.position.x + rect.size.w,
-                             rect.position.y + rect.size.h, 0);
-    vertices[3].position.Set(rect.position.x + rect.size.w,
-                             rect.position.y + rect.size.h, 0);
-    vertices[4].position.Set(rect.position.x, rect.position.y, 0);
-    vertices[5].position.Set(rect.position.x,
-                             rect.position.y + rect.size.h, 0);
+
+    Vec3 posLeftTop(rect.position.x, rect.position.y, 0),
+         posRightTop(rect.position.x + rect.size.w, rect.position.y, 0),
+         posRightBottom(rect.position.x + rect.size.w, rect.position.y + rect.size.h, 0),
+         posLeftBottom(rect.position.x, rect.position.y + rect.size.h, 0);
+
+    vertices[0].position = posLeftTop;
+    vertices[1].position = posRightTop;
+    vertices[2].position = posRightBottom;
+    vertices[3] = vertices[0];
+    vertices[4] = vertices[2];
+    vertices[5].position = posLeftBottom;
+
     for (auto& p : vertices) {
         p.texcoord.Set(0, 0);
     }
@@ -179,8 +168,41 @@ void Renderer::DrawLines(const std::vector<Vec2>& points) {
     DrawMesh(*mesh_, DrawType::LineStrip, CreateIdentityMat<4>(), orthoCamera_.get());
 }
 
-void Renderer::DrawTexture(const Texture& texture, Rect* src, Rect* dst) {
-    // TODO not finish
+void Renderer::DrawTexture(const Texture& texture, Rect* src, const Rect& dst, const Color& color) {
+    auto& vertices = mesh_->GetVertices();
+    vertices.clear();
+    vertices.resize(6);
+    mesh_->GetIndices().clear();
+    Rect srcrect = src ? *src : Rect(0, 0, texture.Width(), texture.Height());
+
+    Vec3 posLeftTop(dst.position.x, dst.position.y, 0),
+         posRightTop(dst.position.x + dst.size.w, dst.position.y, 0),
+         posRightBottom(dst.position.x + dst.size.w, dst.position.y + dst.size.h, 0),
+         posLeftBottom(dst.position.x, dst.position.y + dst.size.h, 0);
+
+    Vec2 texLeftTop(srcrect.position.x / texture.Width(), srcrect.position.y / texture.Height()),
+         texRightTop((srcrect.position.x + srcrect.size.w) / texture.Width(), srcrect.position.y / texture.Height()),
+         texRightBottom((srcrect.position.x + srcrect.size.w) / texture.Width(), (srcrect.position.y + srcrect.size.h) / texture.Height()),
+         texLeftBottom(srcrect.position.x / texture.Width(), (srcrect.position.y + srcrect.size.h) / texture.Height());
+
+    vertices[0].position = posLeftTop;
+    vertices[0].texcoord = texLeftBottom;
+
+    vertices[1].position = posRightTop;
+    vertices[1].texcoord = texRightBottom;
+
+    vertices[2].position = posLeftBottom;
+    vertices[2].texcoord = texLeftTop;
+
+    vertices[3] = vertices[1];
+    vertices[4] = vertices[2];
+
+    vertices[5].position = posRightBottom;
+    vertices[5].texcoord = texRightTop;
+
+    mesh_->Update2GPU();
+    SetDrawColor(color);
+    DrawMesh(*mesh_, DrawType::Triangles, CreateIdentityMat<4>(), orthoCamera_.get(), &texture);
 }
 
 }

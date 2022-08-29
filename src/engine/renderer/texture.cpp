@@ -20,12 +20,12 @@ Texture::~Texture() {
     GL_CALL(glDeleteTextures(1, &id_));
 }
 
-void Texture::Bind(uint32_t slot) {
+void Texture::Bind(uint32_t slot) const {
     GL_CALL(glActiveTexture(GL_TEXTURE0 + slot));
     GL_CALL(glBindTexture(GL_TEXTURE_2D, id_));
 }
 
-void Texture::Unbind() {
+void Texture::Unbind() const {
     GL_CALL(glBindTexture(0, id_));
 }
 

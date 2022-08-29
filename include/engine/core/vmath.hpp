@@ -494,12 +494,17 @@ inline Vec3 Cross(const Vec3& v1, const Vec3& v2) {
 }
 
 template <typename T, unsigned int N>
-T Length(const Vec<T, N>& v) {
+T Length2(const Vec<T, N>& v) {
     int sum = 0;
     for (int i = 0; i < N; i++) {
         sum += v(0, i) * v(0, i);
     }
-    return std::sqrt(sum);
+    return sum;
+}
+
+template <typename T, unsigned int N>
+T Length(const Vec<T, N>& v) {
+    return std::sqrt(Length2(v));
 }
 
 template <typename T, unsigned int N>
@@ -554,6 +559,110 @@ inline float Radians(float degrees) {
 
 inline float Degrees(float radians) {
     return radians * 180.0 / PI;
+}
+
+template <typename T>
+class Quaternion final {
+public:
+    Quaternion();
+    Quaternion(T x, T y, T z, T w): x(x), y(y), z(z), w(w) {}
+    Quaternion(const Vec<T, 3>& v, T s): v(v), s(s) {}
+
+    template <typename U>
+    Quaternion& operator+=(const Quaternion<U>& q) {
+        *this = q + *this;
+        return *this;
+    }
+
+    template <typename U>
+    Quaternion& operator-=(const Quaternion<U>& q) {
+        *this = q - *this;
+        return *this;
+    }
+
+    template <typename U>
+    Quaternion& operator/=(const U& value) {
+        *this = *this / value;
+        return *this;
+    }
+
+    template <typename U>
+    Quaternion& operator*=(const U& value) {
+        *this = *this * value;
+        return *this;
+    }
+
+    template <typename U>
+    Quaternion& operator*=(const Quaternion<U>& q) {
+        *this = *this * q;
+        return *this;
+    }
+
+    union {
+        struct { Vec<T, 4> v; T s; };
+        struct { T x, y, z, w; };
+    };
+};
+
+// Hamilton Product
+template <typename T, typename U>
+auto operator*(const Quaternion<T>& q1, const Quaternion<U>& q2) {
+    return Quaternion<std::common_type_t<T, U>(q1.v * q2.s + q1.s * q2.v + Cross(q1.v, q2.v), q1.s * q2.s - Dot(q1.v, q2.v));
+}
+
+template <typename T, typename U>
+auto operator*(const U& value, const Quaternion<U>& q2) {
+    return Quaternion<std::common_type_t<T, U>(q2.v * value, q2.s * value);
+}
+
+template <typename T, typename U>
+auto operator*(const Quaternion<U>& q2, const U& value) {
+    return value * q2;
+}
+
+template <typename T, typename U>
+auto operator/(const Quaternion<U>& q2, const U& value) {
+    return Quaternion<std::common_type_t<T, U>(q2.v / value, q2.s / value);
+}
+
+template <typename T, typename U>
+auto Dot(const Quaternion<T>& q1, const Quaternion<T>& q2) {
+    return Dot(q1.v, q2.v) + q1.s * q2.s;
+}
+
+template <typename T, typename U>
+auto operator+(const Quaternion<T>& q1, const Quaternion<U>& q2) {
+    return Quaternion<std::common_type_t<T, U>(q1.v + q2.v, q1.s + q2.s);
+}
+
+template <typename T, typename U>
+auto operator-(const Quaternion<T>& q1, const Quaternion<U>& q2) {
+    return Quaternion<std::common_type_t<T, U>(q1.v - q2.v, q1.s - q2.s);
+}
+
+template <typename T>
+auto Length2(const Quaternion<T>& q) {
+    return Length2(q.v) + q.s * q.s;
+}
+
+template <typename T>
+auto Length(const Quaternion<T>& q) {
+    return std::sqrt(Length2(q));
+}
+
+template <typename T>
+auto Conjugate(const Quaternion<T>& q) {
+    return Quaternion<T>(-q.v, q.s);
+}
+
+template <typename T>
+auto Inverse(const Quaternion<T>& q) {
+    return Conjugate(q) / Dot(q, q);
+}
+
+template <typename T>
+auto Normalize(const Quaternion<T>& q) {
+    return q / Length(q);
 }
 
 }

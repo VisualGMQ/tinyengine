@@ -12,5 +12,4 @@ uniform mat4 view;
 void main() {
     outTexcoord = inTexcoord;
     gl_Position = project * view * model * vec4(inPosition, 1);
-    // gl_Position = vec4(inPosition, 1);
 }

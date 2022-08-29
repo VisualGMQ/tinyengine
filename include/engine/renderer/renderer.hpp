@@ -2,6 +2,7 @@
 
 #include "engine/core/pch.hpp"
 #include "engine/core/vmath.hpp"
+#include "engine/core/tool.hpp"
 #include "engine/renderer/mesh.hpp"
 #include "engine/renderer/shader.hpp"
 #include "engine/renderer/texture.hpp"
@@ -27,7 +28,7 @@ public:
     static void SetDrawColor(const Color&);
 
     // 3D draw functions
-    static void DrawMesh(const Mesh&, DrawType, const Mat4&, Camera* camera, Texture* texture = nullptr);
+    static void DrawMesh(const Mesh&, DrawType, const Mat4&, Camera* camera, const Texture* texture = nullptr);
 
     // 2D draw functions
     static void DrawRect(const Rect&);
@@ -49,11 +50,10 @@ public:
     }
 
     static void FillRect(const Rect& rect);
-    static void DrawTexture(const Texture& texture, Rect* src, Rect* dst);
+    static void DrawTexture(const Texture& texture, Rect* src, const Rect& dst, const Color& color = Color(1, 1, 1));
 
 private:
     static std::unique_ptr<Shader> shader_;
-    static std::string readWholeFile(const std::string&);
     
     static Texture* blackTexture_;
     static Texture* whiteTexture_;
@@ -61,7 +61,6 @@ private:
     static std::unique_ptr<Mesh> mesh_;
     static std::unique_ptr<OrthoCamera> orthoCamera_;
     static std::unique_ptr<PerspCamera> perspCamera_;
-    static std::unique_ptr<EmptyCamera> emptyCamera_;
 
     // some staging state
     static Mat4 oldProjectMat_;
