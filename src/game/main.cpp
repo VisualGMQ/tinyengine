@@ -3,9 +3,28 @@
 #include "engine/input/input.hpp"
 #include "engine/renderer/renderer.hpp"
 #include "engine/renderer/shader.hpp"
+#include "engine/ecs/entity.hpp"
 
 enum TextureID {
     Test = 1,
+};
+
+class MyComponent: public engine::Component {
+public:
+    MyComponent(const std::string& name): engine::Component(name) {}
+
+    void OnInit() override {
+        Logt("init");
+    }
+
+    void OnUpdate() override {
+        Logt("update");
+    }
+
+    void OnQuit() override {
+        Logt("quit");
+    }
+private:
 };
 
 class GameStart: public engine::Scene {
@@ -14,6 +33,11 @@ public:
     void OnInit() override {
         engine::TextureFactory::Create(Test, "./resources/test.jpg");
         trianglePrymaid_ = engine::CreateTriangularPyramid();
+        entity_ = engine::CreateEntity("first entity");
+        entity_->SetComponent<MyComponent>(engine::ComponentFactory::Create<MyComponent>("MyComponent1"));
+        Logt("entity `%s` has componetn `%s`", entity_->Name().c_str(), entity_->GetComponent<MyComponent>()->Name().c_str());
+        entity_->RemoveComponent<MyComponent>();
+        entity_->GetComponent<MyComponent>() ? Logt("don't remove") : Logt("removed");
     }
     void OnUpdate() override;
     void OnQuit() override {
@@ -22,6 +46,7 @@ public:
 
 private:
     engine::Vec3 position_;
+    std::shared_ptr<engine::Entity> entity_;
 
     void update3d() {
         if (engine::Input::IsKeyPressing(Key_W)) {
@@ -69,13 +94,14 @@ private:
     std::shared_ptr<engine::Mesh> trianglePrymaid_;
 };
 
-void GameStart::OnUpdate(void) {
+void GameStart::OnUpdate() {
     engine::Renderer::Begin3D();
     draw3d();
     engine::Renderer::Begin2D();
     draw2d();
     update3d();
     // update2d();
+    entity_->Update();
 }
 
 SCENE_CONFIG() {

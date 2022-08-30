@@ -23,17 +23,18 @@ set(ENGINE_NAME "engine")
 aux_source_directory(src/engine/core ENGINE_CORE_SRC)
 aux_source_directory(src/engine/renderer ENGINE_RENDERER_SRC)
 aux_source_directory(src/engine/input ENGINE_INPUT_SRC)
+aux_source_directory(src/engine/ecs ENGINE_ECS_SRC)
 
-add_library(${ENGINE_NAME} STATIC ${ENGINE_CORE_SRC} ${ENGINE_RENDERER_SRC} ${ENGINE_INPUT_SRC})
+add_library(${ENGINE_NAME} STATIC ${ENGINE_CORE_SRC} ${ENGINE_RENDERER_SRC} ${ENGINE_INPUT_SRC} ${ENGINE_ECS_SRC})
 target_link_libraries(${ENGINE_NAME} PUBLIC glad glfw stb_image)
 target_compile_features(${ENGINE_NAME} PUBLIC cxx_std_17)
 target_include_directories(${ENGINE_NAME} PUBLIC include)
 target_compile_definitions(${ENGINE_NAME} PRIVATE SHOULD_EXPORT)
-target_compile_options(
-    ${ENGINE_NAME}
-    PUBLIC $<$<STREQUAL:$<UPPER_CASE:"${CMAKE_BUILD_TYPE}">,"Release">:-Os> -fno-rtti -fno-exceptions
-           $<$<STREQUAL:$<UPPER_CASE:"${CMAKE_BUILD_TYPE}">,"MinSizeRel">:-Os> -fno-rtti -fno-exceptions
-)
+# target_compile_options(
+#     ${ENGINE_NAME}
+#     PUBLIC $<$<STREQUAL:$<UPPER_CASE:"${CMAKE_BUILD_TYPE}">,"Release">:-Os> -fno-rtti -fno-exceptions
+#            $<$<STREQUAL:$<UPPER_CASE:"${CMAKE_BUILD_TYPE}">,"MinSizeRel">:-Os> -fno-rtti -fno-exceptions
+# )
 target_precompile_headers(${ENGINE_NAME} PUBLIC "include/engine/core/pch.hpp")
 
 if (${AUDIO_LIB} STREQUAL "miniaudio")
