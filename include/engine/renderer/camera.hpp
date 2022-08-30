@@ -35,7 +35,17 @@ public:
     const Mat4& GetProject() override;
     const Mat4& GetView() override;
 
+    const Vec3 Position() const { return position_; }
+    const Vec3& Rotation() const { return rotation_; }
+
+    void Move(const Vec3& offset);
+    void MoveTo(const Vec3& pos);
+    void Rotate(const Vec3& offset);
+    void RotateTo(const Vec3& rotation);
+
 private:
+    Vec3 position_;
+    Vec3 rotation_;
     bool isDirt_;
     Mat4 project_;
     Mat4 transform_;

@@ -63,14 +63,51 @@ Mesh::~Mesh() {
 
 std::shared_ptr<Mesh> CreateCubeMesh() {
     return std::shared_ptr<Mesh>(new Mesh({
+            Vertex(Vec3(-0.5f, -0.5f, -0.5f), Vec2( 0.0f, 0.0f)),
+            Vertex(Vec3(0.5f, -0.5f, -0.5f), Vec2(1.0f, 0.0f)),
+            Vertex(Vec3(0.5f,  0.5f, -0.5f), Vec2(1.0f, 1.0f)),
+            Vertex(Vec3(0.5f,  0.5f, -0.5f), Vec2(1.0f, 1.0f)),
+            Vertex(Vec3(-0.5f,  0.5f, -0.5f), Vec2( 0.0f, 1.0f)),
+            Vertex(Vec3(-0.5f, -0.5f, -0.5f), Vec2( 0.0f, 0.0f)),
 
-            },
-            {
+            Vertex(Vec3(-0.5f, -0.5f,  0.5f), Vec2( 0.0f, 0.0f)),
+            Vertex(Vec3(0.5f, -0.5f,  0.5f), Vec2(1.0f, 0.0f)),
+            Vertex(Vec3(0.5f,  0.5f,  0.5f), Vec2(1.0f, 1.0f)),
+            Vertex(Vec3(0.5f,  0.5f,  0.5f), Vec2(1.0f, 1.0f)),
+            Vertex(Vec3(-0.5f,  0.5f,  0.5f), Vec2( 0.0f, 1.0f)),
+            Vertex(Vec3(-0.5f, -0.5f,  0.5f), Vec2( 0.0f, 0.0f)),
 
-            }));
+            Vertex(Vec3(-0.5f,  0.5f,  0.5f), Vec2( 1.0f, 0.0f)),
+            Vertex(Vec3(-0.5f,  0.5f, -0.5f), Vec2( 1.0f, 1.0f)),
+            Vertex(Vec3(-0.5f, -0.5f, -0.5f), Vec2( 0.0f, 1.0f)),
+            Vertex(Vec3(-0.5f, -0.5f, -0.5f), Vec2( 0.0f, 1.0f)),
+            Vertex(Vec3(-0.5f, -0.5f,  0.5f), Vec2( 0.0f, 0.0f)),
+            Vertex(Vec3(-0.5f,  0.5f,  0.5f), Vec2( 1.0f, 0.0f)),
+
+            Vertex(Vec3(0.5f,  0.5f,  0.5f), Vec2(1.0f, 0.0f)),
+            Vertex(Vec3(0.5f,  0.5f, -0.5f), Vec2(1.0f, 1.0f)),
+            Vertex(Vec3(0.5f, -0.5f, -0.5f), Vec2(0.0f, 1.0f)),
+            Vertex(Vec3(0.5f, -0.5f, -0.5f), Vec2(0.0f, 1.0f)),
+            Vertex(Vec3(0.5f, -0.5f,  0.5f), Vec2(0.0f, 0.0f)),
+            Vertex(Vec3(0.5f,  0.5f,  0.5f), Vec2(1.0f, 0.0f)),
+
+            Vertex(Vec3(-0.5f, -0.5f, -0.5f), Vec2( 0.0f, 1.0f)),
+            Vertex(Vec3(0.5f, -0.5f, -0.5f), Vec2(1.0f, 1.0f)),
+            Vertex(Vec3(0.5f, -0.5f,  0.5f), Vec2(1.0f, 0.0f)),
+            Vertex(Vec3(0.5f, -0.5f,  0.5f), Vec2(1.0f, 0.0f)),
+            Vertex(Vec3(-0.5f, -0.5f,  0.5f), Vec2( 0.0f, 0.0f)),
+            Vertex(Vec3(-0.5f, -0.5f, -0.5f), Vec2( 0.0f, 1.0f)),
+
+            Vertex(Vec3(-0.5f,  0.5f, -0.5f), Vec2( 0.0f, 1.0f)),
+            Vertex(Vec3(0.5f,  0.5f, -0.5f), Vec2(1.0f, 1.0f)),
+            Vertex(Vec3(0.5f,  0.5f,  0.5f), Vec2(1.0f, 0.0f)),
+            Vertex(Vec3(0.5f,  0.5f,  0.5f), Vec2(1.0f, 0.0f)),
+            Vertex(Vec3(-0.5f,  0.5f,  0.5f), Vec2( 0.0f, 0.0f)),
+            Vertex(Vec3(-0.5f,  0.5f, -0.5f), Vec2( 0.0f, 1.0f)),
+    }));
 }
 
-std::shared_ptr<Mesh> CreateTriangularPyramid() {
+std::shared_ptr<Mesh> CreateTriangularPyramidMesh() {
     float sqrt3 = std::sqrt(3),
           sqrt13 = std::sqrt(13);
     return std::shared_ptr<Mesh>(new Mesh({

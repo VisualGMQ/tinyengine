@@ -32,7 +32,7 @@ public:
     GameStart(const std::string& name): engine::Scene(name) {}
     void OnInit() override {
         engine::TextureFactory::Create(Test, "./resources/test.jpg");
-        trianglePrymaid_ = engine::CreateTriangularPyramid();
+        trianglePrymaid_ = engine::CreateCubeMesh();
         entity_ = engine::CreateEntity("first entity");
         entity_->SetComponent<MyComponent>(engine::ComponentFactory::Create<MyComponent>("MyComponent1"));
         Logt("entity `%s` has componetn `%s`", entity_->Name().c_str(), entity_->GetComponent<MyComponent>()->Name().c_str());
@@ -46,6 +46,7 @@ public:
 
 private:
     engine::Vec3 position_;
+    float rotation_ = 0;
     std::shared_ptr<engine::Entity> entity_;
 
     void update3d() {
@@ -60,6 +61,12 @@ private:
         }
         if (engine::Input::IsKeyPressing(Key_D)) {
             position_.x += 0.01;
+        }
+        if (engine::Input::IsKeyPressing(Key_H)) {
+            rotation_ -= 0.2;
+        }
+        if (engine::Input::IsKeyPressing(Key_L)) {
+            rotation_ += 0.2;
         }
     }
 
@@ -88,7 +95,9 @@ private:
 
     void draw3d() {
         engine::Renderer::SetDrawColor(engine::Color(0, 1, 0));
-        engine::Renderer::DrawMeshFrame(*trianglePrymaid_, engine::CreateTranslate(position_));
+        auto rotateMat = engine::CreateAxisRotationWithQuat(engine::Vec3(0, 0, 1), engine::Radians(rotation_));
+        auto translateMat = engine::CreateTranslate(position_);
+        engine::Renderer::DrawMeshFrame(*trianglePrymaid_, translateMat * rotateMat);
     }
 
     std::shared_ptr<engine::Mesh> trianglePrymaid_;

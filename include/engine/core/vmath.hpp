@@ -87,27 +87,6 @@ public:
     T* Data() { return data_; }
     const T* Data() const { return data_; }
 
-    template <typename V, typename U, unsigned int OW, unsigned int OH>
-    friend bool operator==(const Mat<V, OW, OH>& m, const Mat<U, OW, OH>& o);
-
-    template <typename V, typename U, unsigned int OW, unsigned int OH>
-    friend bool operator!=(const Mat<V, OW, OH>& m, const Mat<U, OW, OH>& o);
-
-    template <typename V, typename U, unsigned int OW, unsigned int OH>
-    friend bool operator+(const Mat<V, OW, OH>& m, const Mat<U, OW, OH>& o);
-
-    template <typename V, typename U, unsigned int OW, unsigned int OH>
-    friend bool operator-(const Mat<V, OW, OH>& m, const Mat<U, OW, OH>& o);
-
-    template <typename V, typename U, unsigned int OW, unsigned int OH>
-    friend bool operator*(const Mat<V, OW, OH>& m, const U& value);
-
-    template <typename V, typename U, unsigned int OW, unsigned int OH>
-    friend bool operator*(const U& value, const Mat<V, OW, OH>& m);
-
-    template <typename V, typename U, unsigned int OW, unsigned int OH>
-    friend bool operator/(const Mat<V, OW, OH>& m, const U& value);
-
 private:
     T data_[W * H];
 };
@@ -116,7 +95,7 @@ private:
 template <typename T, typename U, unsigned int W, unsigned int H>
 bool operator==(const Mat<T, W, H>& m, const Mat<U, W, H>& o) {
     for (int i = 0; i < W * H; i++) {
-        if (m.data_[i] != o.data_[i])
+        if (m.Data()[i] != o.Data()[i])
             return false;
     }
     return true;
@@ -131,7 +110,7 @@ template <typename T, typename U, unsigned int W, unsigned int H>
 auto operator+(const Mat<T, W, H>& m, const Mat<U, W, H>& o) {
     Mat<std::common_type_t<U, T>, W, H> result;
     for (int i = 0; i < W * H; i++) {
-        result.data_[i] = m.data_[i] + o.data_[i];
+        result.Data()[i] = m.Data()[i] + o.Data()[i];
     }
     return result;
 }
@@ -140,22 +119,22 @@ template <typename T, typename U, unsigned int W, unsigned int H>
 auto operator-(const Mat<T, W, H>& m, const Mat<U, W, H>& o) {
     Mat<std::common_type_t<U, T>, W, H> result;
     for (int i = 0; i < W * H; i++) {
-        result.data_[i] = m.data_[i] - o.data_[i];
+        result.Data()[i] = m.Data()[i] - o.Data()[i];
     }
     return result;
 }
 
-template <typename T, typename U, unsigned int W, unsigned int H>
-auto operator*(const Mat<T, W, H>& m, const U& value) {
-    Mat<std::common_type_t<U, T>, W, H> result;
+template <typename T, unsigned int W, unsigned int H>
+auto operator*(const Mat<T, W, H>& m, float value) {
+    Mat<T, W, H> result;
     for (int i = 0; i < W * H; i++) {
-        result.data_[i] = m.data_[i] * value;
+        result.Data()[i] = m.Data()[i] * value;
     }
     return result;
 }
 
-template <typename T, typename U, unsigned int W, unsigned int H>
-auto operator*(const U& value, const Mat<U, W, H>& m2) {
+template <typename T, unsigned int W, unsigned int H>
+auto operator*(float value, const Mat<T, W, H>& m2) {
     return m2 * value;
 }
 
@@ -163,22 +142,30 @@ template <typename T, typename U, unsigned int W, unsigned int H>
 auto operator/(const Mat<T, W, H>& m, const U& value) {
     Mat<std::common_type_t<U, T>, W, H> result;
     for (int i = 0; i < W * H; i++) {
-        result.data_[i] = m.data_[i] / value;
+        result.Data()[i] = m.Data()[i] / value;
     }
     return result;
 }
-
 
 template <typename T, typename U, unsigned int W, unsigned int H, unsigned int UW>
 auto operator*(const Mat<T, W, H>& m, const Mat<U, UW, W>& o) {
     Mat<std::common_type_t<U, T>, H, UW> result;
     for (int i = 0; i < H; i++) {
         for (int j = 0 ; j < UW; j++) {
-            result(i, j) = 0;
+            result(j, i) = 0;
             for (int k = 0; k < W; k++) {
                 result(j, i) += m.Get(k, i) * o.Get(j, k);
             }
         }
+    }
+    return result;
+}
+
+template <typename T, typename U, unsigned int W, unsigned int H>
+auto MulEach(const Mat<T, W, H>& m1, const Mat<U, W, H>& m2) {
+    Mat<std::common_type_t<T, U>, W, H> result;
+    for (int i = 0; i < W * H; i++) {
+        result.Data()[i] = m1.Data()[i] * m2.Data()[i];
     }
     return result;
 }
@@ -613,7 +600,7 @@ public:
     }
 
     union {
-        struct { Vec<T, 4> v; T s; };
+        struct { Vec<T, 3> v; T s; };
         struct { T x, y, z, w; };
     };
 };
@@ -695,6 +682,58 @@ inline Mat4 CreateScale(const Vec3& scale) {
         0, 0, scale.z, 0,
         0, 0, 0, 1,
     };
+}
+
+inline Mat4 CreateAxisRotationWithQuat(const Vec3& axis, float rotation) {
+    float half_angle = rotation * 0.5;
+    float sin = std::sin(half_angle);
+    float cos = std::cos(half_angle);
+    float x = axis.x * sin;
+    float y = axis.y * sin;
+    float z = axis.z * sin;
+    float w = cos;
+    return Mat4{
+        1 - 2 * y * y - 2 * z * z, 2 * x * y + 2 * z * w, 2 * x * y - 2 * y * w, 0,
+        2 * x * y - 2 * z * w, 1 - 2 * x * x - 2 * z * z, 2 * y * z + 2 * x * w, 0,
+        2 * x * z + 2 * y * w, 2 * y * z - 2 * x * w, 1 - 2 * x * x - 2 * y * y, 0,
+        0, 0, 0, 1,
+    };
+}
+
+inline Mat4 CreateAxisRotationWithEular(const Vec3& axis, float rotation) {
+    float c = std::cos(rotation),
+          s = std::sin(rotation),
+          d = 1 - c; 
+    const float& x = axis.x;
+    const float& y = axis.y;
+    const float& z = axis.z;
+    return Mat4{
+        c + d * x * x, d * x * y - s * z, d * x * z + s * y, 0,
+        d * x * y + s * z, c + d * y * y, d * y * z - s * x, 0,
+        d * x * z - s * y, d * y * z + s * x, c + d * z * z, 0,
+        0, 0, 0, 1,
+    };
+}
+
+inline Vec3 Translate(const Vec3& v, const Vec3& pos) {
+    return v + pos;
+}
+
+inline Vec3 Scale(const Vec3& v, const Vec3& scale) {
+    return MulEach(v, scale);
+}
+
+inline Vec3 RotateWithQuat(const Vec3& v, float angle, const Vec3& axis) {
+    float half_angle = angle * 0.5;
+    float half_sin = std::sin(half_angle);
+    Quaternion<float> q(axis.x * half_sin, axis.y * half_sin, axis.z * half_sin,
+                        std::cos(half_angle * 0.5));
+    return v + Cross(2 * q.v, Cross(q.v, v) + q.s * v);
+}
+
+inline Vec3 SRT(const Vec3& v, const Vec3& pos, const Vec3& rotation, const Vec3& scale) {
+    // TODO not finish
+    return Vec3(0, 0, 0);
 }
 
 }

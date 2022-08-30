@@ -57,4 +57,24 @@ void PerspCamera::tryCalcViewMat() {
     }
 }
 
+void PerspCamera::Move(const Vec3& offset) {
+    position_ += offset;
+    isDirt_ = true;
+}
+
+void PerspCamera::MoveTo(const Vec3& pos) {
+    position_ = pos;
+    isDirt_ = true;
+}
+
+void PerspCamera::Rotate(const Vec3& offset) {
+    rotation_ += offset;
+    isDirt_ = true;
+}
+
+void PerspCamera::RotateTo(const Vec3& rotation) {
+    rotation_ = rotation;
+    isDirt_ = true;
+}
+
 }

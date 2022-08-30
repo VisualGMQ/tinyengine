@@ -44,7 +44,7 @@ private:
     GLuint ebo_;
 };
 
-std::shared_ptr<Mesh> CreateCube();
-std::shared_ptr<Mesh> CreateTriangularPyramid();
+std::shared_ptr<Mesh> CreateCubeMesh();
+std::shared_ptr<Mesh> CreateTriangularPyramidMesh();
 
 }
