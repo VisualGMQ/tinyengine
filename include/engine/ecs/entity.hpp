@@ -42,6 +42,7 @@ void Entity::SetComponent(T* comp) {
     }
     components_[id] = comp;
     comp->OnInit();
+    comp->parent_ = this;
 }
 
 template <typename T>
@@ -61,6 +62,7 @@ void Entity::RemoveComponent() {
     auto it = components_.find(ComponentIDHelper::GetID<T>());
     if (it != components_.end()) {
         it->second->OnQuit();
+        it->second->parent_ = nullptr;
         ComponentFactory::Remove<MyComponent>((T*)it->second);
         components_.erase(it);
     }

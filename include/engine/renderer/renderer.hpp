@@ -38,6 +38,10 @@ public:
     // 3D draw functions
     static void DrawMeshFrame(const Mesh&, const Mat4&, const Texture* = nullptr);
     static void DrawMeshSolid(const Mesh&, const Mat4&, const Texture* = nullptr);
+    static void DrawLine(const Vec3& p1, const Vec3& p2);
+
+    // for debug, for location
+    static void DrawGrid();
 
     // 2D draw functions
     static void DrawRect(const Rect&);
@@ -70,6 +74,7 @@ private:
     static std::unique_ptr<Mesh> mesh_;
     static std::shared_ptr<OrthoCamera> orthoCamera_;
     static std::shared_ptr<PerspCamera> perspCamera_;
+    static Camera* camera_;
 
     // some staging state
     static Mat4 oldProjectMat_;
@@ -77,9 +82,9 @@ private:
     static Mat4 oldModelMat_;
     static GLenum oldPolygonMode_;
 
-    static void drawMesh(const Mesh&, DrawType, const Mat4&, Camera* camera, const Texture* texture);
-    static void drawMeshFrame(const Mesh&, DrawType, const Mat4&, Camera*, const Texture* = nullptr);
-    static void drawMeshSolid(const Mesh&, DrawType, const Mat4&, Camera*, const Texture* = nullptr);
+    static void drawMesh(const Mesh&, DrawType, const Mat4&, const Texture* texture);
+    static void drawMeshFrame(const Mesh&, DrawType, const Mat4&, const Texture* = nullptr);
+    static void drawMeshSolid(const Mesh&, DrawType, const Mat4&, const Texture* = nullptr);
 };
 
 }

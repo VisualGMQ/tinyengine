@@ -496,7 +496,7 @@ inline Vec3 Cross(const Vec3& v1, const Vec3& v2) {
 
 template <typename T, unsigned int N>
 T Length2(const Vec<T, N>& v) {
-    int sum = 0;
+    T sum = 0;
     for (int i = 0; i < N; i++) {
         sum += v(0, i) * v(0, i);
     }
@@ -727,13 +727,28 @@ inline Vec3 RotateWithQuat(const Vec3& v, float angle, const Vec3& axis) {
     float half_angle = angle * 0.5;
     float half_sin = std::sin(half_angle);
     Quaternion<float> q(axis.x * half_sin, axis.y * half_sin, axis.z * half_sin,
-                        std::cos(half_angle * 0.5));
+                        std::cos(half_angle));
+    Quaternion<float> m(v.x, v.y, v.z, 1);
     return v + Cross(2 * q.v, Cross(q.v, v) + q.s * v);
 }
 
 inline Vec3 SRT(const Vec3& v, const Vec3& pos, const Vec3& rotation, const Vec3& scale) {
     // TODO not finish
     return Vec3(0, 0, 0);
+}
+
+inline Mat4 CreateLookAt(const Vec3& right, const Vec3& up, const Vec3& front, const Vec3& position) {
+    return Mat4{
+        right.x, right.y, right.z, -(position.x * right.x + position.y * right.y + position.z * right.z),
+           up.x,    up.y,    up.z, -(position.x * up.x + position.y * up.y +  position.z * up.z),
+        front.x, front.y, front.z, -(position.x * front.x + position.y * front.y + position.z * front.z),
+        0, 0, 0, 1,
+    };
+}
+
+template <typename T>
+T Clamp(const T& value, const T& low, const T& high) {
+    return value > high ? high : (value < low ? low : value);
 }
 
 }

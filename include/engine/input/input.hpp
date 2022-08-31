@@ -23,15 +23,17 @@ public:
     static bool IsButtonReleasing(MouseButton);
 
     static const Vec2& MousePoition();
+    static const Vec2& MouseRelative();
 
     static void UpdateStates();
 
 private:
-    static bool oldKeyState[KEY_NUM];
-    static bool keyState[KEY_NUM];
-    static bool oldBtnState[MOUSEBUTTON_NUM];
-    static bool btnState[MOUSEBUTTON_NUM];
-    static Vec2 position;
+    static bool oldKeyState_[KEY_NUM];
+    static bool keyState_[KEY_NUM];
+    static bool oldBtnState_[MOUSEBUTTON_NUM];
+    static bool btnState_[MOUSEBUTTON_NUM];
+    static Vec2 position_;
+    static Vec2 offset_;
 };
 
 }

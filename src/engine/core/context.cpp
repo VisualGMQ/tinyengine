@@ -51,4 +51,8 @@ bool Context::ShouldClose() {
     return glfwWindowShouldClose(window_);
 }
 
+void Context::Close() {
+    glfwSetWindowShouldClose(window_, 1);
+}
+
 }

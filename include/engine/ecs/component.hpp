@@ -4,8 +4,12 @@
 
 namespace engine {
 
+class Entity;
+
 class Component {
 public:
+    friend class Entity;
+
     Component(const std::string& name): name_(name) {}
     virtual ~Component() = default;
 
@@ -13,9 +17,11 @@ public:
     virtual void OnInit() = 0;
     virtual void OnUpdate() = 0;
     virtual void OnQuit() = 0;
+    Entity* Parent() const { return parent_; }
 
 private:
     std::string name_;
+    Entity* parent_ = nullptr;
 };
 
 class ComponentIDHelper final {

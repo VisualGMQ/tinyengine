@@ -4,6 +4,9 @@
 #include "engine/renderer/renderer.hpp"
 #include "engine/renderer/shader.hpp"
 #include "engine/ecs/entity.hpp"
+#include "engine/input/mouse.hpp"
+#include "engine/ecs/component.hpp"
+#include "engine/ecs/entity.hpp"
 
 enum TextureID {
     Test = 1,
@@ -35,9 +38,14 @@ public:
         trianglePrymaid_ = engine::CreateCubeMesh();
         entity_ = engine::CreateEntity("first entity");
         entity_->SetComponent<MyComponent>(engine::ComponentFactory::Create<MyComponent>("MyComponent1"));
-        Logt("entity `%s` has componetn `%s`", entity_->Name().c_str(), entity_->GetComponent<MyComponent>()->Name().c_str());
         entity_->RemoveComponent<MyComponent>();
         entity_->GetComponent<MyComponent>() ? Logt("don't remove") : Logt("removed");
+        engine::Mouse::Hide();
+        engine::Renderer::GetPerspCamera()->MoveTo(engine::Vec3(0, 1, 1));
+
+        auto entity = engine::CreateEntity("entity1");
+        entity->SetComponent<MyComponent>(engine::ComponentFactory::Create<MyComponent>("MyComponent"));
+        Logw("parent name = %s", entity->GetComponent<MyComponent>()->Parent()->Name().c_str());
     }
     void OnUpdate() override;
     void OnQuit() override {
@@ -45,28 +53,45 @@ public:
     }
 
 private:
-    engine::Vec3 position_;
-    float rotation_ = 0;
     std::shared_ptr<engine::Entity> entity_;
+    engine::Vec2 rotation_;
+    float lineRotationY_ = 0;
 
     void update3d() {
+        auto camera = engine::Renderer::GetPerspCamera();
+        engine::Vec3 position = camera->Position();
         if (engine::Input::IsKeyPressing(Key_W)) {
-            position_.z -= 0.01;
+            camera->MoveFront(0.01);
         }
         if (engine::Input::IsKeyPressing(Key_S)) {
-            position_.z += 0.01;
+            camera->MoveFront(-0.01);
         }
         if (engine::Input::IsKeyPressing(Key_A)) {
-            position_.x -= 0.01;
+            camera->MoveRight(-0.01);
         }
         if (engine::Input::IsKeyPressing(Key_D)) {
-            position_.x += 0.01;
+            camera->MoveRight(0.01);
+        }
+        if (engine::Input::IsKeyPressing(Key_Q)) {
+            camera->MoveUp(0.01);
+        }
+        if (engine::Input::IsKeyPressing(Key_E)) {
+            camera->MoveUp(-0.01);
         }
         if (engine::Input::IsKeyPressing(Key_H)) {
-            rotation_ -= 0.2;
+            lineRotationY_ -= 0.01;
         }
         if (engine::Input::IsKeyPressing(Key_L)) {
-            rotation_ += 0.2;
+            lineRotationY_ += 0.01;
+        }
+        rotation_.y -= engine::Input::MouseRelative().x * 0.001;
+        rotation_.x -= engine::Input::MouseRelative().y * 0.001;
+        rotation_.x = engine::Clamp<double>(rotation_.x, -engine::PI / 2 + 0.01, engine::PI / 2 - 0.01);
+
+        camera->RotateTo(rotation_.x, rotation_.y);
+
+        if (engine::Input::IsKeyPressed(Key_Escape)) {
+            engine::Context::Close();
         }
     }
 
@@ -95,9 +120,12 @@ private:
 
     void draw3d() {
         engine::Renderer::SetDrawColor(engine::Color(0, 1, 0));
-        auto rotateMat = engine::CreateAxisRotationWithQuat(engine::Vec3(0, 0, 1), engine::Radians(rotation_));
-        auto translateMat = engine::CreateTranslate(position_);
-        engine::Renderer::DrawMeshFrame(*trianglePrymaid_, translateMat * rotateMat);
+        engine::Renderer::DrawMeshFrame(*trianglePrymaid_, engine::CreateIdentityMat<4>());
+        engine::Renderer::SetDrawColor(engine::Color(0.5, 0.5, 0.5));
+        engine::Renderer::DrawGrid();
+        engine::Renderer::SetDrawColor(engine::Color(1, 0, 0));
+        engine::Renderer::DrawLine(engine::RotateWithQuat(engine::Vec3(-0.5, 0.1, -1), lineRotationY_, engine::Vec3(0, 1, 0)),
+                                   engine::RotateWithQuat(engine::Vec3(0.5, 0.1, -1), lineRotationY_, engine::Vec3(0, 1, 0)));
     }
 
     std::shared_ptr<engine::Mesh> trianglePrymaid_;
@@ -106,8 +134,8 @@ private:
 void GameStart::OnUpdate() {
     engine::Renderer::Begin3D();
     draw3d();
-    engine::Renderer::Begin2D();
-    draw2d();
+    // engine::Renderer::Begin2D();
+    // draw2d();
     update3d();
     // update2d();
     entity_->Update();

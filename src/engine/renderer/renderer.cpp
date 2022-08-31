@@ -13,6 +13,7 @@ Mat4 Renderer::oldProjectMat_;
 Mat4 Renderer::oldViewMat_;
 Mat4 Renderer::oldModelMat_;
 GLenum Renderer::oldPolygonMode_ = GL_FILL;
+Camera* Renderer::camera_ = nullptr;
 
 enum RenderInnerTextureID {
     Black = -1,
@@ -80,26 +81,27 @@ std::shared_ptr<PerspCamera>& Renderer::GetPerspCamera() {
 
 void Renderer::Begin2D() {
     GL_CALL(glDisable(GL_DEPTH_TEST));
+    camera_ = orthoCamera_.get();
 }
 
 void Renderer::Begin3D() {
     GL_CALL(glEnable(GL_DEPTH_TEST));
+    camera_ = perspCamera_.get();
 }
 
 void Renderer::DrawMeshSolid(const Mesh& mesh, const Mat4& transform, const Texture* texture) {
-    drawMeshSolid(mesh, DrawType::Triangles, transform, perspCamera_.get(), texture);
+    drawMeshSolid(mesh, DrawType::Triangles, transform, texture);
 }
 
 void Renderer::DrawMeshFrame(const Mesh& mesh, const Mat4& transform, const Texture* texture) {
-    drawMeshFrame(mesh, DrawType::Triangles, transform, perspCamera_.get(), texture);
+    drawMeshFrame(mesh, DrawType::Triangles, transform, texture);
 }
 
 void Renderer::drawMesh(const Mesh& mesh,
                         DrawType type,
                         const Mat4& transform,
-                        Camera* camera,
                         const Texture* texture) {
-    if(!camera) {
+    if(!camera_) {
         Loge("camera not exists");
         return ;
     }
@@ -111,8 +113,8 @@ void Renderer::drawMesh(const Mesh& mesh,
     GL_CALL(glBindVertexArray(mesh.vao_));
     shader_->Use();
 
-    auto& project = camera->GetProject();
-    auto& view = camera->GetView();
+    auto& project = camera_->Project();
+    auto& view = camera_->View();
      if (transform != oldModelMat_) {
         oldModelMat_ = transform;
         shader_->SetMat4("model", transform);
@@ -135,20 +137,40 @@ void Renderer::drawMesh(const Mesh& mesh,
     }
 }
 
-void Renderer::drawMeshFrame(const Mesh& mesh, DrawType type, const Mat4& transform, Camera* camera, const Texture* texture) {
+void Renderer::drawMeshFrame(const Mesh& mesh, DrawType type, const Mat4& transform, const Texture* texture) {
     if (oldPolygonMode_ != GL_LINE) {
         GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
         oldPolygonMode_ = GL_LINE;
     }
-    drawMesh(mesh, type, transform, camera, texture);
+    drawMesh(mesh, type, transform, texture);
 }
 
-void Renderer::drawMeshSolid(const Mesh& mesh, DrawType type, const Mat4& transform, Camera* camera, const Texture* texture) {
+void Renderer::drawMeshSolid(const Mesh& mesh, DrawType type, const Mat4& transform, const Texture* texture) {
     if (oldPolygonMode_ != GL_FILL) {
         GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
         oldPolygonMode_ = GL_FILL;
     }
-    drawMesh(mesh, type, transform, camera, texture);
+    drawMesh(mesh, type, transform, texture);
+}
+
+void Renderer::DrawLine(const Vec3& p1, const Vec3& p2) {
+    auto& vertices = mesh_->GetVertices();
+    vertices.clear();
+    mesh_->GetIndices().clear();
+    vertices.resize(2);
+    vertices[0].position = p1;
+    vertices[0].texcoord.Set(0, 0);
+    vertices[1].position = p2;
+    vertices[1].texcoord.Set(0, 0);
+    mesh_->Update2GPU();
+    drawMeshSolid(*mesh_, DrawType::Lines, CreateIdentityMat<4>());
+}
+
+void Renderer::DrawGrid() {
+    for (int i = -100; i <= 100; i++) {
+        DrawLine(Vec3(i * 1, 0, -100), Vec3(i * 1, 0, 100));
+        DrawLine(Vec3(-100, 0, i * 1), Vec3(100, 0, i * 1));
+    }
 }
 
 void Renderer::DrawRect(const Rect& rect) {
@@ -166,7 +188,7 @@ void Renderer::DrawRect(const Rect& rect) {
         vertices[i].texcoord.Set(0, 0);
     }
     mesh_->Update2GPU();
-    drawMeshSolid(*mesh_, DrawType::LineLoop, CreateIdentityMat<4>(), orthoCamera_.get());
+    drawMeshSolid(*mesh_, DrawType::LineLoop, CreateIdentityMat<4>());
 }
 
 void Renderer::DrawLine(const Vec2& p1, const Vec2& p2) {
@@ -180,7 +202,7 @@ void Renderer::DrawLine(const Vec2& p1, const Vec2& p2) {
         p.texcoord.Set(0, 0);
     }
     mesh_->Update2GPU();
-    drawMeshSolid(*mesh_, DrawType::Lines, CreateIdentityMat<4>(), orthoCamera_.get());
+    drawMeshSolid(*mesh_, DrawType::Lines, CreateIdentityMat<4>());
 }
 
 void Renderer::FillRect(const Rect& rect) {
@@ -205,7 +227,7 @@ void Renderer::FillRect(const Rect& rect) {
         p.texcoord.Set(0, 0);
     }
     mesh_->Update2GPU();
-    drawMeshSolid(*mesh_, DrawType::Triangles, CreateIdentityMat<4>(), orthoCamera_.get());
+    drawMeshSolid(*mesh_, DrawType::Triangles, CreateIdentityMat<4>());
 }
 
 void Renderer::DrawLines(const std::vector<Vec2>& points) {
@@ -217,7 +239,7 @@ void Renderer::DrawLines(const std::vector<Vec2>& points) {
         vertices[i].texcoord.Set(0, 0);
     }
     mesh_->Update2GPU();
-    drawMeshSolid(*mesh_, DrawType::LineStrip, CreateIdentityMat<4>(), orthoCamera_.get());
+    drawMeshSolid(*mesh_, DrawType::LineStrip, CreateIdentityMat<4>());
 }
 
 void Renderer::DrawTexture(const Texture& texture, Rect* src, const Rect& dst, const Color& color, const Mat4& transform) {
@@ -254,7 +276,7 @@ void Renderer::DrawTexture(const Texture& texture, Rect* src, const Rect& dst, c
 
     mesh_->Update2GPU();
     SetDrawColor(color);
-    drawMeshSolid(*mesh_, DrawType::Triangles, transform, orthoCamera_.get(), &texture);
+    drawMeshSolid(*mesh_, DrawType::Triangles, transform, &texture);
 }
 
 }
