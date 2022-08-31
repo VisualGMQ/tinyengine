@@ -1,5 +1,6 @@
 #include "engine/core/log.hpp"
 #include "engine/core/scene.hpp"
+#include "engine/core/configer.hpp"
 #include "engine/input/input.hpp"
 #include "engine/renderer/renderer.hpp"
 #include "engine/renderer/shader.hpp"
@@ -24,7 +25,6 @@ public:
     void OnQuit() override {
         Logt("quit");
     }
-private:
 };
 
 class GameStart: public engine::Scene {
@@ -38,6 +38,10 @@ public:
         Logt("entity `%s` has componetn `%s`", entity_->Name().c_str(), entity_->GetComponent<MyComponent>()->Name().c_str());
         entity_->RemoveComponent<MyComponent>();
         entity_->GetComponent<MyComponent>() ? Logt("don't remove") : Logt("removed");
+
+        engine::Configer configer("init.cfg");
+        configer.Add("testValue", 123.321);
+        configer.Write2File("test.cfg");
     }
     void OnUpdate() override;
     void OnQuit() override {
