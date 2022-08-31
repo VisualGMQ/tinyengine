@@ -1,5 +1,6 @@
 #include "engine/core/log.hpp"
 #include "engine/core/scene.hpp"
+#include "engine/core/configer.hpp"
 #include "engine/input/input.hpp"
 #include "engine/renderer/renderer.hpp"
 #include "engine/renderer/shader.hpp"
@@ -27,7 +28,6 @@ public:
     void OnQuit() override {
         Logt("quit");
     }
-private:
 };
 
 class GameStart: public engine::Scene {

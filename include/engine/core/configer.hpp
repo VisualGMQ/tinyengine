@@ -12,16 +12,41 @@ public:
         Unknown = 0,
         Number,
         String,
-        List, 
+        Bool,
     };
     struct Element {
         ElementType type;
-        std::variant<float, std::string, std::vector<Element>> data;
+        std::string name;
+        std::variant<float, bool, std::string, std::vector<Element>> data;
 
-        Element(): type(ElementType::Unknown) {}
-        Element(float value): type(ElementType::Number), data(value) {}
-        Element(const std::string& value): type(ElementType::String), data(value) {}
-        Element(const std::vector<Element>& value): type(ElementType::List), data(value) {}
+        Element(const std::string& name): type(ElementType::Unknown), name(name) {}
+        Element(const std::string& name, float value): type(ElementType::Number), name(name), data(value) {}
+        Element(const std::string& name, bool value): type(ElementType::Bool), name(name), data(value) {}
+        Element(const std::string& name, const std::string& value): type(ElementType::String), name(name), data(value) {}
+
+        bool Bool() const {
+            if (type != ElementType::Bool) {
+                Loge("[Configer]: element type is not bool");
+                return false;
+            }
+            return std::get<bool>(data);
+        }
+
+        float Number() const {
+            if (type != ElementType::Number) {
+                Loge("[Configer]: element type is not number");
+                return 0;
+            }
+            return std::get<float>(data);
+        }
+
+        std::string String() const {
+            if (type != ElementType::String) {
+                Loge("[Configer]: element type is not string");
+                return "";
+            }
+            return std::get<std::string>(data);
+        }
     };
 
     Configer(const std::string& filename);
@@ -30,27 +55,32 @@ public:
         return elements_.find(name) != elements_.end();
     }
 
-    void Add(const std::string& name, float value);
-    void Add(const std::string& name, const std::string& value);
-    void Add(const std::string& name, const std::vector<Element>& value);
+    template <typename T>
+    void Add(const std::string& name, const T&);
 
     template <typename T>
     std::optional<T> Get(const std::string& name);
 
+    void Write2File(const std::string& filename);
+
 private:
     std::unordered_map<std::string, Element> elements_;
+    std::string content_;
 
-    template <typename T>
-    void add(const std::string& name, const T& value) {
-        if (Has(name)) {
-            Logw("%s already exists", name.c_str());
-        } else {
-            elements_.emplace(name, value);
-        }
-    }
+    void add(const std::string& name, const Element& elem);
+    Element parse();
+    unsigned int curIdx_;
 
-    void parse(const std::string& content);
-    unsigned int index_;
+    void skipWhiteSpace();
+    char next(int = 1);
+    bool isEOF() const;
+    char curChar() const;
+    char lookFor(int) const;
+
+    std::string parseKey();
+    std::string parseStr();
+    float parseNumber();
+    bool parseBool();
 };
 
 template <typename T>
@@ -72,12 +102,6 @@ std::optional<T> Configer::Get(const std::string& name) {
                     return std::nullopt;
                 }
                 break;
-            case Configer::ElementType::List:
-                if (!std::is_same_v<T, std::vector<Element>>) {
-                    Logw("%s field is not list", name.c_str());
-                    return std::nullopt;
-                }
-                break;
             default:
                 Logw("%s type unknown", name.c_str());
                 return std::nullopt;
@@ -85,5 +109,6 @@ std::optional<T> Configer::Get(const std::string& name) {
         return std::get<T>(it->second.data);
     }
 }
+
 
 }
