@@ -37,9 +37,9 @@ void Renderer::Init(int orthoW, int orthoH) {
 
     GL_CALL(glEnable(GL_BLEND));
     GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-    // GL_CALL(glEnable(GL_CULL_FACE));
-    // GL_CALL(glCullFace(GL_BACK));
-    // GL_CALL(glFrontFace(GL_CW));
+    GL_CALL(glEnable(GL_CULL_FACE));
+    GL_CALL(glCullFace(GL_BACK));
+    GL_CALL(glFrontFace(GL_CW));
 }
 
 void Renderer::Quit() {
@@ -81,11 +81,13 @@ std::shared_ptr<PerspCamera>& Renderer::GetPerspCamera() {
 
 void Renderer::Begin2D() {
     GL_CALL(glDisable(GL_DEPTH_TEST));
+    GL_CALL(glDisable(GL_CULL_FACE));
     camera_ = orthoCamera_.get();
 }
 
 void Renderer::Begin3D() {
     GL_CALL(glEnable(GL_DEPTH_TEST));
+    GL_CALL(glEnable(GL_CULL_FACE));
     camera_ = perspCamera_.get();
 }
 
@@ -242,17 +244,17 @@ void Renderer::DrawLines(const std::vector<Vec2>& points) {
     drawMeshSolid(*mesh_, DrawType::LineStrip, CreateIdentityMat<4>());
 }
 
-void Renderer::DrawTexture(const Texture& texture, Rect* src, const Rect& dst, const Color& color, const Mat4& transform) {
+void Renderer::DrawTexture(const Texture& texture, Rect* src, const Size& size, const Mat4& transform) {
     auto& vertices = mesh_->GetVertices();
     vertices.clear();
     vertices.resize(6);
     mesh_->GetIndices().clear();
     Rect srcrect = src ? *src : Rect(0, 0, texture.Width(), texture.Height());
 
-    Vec3 posLeftTop(dst.position.x, dst.position.y, 0),
-         posRightTop(dst.position.x + dst.size.w, dst.position.y, 0),
-         posRightBottom(dst.position.x + dst.size.w, dst.position.y + dst.size.h, 0),
-         posLeftBottom(dst.position.x, dst.position.y + dst.size.h, 0);
+    Vec3 posLeftTop(0, 0, 0),
+         posRightTop(size.w, 0, 0),
+         posRightBottom(size.w, size.h, 0),
+         posLeftBottom(0, size.h, 0);
 
     Vec2 texLeftTop(srcrect.position.x / texture.Width(), srcrect.position.y / texture.Height()),
          texRightTop((srcrect.position.x + srcrect.size.w) / texture.Width(), srcrect.position.y / texture.Height()),
@@ -275,7 +277,6 @@ void Renderer::DrawTexture(const Texture& texture, Rect* src, const Rect& dst, c
     vertices[5].texcoord = texRightTop;
 
     mesh_->Update2GPU();
-    SetDrawColor(color);
     drawMeshSolid(*mesh_, DrawType::Triangles, transform, &texture);
 }
 

@@ -4,10 +4,10 @@
 - [x] 鼠标键盘输入
 - [x] ECS
 - [x] 场景
-- [X] 2D/3D摄像机
+- [x] 2D/3D摄像机
+- [x] Configer
 - [ ] GUI
 - [ ] 物理系统
-- [ ] Configer
 - [ ] TileSheet
 
 目前效果：

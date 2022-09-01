@@ -63,7 +63,7 @@ public:
     }
 
     static void FillRect(const Rect& rect);
-    static void DrawTexture(const Texture& texture, Rect* src, const Rect& dst, const Color& color = Color(1, 1, 1), const Mat4& transform = CreateIdentityMat<4>());
+    static void DrawTexture(const Texture& texture, Rect* src, const Size& size, const Mat4& transform = CreateIdentityMat<4>());
 
 private:
     static std::unique_ptr<Shader> shader_;

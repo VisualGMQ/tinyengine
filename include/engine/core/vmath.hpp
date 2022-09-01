@@ -562,6 +562,14 @@ inline float Degrees(float radians) {
     return radians * 180.0 / PI;
 }
 
+inline Vec3 Radians(const Vec3& v) {
+    return Vec3(Radians(v.x), Radians(v.y), Radians(v.z));
+}
+
+inline Vec3 Degrees(const Vec3& v) {
+    return Vec3(Degrees(v.x), Degrees(v.y), Degrees(v.z));
+}
+
 template <typename T>
 class Quaternion final {
 public:
@@ -732,9 +740,54 @@ inline Vec3 RotateWithQuat(const Vec3& v, float angle, const Vec3& axis) {
     return v + Cross(2 * q.v, Cross(q.v, v) + q.s * v);
 }
 
-inline Vec3 SRT(const Vec3& v, const Vec3& pos, const Vec3& rotation, const Vec3& scale) {
-    // TODO not finish
-    return Vec3(0, 0, 0);
+inline Mat4 CreateRotationX(float angle) {
+    float cx = std::cos(angle),
+          sx = std::sin(angle);
+    return Mat4{
+        1, 0, 0, 0,
+        0, cx, -sx, 0,
+        0, sx, cx, 0,
+        0, 0, 0, 1,
+    };
+}
+
+inline Mat4 CreateRotationY(float angle) {
+    float cy = std::cos(angle),
+          sy = std::sin(angle);
+    return Mat4{
+        cy, 0, sy, 0,
+        0, 1, 0, 0,
+        -sy, 0, cy, 0,
+        0, 0, 0, 1,
+    };
+}
+
+inline Mat4 CreateRotationZ(float angle) {
+    float cz = std::cos(angle),
+          sz = std::sin(angle);
+    return Mat4 {
+        cz, -sz, 0, 0,
+        sz, cz, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 1,
+    };
+}
+
+inline Mat4 CreateSRT(const Vec3& pos, const Vec3& rotation, const Vec3& scale) {
+    return
+        Mat4{
+            1, 0, 0, pos.x,
+            0, 1, 0, pos.y,
+            0, 0, 1, pos.z,
+            0, 0, 0, 1,
+        } *
+        CreateRotationX(rotation.x) * CreateRotationY(rotation.y) * CreateRotationZ(rotation.z) *
+        Mat4{
+            scale.x, 0, 0, 0,
+            0, scale.y, 0, 0,
+            0, 0, scale.z, 0,
+            0, 0, 0, 1,
+        };
 }
 
 inline Mat4 CreateLookAt(const Vec3& right, const Vec3& up, const Vec3& front, const Vec3& position) {

@@ -8,6 +8,7 @@
 #include "engine/input/mouse.hpp"
 #include "engine/ecs/component.hpp"
 #include "engine/ecs/entity.hpp"
+#include "engine/renderer/image.hpp"
 
 enum TextureID {
     Test = 1,
@@ -34,7 +35,9 @@ class GameStart: public engine::Scene {
 public:
     GameStart(const std::string& name): engine::Scene(name) {}
     void OnInit() override {
-        engine::TextureFactory::Create(Test, "./resources/test.jpg");
+        auto texture = engine::TextureFactory::Create(Test, "./resources/test.jpg");
+        image_ = std::make_unique<engine::Image>(texture);
+
         trianglePrymaid_ = engine::CreateCubeMesh();
         entity_ = engine::CreateEntity("first entity");
         entity_->SetComponent<MyComponent>(engine::ComponentFactory::Create<MyComponent>("MyComponent1"));
@@ -46,6 +49,8 @@ public:
         auto entity = engine::CreateEntity("entity1");
         entity->SetComponent<MyComponent>(engine::ComponentFactory::Create<MyComponent>("MyComponent"));
         Logw("parent name = %s", entity->GetComponent<MyComponent>()->Parent()->Name().c_str());
+        entity->RemoveComponent<MyComponent>();
+        Logw("has parent? %d", entity->GetComponent<MyComponent>() != nullptr);
     }
     void OnUpdate() override;
     void OnQuit() override {
@@ -54,12 +59,12 @@ public:
 
 private:
     std::shared_ptr<engine::Entity> entity_;
+    std::unique_ptr<engine::Image> image_;
     engine::Vec2 rotation_;
     float lineRotationY_ = 0;
 
     void update3d() {
         auto camera = engine::Renderer::GetPerspCamera();
-        engine::Vec3 position = camera->Position();
         if (engine::Input::IsKeyPressing(Key_W)) {
             camera->MoveFront(0.01);
         }
@@ -106,16 +111,22 @@ private:
     }
 
     void draw2d() {
-        engine::Renderer::SetDrawColor(engine::Color(1, 0, 0, 1));
+        engine::Renderer::SetDrawColor(engine::Color(1, 0, 0));
         engine::Renderer::DrawLine(engine::Vec2(0, 0), engine::Vec2(1024, 720));
-        engine::Renderer::SetDrawColor(engine::Color(0, 1, 0, 1));
+        engine::Renderer::SetDrawColor(engine::Color(0, 1, 0));
         engine::Renderer::DrawRect(engine::Rect(100, 100, 200, 300));
-        engine::Renderer::SetDrawColor(engine::Color(0, 0, 1, 1));
+        engine::Renderer::SetDrawColor(engine::Color(0, 0, 1));
         engine::Renderer::FillRect(engine::Rect(100, 500, 200, 100));
         engine::Renderer::DrawLines({engine::Vec2(100, 100), engine::Vec2(200, 150), engine::Vec2(300, 400)});
 
-        auto texture = engine::TextureFactory::Find(Test);
-        engine::Renderer::DrawTexture(*texture, nullptr, engine::Rect(400, 100, texture->Width(), texture->Height()));
+        engine::Renderer::SetDrawColor(engine::Color(1, 1, 1));
+        image_->SetPosition(engine::Vec2(100, 100));
+        image_->Draw();
+        // auto texture = engine::TextureFactory::Find(Test);
+        // engine::Renderer::DrawTexture(*texture,
+        //                               nullptr, engine::Size(texture->Width(), texture->Height()),
+        //                               engine::CreateTranslate(engine::Vec3(100, 0, 0)) *
+        //                               engine::CreateAxisRotationWithEular(engine::Vec3(0, 0, 1), engine::Radians(45)));
     }
 
     void draw3d() {
@@ -134,8 +145,8 @@ private:
 void GameStart::OnUpdate() {
     engine::Renderer::Begin3D();
     draw3d();
-    // engine::Renderer::Begin2D();
-    // draw2d();
+    engine::Renderer::Begin2D();
+    draw2d();
     update3d();
     // update2d();
     entity_->Update();

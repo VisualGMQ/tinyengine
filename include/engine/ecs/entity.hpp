@@ -20,13 +20,14 @@ public:
     const std::string& Name() const { return name_; }
 
     inline void Update() {
-        for (auto& [key, value] : components_) {
-            value->OnUpdate();
+        for (auto& comp : order_) {
+            comp->OnUpdate();
         }
     }
 
 private:
     std::unordered_map<unsigned int, Component*> components_;
+    std::vector<Component*> order_;
 
     std::string name_;
 };
@@ -35,14 +36,20 @@ private:
 template <typename T>
 void Entity::SetComponent(T* comp) {
     static_assert(std::is_base_of_v<Component, T> && !std::is_same_v<Component, T>);
+    if (!comp) {
+        Logw("component is nullptr");
+        return;
+    }
     unsigned int id = ComponentIDHelper::GetID<T>();
     auto it = components_.find(id);
     if (it != components_.end()) {
-        Logw("entity %s already has component %s", Name().c_str(), comp->Name().c_str());
+        Logw("entity %s already has component %s, set failed", Name().c_str(), it->second->Name().c_str());
+        return;
     }
     components_[id] = comp;
     comp->OnInit();
     comp->parent_ = this;
+    order_.push_back(comp);
 }
 
 template <typename T>
@@ -63,6 +70,13 @@ void Entity::RemoveComponent() {
     if (it != components_.end()) {
         it->second->OnQuit();
         it->second->parent_ = nullptr;
+        auto oit = order_.begin();
+        while (*oit != it->second && oit != order_.end()) {
+            oit++;
+        }
+        if (oit != order_.end()) {
+            order_.erase(oit);
+        }
         ComponentFactory::Remove<MyComponent>((T*)it->second);
         components_.erase(it);
     }
