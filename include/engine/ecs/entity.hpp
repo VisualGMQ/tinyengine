@@ -1,12 +1,17 @@
 #pragma once
 
 #include "engine/ecs/component.hpp"
+#include "engine/ecs/world.hpp"
 
 namespace engine {
 
+using EntityID = unsigned int;
+
 class Entity final {
 public:
-    Entity(const std::string& name): name_(name) {}
+    friend class World;
+
+    Entity(World* world, EntityID id, const std::string& name): world_(world), id_(id), name_(name) {}
 
     template <typename T>
     void SetComponent(T*);
@@ -19,17 +24,16 @@ public:
 
     const std::string& Name() const { return name_; }
 
-    inline void Update() {
-        for (auto& comp : order_) {
-            comp->OnUpdate();
-        }
-    }
+    EntityID ID() const { return id_; }
+    World* World() const { return world_; }
 
 private:
     std::unordered_map<unsigned int, Component*> components_;
-    std::vector<Component*> order_;
+    class World* world_;
 
+    EntityID id_;
     std::string name_;
+    bool shouldBeCleanUp_ = false;
 };
 
 
@@ -49,7 +53,6 @@ void Entity::SetComponent(T* comp) {
     components_[id] = comp;
     comp->OnInit();
     comp->parent_ = this;
-    order_.push_back(comp);
 }
 
 template <typename T>
@@ -66,24 +69,12 @@ T* Entity::GetComponent() {
 template <typename T>
 void Entity::RemoveComponent() {
     static_assert(std::is_base_of_v<Component, T> && !std::is_same_v<Component, T>);
-    auto it = components_.find(ComponentIDHelper::GetID<T>());
-    if (it != components_.end()) {
-        it->second->OnQuit();
-        it->second->parent_ = nullptr;
-        auto oit = order_.begin();
-        while (*oit != it->second && oit != order_.end()) {
-            oit++;
-        }
-        if (oit != order_.end()) {
-            order_.erase(oit);
-        }
-        ComponentFactory::Remove<MyComponent>((T*)it->second);
-        components_.erase(it);
-    }
-}
 
-inline std::shared_ptr<Entity> CreateEntity(const std::string& name) {
-    return std::make_shared<Entity>(name);
+    unsigned int id = ComponentIDHelper::GetID<T>();
+    auto component = components_[id];
+    component->OnQuit();
+    components_.erase(id);
+    world_->RemoveComponent(component);
 }
 
 }

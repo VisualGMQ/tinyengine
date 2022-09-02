@@ -9,6 +9,7 @@
 #include "engine/ecs/component.hpp"
 #include "engine/ecs/entity.hpp"
 #include "engine/renderer/image.hpp"
+#include "engine/ecs/world.hpp"
 
 enum TextureID {
     Test = 1,
@@ -16,18 +17,30 @@ enum TextureID {
 
 class MyComponent: public engine::Component {
 public:
-    MyComponent(const std::string& name): engine::Component(name) {}
+    MyComponent(unsigned int id, const std::string& name): engine::Component(id, name) {}
 
     void OnInit() override {
         Logt("init");
     }
 
-    void OnUpdate() override {
-        Logt("update");
-    }
-
     void OnQuit() override {
         Logt("quit");
+    }
+
+    int value = 123;
+};
+
+class TestSystem: public engine::System {
+public:
+    TestSystem(engine::World* world): engine::System(world) {}
+
+    void Update() override {
+        const auto& entities = World()->Entities();
+        for (auto& entity : entities) {
+            if (entity->GetComponent<MyComponent>()) {
+                Logt1("entity has MyComponent");
+            }
+        }
     }
 };
 
@@ -35,31 +48,31 @@ class GameStart: public engine::Scene {
 public:
     GameStart(const std::string& name): engine::Scene(name) {}
     void OnInit() override {
+        world_ = std::make_unique<engine::World>();
+
+        world_->AddSystem<TestSystem>();
+
         auto texture = engine::TextureFactory::Create(Test, "./resources/test.jpg");
         image_ = std::make_unique<engine::Image>(texture);
 
         trianglePrymaid_ = engine::CreateCubeMesh();
-        entity_ = engine::CreateEntity("first entity");
-        entity_->SetComponent<MyComponent>(engine::ComponentFactory::Create<MyComponent>("MyComponent1"));
-        entity_->RemoveComponent<MyComponent>();
-        entity_->GetComponent<MyComponent>() ? Logt("don't remove") : Logt("removed");
         engine::Mouse::Hide();
         engine::Renderer::GetPerspCamera()->MoveTo(engine::Vec3(0, 1, 1));
 
-        auto entity = engine::CreateEntity("entity1");
-        entity->SetComponent<MyComponent>(engine::ComponentFactory::Create<MyComponent>("MyComponent"));
-        Logw("parent name = %s", entity->GetComponent<MyComponent>()->Parent()->Name().c_str());
-        entity->RemoveComponent<MyComponent>();
-        Logw("has parent? %d", entity->GetComponent<MyComponent>() != nullptr);
+        entity_ = world_->CreateEntity("Entity1");
+        entity_->SetComponent<MyComponent>(world_->CreateComponent<MyComponent>("MyComponent"));
+        Logw("parent name = %s", entity_->GetComponent<MyComponent>()->Parent()->Name().c_str());
     }
     void OnUpdate() override;
     void OnQuit() override {
+        world_->Shutdown();
         trianglePrymaid_.reset();
     }
 
 private:
-    std::shared_ptr<engine::Entity> entity_;
+    engine::Entity* entity_;
     std::unique_ptr<engine::Image> image_;
+    std::unique_ptr<engine::World> world_;
     engine::Vec2 rotation_;
     float lineRotationY_ = 0;
 
@@ -122,11 +135,6 @@ private:
         engine::Renderer::SetDrawColor(engine::Color(1, 1, 1));
         image_->SetPosition(engine::Vec2(100, 100));
         image_->Draw();
-        // auto texture = engine::TextureFactory::Find(Test);
-        // engine::Renderer::DrawTexture(*texture,
-        //                               nullptr, engine::Size(texture->Width(), texture->Height()),
-        //                               engine::CreateTranslate(engine::Vec3(100, 0, 0)) *
-        //                               engine::CreateAxisRotationWithEular(engine::Vec3(0, 0, 1), engine::Radians(45)));
     }
 
     void draw3d() {
@@ -149,7 +157,8 @@ void GameStart::OnUpdate() {
     draw2d();
     update3d();
     // update2d();
-    entity_->Update();
+    world_->Update();
+    world_->CleanUp();
 }
 
 SCENE_CONFIG() {
