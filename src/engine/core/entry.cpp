@@ -4,6 +4,7 @@
 #include "engine/input/input.hpp"
 #include "engine/renderer/renderer.hpp"
 #include "engine/renderer/texture.hpp"
+#include "engine/core/timer.hpp"
 
 DLLEXPORT extern void GameInit(void);
 
@@ -35,6 +36,8 @@ int main(int argc, char** argv) {
         glfwPollEvents();
         engine::Renderer::Clear();
         scene->OnUpdate();
+        engine::Timer::UpdateElapse();
+        engine::Timer::UpdateTimers();
         engine::Context::SwapBuffers();
         engine::Input::UpdateStates();
         engine::SceneMgr::QuitOldScene();

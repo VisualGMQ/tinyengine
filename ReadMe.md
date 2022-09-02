@@ -6,6 +6,7 @@
 - [x] 场景
 - [x] 2D/3D摄像机
 - [x] Configer
+- [x] 定时器
 - [ ] GUI
 - [ ] 物理系统
 - [ ] TileSheet

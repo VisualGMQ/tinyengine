@@ -10,6 +10,7 @@
 #include "engine/ecs/entity.hpp"
 #include "engine/renderer/image.hpp"
 #include "engine/ecs/world.hpp"
+#include "engine/core/timer.hpp"
 
 enum TextureID {
     Test = 1,
@@ -62,6 +63,16 @@ public:
         entity_ = world_->CreateEntity("Entity1");
         entity_->SetComponent<MyComponent>(world_->CreateComponent<MyComponent>("MyComponent"));
         Logw("parent name = %s", entity_->GetComponent<MyComponent>()->Parent()->Name().c_str());
+
+        unsigned int id = engine::Timer::AddTimer([=](double time, void* param){
+            static int tick = 0;
+            tick++;
+            Logi("ticked");
+            if (tick == 5) {
+                engine::Timer::RemoveTimer(id);
+            }
+            return time;
+        }, 1, nullptr);
     }
     void OnUpdate() override;
     void OnQuit() override {

@@ -14,6 +14,7 @@
 #include <stack>
 #include <queue>
 #include <memory>
+#include <functional>
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
