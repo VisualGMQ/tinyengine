@@ -2,6 +2,7 @@
 
 #include "engine/ecs/component.hpp"
 #include "engine/ecs/world.hpp"
+#include "engine/ecs/behavior.hpp"
 
 namespace engine {
 
@@ -27,6 +28,13 @@ public:
     EntityID ID() const { return id_; }
     World* World() const { return world_; }
 
+    void SetBehavior(std::unique_ptr<Behavior>&& behavior) {
+        behavior_ = std::move(behavior);
+        behavior_->parent_ = this;
+    }
+    void SetBehavior(std::unique_ptr<Behavior>& behavior) { behavior_ = std::move(behavior); }
+    Behavior* GetBehavior() { return behavior_.get(); }
+
 private:
     std::unordered_map<unsigned int, Component*> components_;
     class World* world_;
@@ -34,6 +42,8 @@ private:
     EntityID id_;
     std::string name_;
     bool shouldBeCleanUp_ = false;
+
+    std::unique_ptr<Behavior> behavior_ = nullptr;
 };
 
 

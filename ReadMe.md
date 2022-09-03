@@ -8,8 +8,9 @@
 - [x] Configer
 - [x] 定时器
 - [x] TileSheet
-- [ ] GUI
+- [x] GUI
 - [ ] 物理系统
+- [ ] Animation
 
 目前效果：
 

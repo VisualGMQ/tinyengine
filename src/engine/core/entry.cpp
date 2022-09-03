@@ -5,6 +5,8 @@
 #include "engine/renderer/renderer.hpp"
 #include "engine/renderer/texture.hpp"
 #include "engine/core/timer.hpp"
+#include "engine/ecs/world.hpp"
+#include "engine/ecs/entity.hpp"
 
 DLLEXPORT extern void GameInit(void);
 
@@ -18,13 +20,14 @@ int main(int argc, char** argv) {
     auto heightElem = configReader.Get<float>("height");
 
     std::string title = titleElem ? titleElem.value() : "engine";
-    float width = widthElem ? widthElem.value() : 1024;
-    float height = heightElem ? heightElem.value() : 720;
+    float width = widthElem ? widthElem.value() : WindowWidth;
+    float height = heightElem ? heightElem.value() : WindowHeight;
 
     engine::Context::Init(title, width, height);
     engine::Renderer::Init(width, height);
     engine::TextureFactory::Init();
     engine::Input::Init();
+    engine::World::Init();
     engine::SceneMgr::Init();
 
     GameInit();
@@ -35,7 +38,20 @@ int main(int argc, char** argv) {
     while (!engine::Context::ShouldClose()) {
         glfwPollEvents();
         engine::Renderer::Clear();
+        for (auto& entity : engine::World::Instance()->Entities()) {
+            if (auto behavior = entity->GetBehavior(); behavior != nullptr) {
+                if (!behavior->IsInited()) {
+                    behavior->OnInit();
+                    behavior->Inited();
+                }
+            }
+        }
         scene->OnUpdate();
+        for (auto& entity : engine::World::Instance()->Entities()) {
+            if (auto behavior = entity->GetBehavior(); behavior != nullptr) {
+                behavior->OnUpdate();
+            }
+        }
         engine::Timer::UpdateElapse();
         engine::Timer::UpdateTimers();
         engine::Timer::CleanUpTimers();
@@ -45,6 +61,7 @@ int main(int argc, char** argv) {
     }
 
     engine::SceneMgr::Quit();
+    engine::World::Quit();
     engine::Input::Quit();
     engine::TextureFactory::Quit();
     engine::Renderer::Quit();

@@ -552,6 +552,11 @@ struct Rect {
     Rect(const Vec2& pos, const Vec2& size) : position(pos), size(size) {}
 };
 
+inline std::ostream& operator<<(std::ostream& o, const Rect& rect) {
+    o << "Rect(" << rect.position << ", " << rect.size << ")";
+    return o;
+}
+
 constexpr float PI = 3.14159265358;
 
 inline float Radians(float degrees) {
@@ -803,5 +808,12 @@ template <typename T>
 T Clamp(const T& value, const T& low, const T& high) {
     return value > high ? high : (value < low ? low : value);
 }
+
+inline bool IsPointInRect(const Vec2& p, const Rect& r) {
+    return p.x >= r.position.x && p.x <= r.position.x + r.size.w &&
+           p.y >= r.position.y && p.y <= r.position.y + r.size.h;
+}
+
+extern const Mat4 IdentityMat4;
 
 }

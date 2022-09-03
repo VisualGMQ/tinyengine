@@ -91,10 +91,10 @@ void Image::tryCalcTransformMat() {
     }
 }
 
-void Image::Draw() {
+void Image::Draw(const Mat4& parentTransform) {
     if (!texture_) return;
     tryCalcTransformMat();
-    Renderer::DrawTexture(*texture_, &srcrect_, size_, transform_);
+    Renderer::DrawTexture(*texture_, &srcrect_, size_, transform_ * parentTransform);
 }
 
 }

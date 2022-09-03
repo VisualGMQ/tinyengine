@@ -6,24 +6,26 @@ namespace engine {
 
 class Entity;
 
+using ComponentID = unsigned int;
+
 class Component {
 public:
     friend class Entity;
     friend class World;
 
-    Component(unsigned int id, const std::string& name): id_(id), name_(name) {}
+    Component(ComponentID id, const std::string& name): id_(id), name_(name) {}
     virtual ~Component() = default;
 
     const std::string& Name() const { return name_; }
-    virtual void OnInit() = 0;
-    virtual void OnQuit() = 0;
+    virtual void OnInit() {}
+    virtual void OnQuit() {}
     Entity* Parent() const { return parent_; }
 
     unsigned int ID() const { return id_; }
 
 private:
     std::string name_;
-    unsigned int id_;
+    ComponentID id_;
     Entity* parent_ = nullptr;
 };
 

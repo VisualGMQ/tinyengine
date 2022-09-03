@@ -9,6 +9,10 @@ namespace engine {
 
 class World final {
 public:
+    static World* Instance();
+    static void Init();
+    static void Quit();
+
     Entity* CreateEntity(const std::string& name);
     void DestroyEntity(unsigned int id);
     void DestroyEntity(Entity* entity);
@@ -36,7 +40,7 @@ public:
 
 private:
     unsigned int entityID_ = 0; 
-    unsigned int componentID_ = 0; 
+    ComponentID componentID_ = 0; 
 
     std::vector<std::unique_ptr<Entity>> entities_;
     std::stack<std::unique_ptr<Entity>> entityTrashes_;
@@ -47,6 +51,8 @@ private:
         std::stack<std::unique_ptr<Component>> componentTrashes_;
     };
     std::unordered_map<unsigned int, ComponentCell> components_;
+
+    static std::unique_ptr<World> instance_;
 
     void destroyEntity(const std::vector<std::unique_ptr<Entity>>::const_iterator& it);
 };

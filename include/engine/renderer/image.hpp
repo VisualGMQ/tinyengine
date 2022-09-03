@@ -22,7 +22,7 @@ public:
     void SetAnchor(const Vec2&);
     const Vec2& GetAnchor() const { return anchor_; }
 
-    void Draw();
+    void Draw(const Mat4& = IdentityMat4);
 
 private:
     Texture* texture_;

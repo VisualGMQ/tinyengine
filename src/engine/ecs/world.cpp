@@ -4,6 +4,21 @@
 
 namespace engine {
 
+std::unique_ptr<World> World::instance_;
+
+World* World::Instance() {
+    if (!instance_) {
+        instance_ = std::make_unique<World>();
+    }
+    return instance_.get();
+}
+
+void World::Init() { }
+
+void World::Quit() {
+    instance_.reset();
+}
+
 Entity* World::CreateEntity(const std::string& name) {
     if (entityTrashes_.empty()) {
         entities_.push_back(std::make_unique<Entity>(this, entityID_++, name));
@@ -74,6 +89,9 @@ void World::CleanUp() {
                 RemoveComponent(component.second);
             }
             entities_[idx]->components_.clear();
+            if (entities_[idx]->behavior_) {
+                entities_[idx]->behavior_->OnQuit();
+            }
             entities_.erase(entities_.begin() + idx);
         } else {
             idx++;

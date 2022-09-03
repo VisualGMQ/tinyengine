@@ -12,6 +12,7 @@
 #include "engine/ecs/world.hpp"
 #include "engine/core/timer.hpp"
 #include "engine/renderer/tilesheet.hpp"
+#include "engine/ui/ui_system.hpp"
 
 class MyComponent: public engine::Component {
 public:
@@ -42,22 +43,38 @@ public:
     }
 };
 
+class TestBehavior: public engine::Behavior {
+public:
+    void OnInit() override {
+        Logw("inited");
+    }
+
+    void OnUpdate() override {
+        Logw1("update");
+    }
+
+    void OnQuit() override {
+        Logw("quit");
+    }
+private:
+};
+
 class GameStart: public engine::Scene {
 public:
     GameStart(const std::string& name): engine::Scene(name) {}
     void OnInit() override {
-        world_ = std::make_unique<engine::World>();
-
+        world_ = engine::World::Instance();
         world_->AddSystem<TestSystem>();
+        world_->AddSystem<engine::UISystem>();
 
         auto texture = engine::TextureFactory::Create("./resources/test.jpg", "test");
-        image_ = std::make_unique<engine::Image>(texture);
 
         trianglePrymaid_ = engine::CreateCubeMesh();
         engine::Mouse::Hide();
         engine::Renderer::GetPerspCamera()->MoveTo(engine::Vec3(0, 1, 1));
 
         entity_ = world_->CreateEntity("Entity1");
+        entity_->SetBehavior(std::make_unique<TestBehavior>());
         entity_->SetComponent<MyComponent>(world_->CreateComponent<MyComponent>("MyComponent"));
         Logw("parent name = %s", entity_->GetComponent<MyComponent>()->Parent()->Name().c_str());
 
@@ -75,6 +92,22 @@ public:
         Logw("texture id = %d", texture->ID());
         tilesheet_.reset(new engine::TileSheet(texture->ID(), 3, 13));
         tile_ = tilesheet_->Get(0, 1);
+
+        button_ = world_->CreateEntity("test button");
+        button_->SetComponent(world_->CreateComponent<engine::RectTransform>("recttransform"));
+        button_->SetComponent(world_->CreateComponent<engine::ButtonComponent>("buttonComponent"));
+
+        cppImage_.reset(new engine::Image(engine::TextureFactory::Find("test")));
+        button_->GetComponent<engine::RectTransform>()->position.Set(20, 40);
+        button_->GetComponent<engine::RectTransform>()->anchor.Set(0, 0);
+        button_->GetComponent<engine::RectTransform>()->size = cppImage_->GetSize();
+        button_->GetComponent<engine::ButtonComponent>()->image = cppImage_;
+        button_->GetComponent<engine::ButtonComponent>()->clickCb = [](engine::ButtonComponent*) {
+            Logw("clicked");
+        };
+        button_->GetComponent<engine::ButtonComponent>()->motionCb = [](engine::ButtonComponent*) {
+            Logw("motioned");
+        };
     }
     void OnUpdate() override;
     void OnQuit() override {
@@ -84,11 +117,12 @@ public:
 
 private:
     engine::Entity* entity_;
-    std::unique_ptr<engine::Image> image_;
-    std::unique_ptr<engine::World> world_;
+    engine::World* world_;
     std::shared_ptr<engine::Image> tile_;
     engine::Vec2 rotation_;
+    std::shared_ptr<engine::Image> cppImage_;
     std::unique_ptr<engine::TileSheet> tilesheet_;
+    engine::Entity* button_;
     float lineRotationY_ = 0;
 
     void update3d() {
@@ -155,8 +189,6 @@ private:
         engine::Renderer::DrawLines({engine::Vec2(100, 100), engine::Vec2(200, 150), engine::Vec2(300, 400)});
 
         engine::Renderer::SetDrawColor(engine::Color(1, 1, 1));
-        image_->SetPosition(engine::Vec2(100, 100));
-        image_->Draw();
         tile_->SetPosition(engine::Vec2(300, 300));
         tile_->Draw();
     }
