@@ -38,6 +38,7 @@ int main(int argc, char** argv) {
         scene->OnUpdate();
         engine::Timer::UpdateElapse();
         engine::Timer::UpdateTimers();
+        engine::Timer::CleanUpTimers();
         engine::Context::SwapBuffers();
         engine::Input::UpdateStates();
         engine::SceneMgr::QuitOldScene();

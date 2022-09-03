@@ -26,27 +26,42 @@ void Timer::UpdateTimers() {
     }
 }
 
-unsigned int Timer::AddTimer(Timer::Callback callback, double time, void* param) {
-    unsigned int id = curID_++;
+TimerID Timer::AddTimer(Timer::Callback callback, double time, void* param) {
+    TimerID id = curID_++;
     timers_.emplace(std::piecewise_construct,
                     std::forward_as_tuple(id),
-                    std::forward_as_tuple(callback, time, param));
+                    std::forward_as_tuple(id, callback, time, param));
     return id; 
 }
 
 void Timer::RemoveTimer(unsigned int id) {
-    timers_.erase(id);
+    auto it = timers_.find(id);
+    if (it != timers_.end()) {
+        it->second.shouldDie_ = true;
+    }
+}
+
+void Timer::CleanUpTimers() {
+    auto it = timers_.begin();
+    while (it != timers_.end()) {
+        if (it->second.shouldDie_) {
+            timers_.erase(it);
+            it = timers_.begin();
+        } else {
+            it ++;
+        }
+    }
 }
 
 
-Timer::Timer(Callback callback, double time, void* param): callback_(callback), elapse_(0), time_(time), param_(param) {}
+Timer::Timer(TimerID id, Callback callback, double time, void* param): id_(id), callback_(callback), elapse_(0), time_(time), param_(param) {}
 
 void Timer::Update() {
     elapse_ += Timer::GetElapse();
     while (elapse_ >= time_) {
         elapse_ -= time_;
         if (callback_) {
-            time_ = callback_(time_, param_);
+            time_ = callback_(*this, time_, param_);
         }
     }
 }

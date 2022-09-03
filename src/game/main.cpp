@@ -64,12 +64,12 @@ public:
         entity_->SetComponent<MyComponent>(world_->CreateComponent<MyComponent>("MyComponent"));
         Logw("parent name = %s", entity_->GetComponent<MyComponent>()->Parent()->Name().c_str());
 
-        unsigned int id = engine::Timer::AddTimer([=](double time, void* param){
+        engine::TimerID id = engine::Timer::AddTimer([](engine::Timer& timer, double time, void* param){
             static int tick = 0;
             tick++;
             Logi("ticked");
             if (tick == 5) {
-                engine::Timer::RemoveTimer(id);
+                engine::Timer::RemoveTimer(timer.ID());
             }
             return time;
         }, 1, nullptr);
