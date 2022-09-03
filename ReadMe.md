@@ -7,9 +7,9 @@
 - [x] 2D/3D摄像机
 - [x] Configer
 - [x] 定时器
+- [x] TileSheet
 - [ ] GUI
 - [ ] 物理系统
-- [ ] TileSheet
 
 目前效果：
 

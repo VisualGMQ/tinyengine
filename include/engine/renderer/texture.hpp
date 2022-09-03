@@ -6,10 +6,14 @@
 
 namespace engine {
 
+using TextureID = int;
+
 /* Please make sure your image format is RGBA8888 */
 class Texture final {
 public:
-    Texture(unsigned char* data, int w, int h);
+    friend class TextureFactory;
+
+    Texture(const std::string& name, unsigned char* data, int w, int h);
     Texture(const Texture&) = delete;
     ~Texture();
 
@@ -21,8 +25,13 @@ public:
     void Bind(uint32_t slot = 0) const;
     void Unbind() const;
 
+    TextureID ID() const { return myId_; }
+    const std::string& Name() const { return name_; }
+
 private:
     GLuint id_;
+    TextureID myId_ = -1;
+    std::string name_;
     float w_;
     float h_;
 };
@@ -32,12 +41,14 @@ public:
     static void Init();
     static void Quit();
 
-    static Texture* Create(int id, const std::string& filename);
-    static Texture* Create(int id, unsigned char* data, int w, int h);
-    static Texture* Find(int id);
+    static Texture* Create(const std::string& filename, const std::string& name);
+    static Texture* Create(const std::string& name, unsigned char* data, int w, int h);
+    static Texture* Find(TextureID id);
+    static Texture* Find(const std::string& name);
 
 private:
-    static std::unordered_map<int, std::unique_ptr<Texture>> textureMap_;
+    static std::unordered_map<TextureID, std::unique_ptr<Texture>> textureMap_;
+    static TextureID curId_;
 };
 
 }

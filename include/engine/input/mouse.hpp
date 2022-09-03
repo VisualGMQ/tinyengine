@@ -9,6 +9,7 @@ class Mouse final {
 public:
     static void Hide();
     static void Show();
+    static bool IsShowing();
 };
 
 }

@@ -11,10 +11,7 @@
 #include "engine/renderer/image.hpp"
 #include "engine/ecs/world.hpp"
 #include "engine/core/timer.hpp"
-
-enum TextureID {
-    Test = 1,
-};
+#include "engine/renderer/tilesheet.hpp"
 
 class MyComponent: public engine::Component {
 public:
@@ -53,7 +50,7 @@ public:
 
         world_->AddSystem<TestSystem>();
 
-        auto texture = engine::TextureFactory::Create(Test, "./resources/test.jpg");
+        auto texture = engine::TextureFactory::Create("./resources/test.jpg", "test");
         image_ = std::make_unique<engine::Image>(texture);
 
         trianglePrymaid_ = engine::CreateCubeMesh();
@@ -73,6 +70,11 @@ public:
             }
             return time;
         }, 1, nullptr);
+
+        texture = engine::TextureFactory::Create("./resources/tilesheet.png", "tilesheet");
+        Logw("texture id = %d", texture->ID());
+        tilesheet_.reset(new engine::TileSheet(texture->ID(), 3, 13));
+        tile_ = tilesheet_->Get(0, 1);
     }
     void OnUpdate() override;
     void OnQuit() override {
@@ -84,7 +86,9 @@ private:
     engine::Entity* entity_;
     std::unique_ptr<engine::Image> image_;
     std::unique_ptr<engine::World> world_;
+    std::shared_ptr<engine::Image> tile_;
     engine::Vec2 rotation_;
+    std::unique_ptr<engine::TileSheet> tilesheet_;
     float lineRotationY_ = 0;
 
     void update3d() {
@@ -112,6 +116,13 @@ private:
         }
         if (engine::Input::IsKeyPressing(Key_L)) {
             lineRotationY_ += 0.01;
+        }
+        if (engine::Input::IsKeyPressed(Key_M)) {
+            if (engine::Mouse::IsShowing()) {
+                engine::Mouse::Hide();
+            } else {
+                engine::Mouse::Show();
+            }
         }
         rotation_.y -= engine::Input::MouseRelative().x * 0.001;
         rotation_.x -= engine::Input::MouseRelative().y * 0.001;
@@ -146,6 +157,8 @@ private:
         engine::Renderer::SetDrawColor(engine::Color(1, 1, 1));
         image_->SetPosition(engine::Vec2(100, 100));
         image_->Draw();
+        tile_->SetPosition(engine::Vec2(300, 300));
+        tile_->Draw();
     }
 
     void draw3d() {

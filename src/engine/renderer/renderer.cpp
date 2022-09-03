@@ -15,21 +15,15 @@ Mat4 Renderer::oldModelMat_;
 GLenum Renderer::oldPolygonMode_ = GL_FILL;
 Camera* Renderer::camera_ = nullptr;
 
-enum RenderInnerTextureID {
-    Black = -1,
-    White = -2,
-};
-
-
 void Renderer::Init(int orthoW, int orthoH) {
     stbi_set_flip_vertically_on_load(true);
     ShaderModule vertexModule(ReadWholeFile("shader/shader.vert"), ShaderModule::Type::Vertex);
     ShaderModule fragModule(ReadWholeFile("shader/shader.frag"), ShaderModule::Type::Fragment);
     shader_ = std::make_unique<Shader>(vertexModule, fragModule);
     unsigned char value[4] = {0x00, 0x00, 0x00, 0xFF};
-    blackTexture_ = TextureFactory::Create(Black, value, 1, 1);
+    blackTexture_ = TextureFactory::Create("Engine::Renderer::Black", value, 1, 1);
     memset(value, 0xFF, sizeof(unsigned char) * 4);
-    whiteTexture_ = TextureFactory::Create(White, value, 1, 1);
+    whiteTexture_ = TextureFactory::Create("Engine::Renderer::White", value, 1, 1);
     mesh_ = std::make_unique<Mesh>();
 
     orthoCamera_ = std::make_unique<OrthoCamera>(orthoW, orthoH, 1.0f);
