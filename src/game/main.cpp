@@ -91,7 +91,9 @@ public:
         texture = engine::TextureFactory::Create("./resources/tilesheet.png", "tilesheet");
         Logw("texture id = %d", texture->ID());
         tilesheet_.reset(new engine::TileSheet(texture->ID(), 3, 13));
-        tile_ = tilesheet_->Get(0, 1);
+        tile1_ = tilesheet_->Get(0, 1);
+        tile2_ = tilesheet_->Get(0, 2);
+        tile3_ = tilesheet_->Get(0, 3);
 
         button_ = world_->CreateEntity("test button");
         button_->SetComponent(world_->CreateComponent<engine::RectTransform>("recttransform"));
@@ -118,7 +120,9 @@ public:
 private:
     engine::Entity* entity_;
     engine::World* world_;
-    std::shared_ptr<engine::Image> tile_;
+    std::shared_ptr<engine::Image> tile1_;
+    std::shared_ptr<engine::Image> tile2_;
+    std::shared_ptr<engine::Image> tile3_;
     engine::Vec2 rotation_;
     std::shared_ptr<engine::Image> cppImage_;
     std::unique_ptr<engine::TileSheet> tilesheet_;
@@ -180,8 +184,6 @@ private:
     }
 
     void draw2d() {
-        engine::Renderer::SetDrawColor(engine::Color(1, 0, 0));
-        engine::Renderer::DrawLine(engine::Vec2(0, 0), engine::Vec2(1024, 720));
         engine::Renderer::SetDrawColor(engine::Color(0, 1, 0));
         engine::Renderer::DrawRect(engine::Rect(100, 100, 200, 300));
         engine::Renderer::SetDrawColor(engine::Color(0, 0, 1));
@@ -189,8 +191,12 @@ private:
         engine::Renderer::DrawLines({engine::Vec2(100, 100), engine::Vec2(200, 150), engine::Vec2(300, 400)});
 
         engine::Renderer::SetDrawColor(engine::Color(1, 1, 1));
-        tile_->SetPosition(engine::Vec2(300, 300));
-        tile_->Draw();
+        tile1_->SetPosition(engine::Vec2(300, 300));
+        tile1_->Draw();
+        tile2_->SetPosition(engine::Vec2(350, 300));
+        tile2_->Draw();
+        tile3_->SetPosition(engine::Vec2(400, 300));
+        tile3_->Draw();
 
 
         engine::Renderer::SetDrawColor(engine::Color(1, 1, 1));
