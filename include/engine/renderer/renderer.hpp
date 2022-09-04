@@ -64,12 +64,14 @@ public:
 
     static void FillRect(const Rect& rect);
     static void DrawTexture(const Texture& texture, Rect* src, const Size& size, const Mat4& transform = CreateIdentityMat<4>());
+    static void DrawText(const std::string& text, Vec2 pos, int ptSize);
 
 private:
     static std::unique_ptr<Shader> shader_;
     
     static Texture* blackTexture_;
     static Texture* whiteTexture_;
+    static Texture* textTexture_;
     static Color currentColor_;
     static std::unique_ptr<Mesh> mesh_;
     static std::shared_ptr<OrthoCamera> orthoCamera_;
@@ -85,6 +87,7 @@ private:
     static void drawMesh(const Mesh&, DrawType, const Mat4&, const Texture* texture);
     static void drawMeshFrame(const Mesh&, DrawType, const Mat4&, const Texture* = nullptr);
     static void drawMeshSolid(const Mesh&, DrawType, const Mat4&, const Texture* = nullptr);
+    static void drawOneChar(char c, int index, const Vec2& initPos, int ptSize);
 };
 
 }

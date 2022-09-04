@@ -5,6 +5,7 @@ namespace engine {
 std::unique_ptr<Shader> Renderer::shader_ = nullptr;
 Texture* Renderer::blackTexture_ = nullptr;
 Texture* Renderer::whiteTexture_ = nullptr;
+Texture* Renderer::textTexture_ = nullptr;
 Color Renderer::currentColor_(0, 0, 0, 1);
 std::unique_ptr<Mesh> Renderer::mesh_ = nullptr;
 std::shared_ptr<OrthoCamera> Renderer::orthoCamera_ = nullptr;
@@ -28,6 +29,8 @@ void Renderer::Init(int orthoW, int orthoH) {
 
     orthoCamera_ = std::make_unique<OrthoCamera>(orthoW, orthoH, 1.0f);
     perspCamera_ = std::make_unique<PerspCamera>(Radians(45), 1024 / 720.0f, 0.1f, 100.f);
+
+    textTexture_ = TextureFactory::Create("./resources/numbers.png", "Engine::Renderer::Number");
 
     GL_CALL(glEnable(GL_BLEND));
     GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
@@ -272,6 +275,81 @@ void Renderer::DrawTexture(const Texture& texture, Rect* src, const Size& size, 
 
     mesh_->Update2GPU();
     drawMeshSolid(*mesh_, DrawType::Triangles, transform, &texture);
+}
+
+void Renderer::DrawText(const std::string& text, Vec2 pos, int ptSize) {
+    Vec2 position = pos;
+    int index = 0;
+
+    float pixelSize = ptSize / 8.0;
+    Vec2 yOffset = Vec2(0, pixelSize * 2);
+    for (int i = 0; i < text.size(); i++) {
+        char c = text[i];
+        if (c != '\n') {
+            if (c == 'p' || c == 'q' || c == 'g' || c == 'y') {
+                drawOneChar(text[i], i - index, position + yOffset, ptSize);
+            } else {
+                drawOneChar(text[i], i - index, position, ptSize);
+            }
+        } else {
+            position.y += ptSize + pixelSize * 2;
+            index = i + 1;
+        }
+    }
+}
+
+#define TEXT_IMAGE_HEIGHT 4
+
+std::unordered_map<char, int> OtherCharMap = {
+    {'.', 0},
+    {',', 1},
+    {';', 2},
+    {':', 3},
+    {'$', 4},
+    {'#', 5},
+    {'\'', 6},
+    {'!', 7},
+    {'\"', 8},
+    {'/', 9},
+    {'\\', 10},
+    {'?', 11},
+    {'%', 12},
+    {'&', 13},
+    {'(', 14},
+    {')', 15},
+    {'@', 16},
+    {'^', 17},
+    {'*', 18},
+    {'-', 19},
+    {'=', 20},
+    {'_', 21},
+    {'+', 22},
+    {'|', 23},
+    {'~', 24},
+    {'`', 25},
+};
+
+void Renderer::drawOneChar(char c, int index, const Vec2& initPos, int ptSize) {
+    Rect rect;
+    rect.size.Set(8, 8);
+    if (c >= 'A' && c <= 'Z') {
+        rect.position.Set(8 * (c - 'A'), (TEXT_IMAGE_HEIGHT - 1) * 8);
+    } else if (c >= 'a' && c <= 'z') {
+        rect.position.Set(8 * (c - 'a'), (TEXT_IMAGE_HEIGHT - 2) * 8);
+    } else if (c >= '0' && c <= '9') {
+        rect.position.Set(8 * (c - '0'), (TEXT_IMAGE_HEIGHT - 3) * 8);
+    } else if (isspace(c)) {
+        return;
+    } else {
+        auto it = OtherCharMap.find(c);
+        if (it != OtherCharMap.end()) {
+            rect.position.Set(8 * it->second, (TEXT_IMAGE_HEIGHT - 4) * 8);
+        } else {
+            rect.position.Set(8 * 10, (TEXT_IMAGE_HEIGHT - 3) * 8);
+        }
+    }
+    float pixelScaleSize = ptSize / 8.0;
+    DrawTexture(*textTexture_, &rect, Size(ptSize, ptSize), CreateTranslate(Vec3(pixelScaleSize * 7 * index + initPos.x, initPos.y, 0)));
 }
 
 }

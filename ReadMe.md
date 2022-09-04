@@ -9,6 +9,8 @@
 - [x] 定时器
 - [x] TileSheet
 - [x] GUI
+- [x] 文字绘制
+- [ ] 音频系统
 - [ ] 物理系统
 - [ ] Animation
 

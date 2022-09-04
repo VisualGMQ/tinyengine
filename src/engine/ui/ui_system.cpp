@@ -4,6 +4,7 @@ namespace engine {
 
 void UISystem::Update() {
     Renderer::Begin2D();
+    Renderer::SetDrawColor(Color(1, 1, 1));
     for (auto& entity : World()->Entities()) {
         auto button = entity->GetComponent<ButtonComponent>();
         auto transform = entity->GetComponent<RectTransform>();

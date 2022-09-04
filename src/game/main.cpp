@@ -191,6 +191,11 @@ private:
         engine::Renderer::SetDrawColor(engine::Color(1, 1, 1));
         tile_->SetPosition(engine::Vec2(300, 300));
         tile_->Draw();
+
+
+        engine::Renderer::SetDrawColor(engine::Color(1, 1, 1));
+        engine::Renderer::DrawText("VisualGMQ made for 1MGames\ngithub: https://github.visualgmq.io\na simple framework makde for 1MGames", engine::Vec2(500, 0), 16);
+        engine::Renderer::DrawText(".,\"':;/?!\n@#$%^&*()_+-=", engine::Vec2(500, 100), 32);
     }
 
     void draw3d() {
