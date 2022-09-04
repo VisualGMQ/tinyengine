@@ -23,6 +23,7 @@ int main(int argc, char** argv) {
     float width = widthElem ? widthElem.value() : WindowWidth;
     float height = heightElem ? heightElem.value() : WindowHeight;
 
+    engine::Logger::Init();
     engine::Context::Init(title, width, height);
     engine::Renderer::Init(width, height);
     engine::TextureFactory::Init();
@@ -66,5 +67,6 @@ int main(int argc, char** argv) {
     engine::TextureFactory::Quit();
     engine::Renderer::Quit();
     engine::Context::Quit();
+    engine::Logger::Quit();
     return 0;
 }

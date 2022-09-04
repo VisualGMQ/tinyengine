@@ -76,7 +76,7 @@ public:
         entity_ = world_->CreateEntity("Entity1");
         entity_->SetBehavior(std::make_unique<TestBehavior>());
         entity_->SetComponent<MyComponent>(world_->CreateComponent<MyComponent>("MyComponent"));
-        Logw("parent name = %s", entity_->GetComponent<MyComponent>()->Parent()->Name().c_str());
+        Logw("parent name = {}", entity_->GetComponent<MyComponent>()->Parent()->Name().c_str());
 
         engine::TimerID id = engine::Timer::AddTimer([](engine::Timer& timer, double time, void* param){
             static int tick = 0;
@@ -89,7 +89,7 @@ public:
         }, 1, nullptr);
 
         texture = engine::TextureFactory::Create("./resources/tilesheet.png", "tilesheet");
-        Logw("texture id = %d", texture->ID());
+        Logw("texture id = {}", texture->ID());
         tilesheet_.reset(new engine::TileSheet(texture->ID(), 3, 13));
         tile1_ = tilesheet_->Get(0, 1);
         tile2_ = tilesheet_->Get(0, 2);
@@ -110,6 +110,9 @@ public:
         button_->GetComponent<engine::ButtonComponent>()->motionCb = [](engine::ButtonComponent*) {
             Logw("motioned");
         };
+
+        engine::Logger logger(std::cout);
+        Logd("Vec2 = {}, Vec3 = {}, {123}, {", engine::Vec2(1, 2), engine::Vec3(1, 2, 3));
     }
     void OnUpdate() override;
     void OnQuit() override {

@@ -18,7 +18,7 @@ inline void GLClearError() {
     statement; \
     GLenum ___err_inner_use = glGetError(); \
     int loop = 0; \
-    while (loop < GL_CALL_MAX_LOOP && ___err_inner_use != GL_NO_ERROR) { Loge("OpenGL Error: %s", engine::GLGetErrorString(___err_inner_use)); loop++; } \
+    while (loop < GL_CALL_MAX_LOOP && ___err_inner_use != GL_NO_ERROR) { Loge("OpenGL Error: {}", engine::GLGetErrorString(___err_inner_use)); loop++; } \
 } while(0)
 
 }

@@ -13,7 +13,7 @@ ShaderModule::ShaderModule(const std::string& source_code, Type type) {
     GL_CALL(glGetShaderiv(id_, GL_COMPILE_STATUS, &isSuccess));
     if (!isSuccess) {
         glGetShaderInfoLog(id_, sizeof(infoLog), NULL, infoLog);
-        Loge("vertex shader compile failed:\n%s", infoLog);
+        Loge("vertex shader compile failed:\n{}", infoLog);
     }
 }
 
@@ -33,7 +33,7 @@ Shader::Shader(const ShaderModule& vertex, const ShaderModule& fragment) {
     GL_CALL(glGetProgramiv(program_, GL_LINK_STATUS, &isSuccess));
     if(!isSuccess) {
         glGetProgramInfoLog(program_, sizeof(infoLog), NULL, infoLog);
-        Loge("shader link failed:\n%s", infoLog);
+        Loge("shader link failed:\n{}", infoLog);
     }
 }
 
@@ -72,7 +72,7 @@ void Shader::SetMat4(const std::string& name, const Mat4& m) {
 GLint Shader::findLocation(const std::string& name) {
     GLint loc = glGetUniformLocation(program_, name.c_str());
     if (loc < 0) {
-        Loge("get uniform `%s` location failed", name.c_str());
+        Loge("get uniform `{}` location failed", name.c_str());
     }
     return loc;
 }

@@ -57,7 +57,7 @@ void Entity::SetComponent(T* comp) {
     unsigned int id = ComponentIDHelper::GetID<T>();
     auto it = components_.find(id);
     if (it != components_.end()) {
-        Logw("entity %s already has component %s, set failed", Name().c_str(), it->second->Name().c_str());
+        Logw("entity {} already has component {}, set failed", Name().c_str(), it->second->Name().c_str());
         return;
     }
     components_[id] = comp;

@@ -18,7 +18,7 @@ void SceneMgr::ChangeScene(const std::string& name) {
     auto it = scenes_.find(name);
     oldScene_ = curScene_;
     if (it == scenes_.end()) {
-        Logw("scene %s not exists", name.c_str());
+        Logw("scene {} not exists", name.c_str());
         curScene_ = nullptr;
     } else {
         curScene_ = it->second.get();

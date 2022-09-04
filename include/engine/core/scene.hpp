@@ -42,7 +42,7 @@ void SceneMgr::LoadScene(const std::string& name) {
     if (it == scenes_.end()) {
         scenes_[name] = std::make_unique<T>(name);
     } else {
-        Logw("scene %s already loaded", name.c_str());
+        Logw("scene {} already loaded", name.c_str());
     }
 }
 

@@ -92,18 +92,18 @@ std::optional<T> Configer::Get(const std::string& name) {
         switch (it->second.type) {
             case Configer::ElementType::Number:
                 if (!std::is_arithmetic_v<T>) {
-                    Logw("%s field is not number", name.c_str());
+                    Logw("{} field is not number", name.c_str());
                     return std::nullopt;
                 }
                 break;
             case Configer::ElementType::String:
                 if (!std::is_same_v<T, std::string>) {
-                    Logw("%s field is not string", name.c_str());
+                    Logw("{} field is not string", name.c_str());
                     return std::nullopt;
                 }
                 break;
             default:
-                Logw("%s type unknown", name.c_str());
+                Logw("{} type unknown", name.c_str());
                 return std::nullopt;
         }
         return std::get<T>(it->second.data);

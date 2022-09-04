@@ -32,7 +32,7 @@ void Configer::Add<bool>(const std::string& name, const bool& value) {
 
 void Configer::add(const std::string& name, const Element& elem) {
     if (Has(name)) {
-        Logw("%s already exists", name.c_str());
+        Logw("{} already exists", name.c_str());
     } else {
         elements_.emplace(name, elem);
     }
@@ -162,7 +162,7 @@ bool Configer::parseBool() {
 void Configer::Write2File(const std::string& filename) {
     std::ofstream file(filename);
     if (file.fail()) {
-        Loge("output file %s open failed", filename.c_str());
+        Loge("output file {} open failed", filename.c_str());
     }
     for (auto& [name, value] : elements_) {
         file << name << " = ";
