@@ -2,8 +2,7 @@
 
 #include "engine/ecs/component.hpp"
 #include "engine/ecs/system.hpp"
-
-class Entity;
+#include "engine/ecs/entity.hpp"
 
 namespace engine {
 
@@ -28,6 +27,7 @@ public:
 
     void RemoveComponent(Component*);
 
+    void TryInitEntities();
     void Update();
     void CleanUp();
 
@@ -35,6 +35,8 @@ public:
     void AddSystem();
 
     void RemoveSystem(System* system);
+
+    const std::vector<std::unique_ptr<System>>& Systems() const { return systems_; }
 
     void Shutdown();
 
@@ -55,6 +57,8 @@ private:
     static std::unique_ptr<World> instance_;
 
     void destroyEntity(const std::vector<std::unique_ptr<Entity>>::const_iterator& it);
+    void updateEntity(Entity* entity);
+    void initEntity(Entity* entity);
 };
 
 template <typename T>

@@ -1,6 +1,7 @@
 #include "engine/ecs/world.hpp"
 #include "engine/ecs/component.hpp"
 #include "engine/ecs/entity.hpp"
+#include "engine/core/scene.hpp"
 
 namespace engine {
 
@@ -74,11 +75,59 @@ void World::RemoveComponent(Component* component) {
     }
 }
 
-void World::Update() {
-    for (auto& system : systems_) {
-        system->Update();
+void World::TryInitEntities() {
+    auto scene = SceneMgr::CurrentScene();
+    if (!scene) return;
+    auto node = scene->GetRootEntity()->GetComponent<NodeComponent>();
+
+    for (auto& entity : node->children) {
+        initEntity(entity);
     }
 }
+
+void World::initEntity(Entity* entity) {
+    if (auto behavior = entity->GetBehavior(); behavior != nullptr) {
+        if (!behavior->IsInited()) {
+            behavior->OnInit();
+            behavior->Inited();
+        }
+    }
+
+    if (auto node = entity->GetComponent<NodeComponent>(); node != nullptr) {
+        for (auto& ent : node->children) {
+            initEntity(ent);
+        }
+    }
+}
+
+void World::Update() {
+    auto scene = SceneMgr::CurrentScene();
+    if (!scene) return;
+    auto node = scene->GetRootEntity()->GetComponent<NodeComponent>();
+
+    for (auto& entity : node->children) {
+        updateEntity(entity);
+    }
+}
+
+void World::updateEntity(Entity* entity) {
+    if (!entity) return;
+
+    auto& systems = World::Instance()->Systems();
+    if (auto behavior = entity->GetBehavior(); behavior != nullptr) {
+        behavior->OnUpdate();
+    }
+    for (auto& system : systems) {
+        system->Update(entity);
+    }
+
+    if (auto node = entity->GetComponent<NodeComponent>(); node != nullptr) {
+        for (auto& ent : node->children) {
+            updateEntity(ent);
+        }
+    }
+}
+
 
 void World::CleanUp() {
     size_t idx = 0;

@@ -2,15 +2,13 @@
 
 namespace engine {
 
-void UISystem::Update() {
+void UISystem::Update(Entity* entity) {
     Renderer::Begin2D();
     Renderer::SetDrawColor(Color(1, 1, 1));
-    for (auto& entity : World()->Entities()) {
-        auto button = entity->GetComponent<ButtonComponent>();
-        auto transform = entity->GetComponent<RectTransform>();
-        if (button && transform) {
-            drawButton(transform, button);
-        }
+    auto button = entity->GetComponent<ButtonComponent>();
+    auto transform = entity->GetComponent<RectTransform>();
+    if (button && transform) {
+        drawButton(transform, button);
     }
 }
 

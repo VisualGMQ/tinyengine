@@ -8,8 +8,8 @@
 #include "engine/input/mouse.hpp"
 #include "engine/ecs/component.hpp"
 #include "engine/ecs/entity.hpp"
-#include "engine/renderer/image.hpp"
 #include "engine/ecs/world.hpp"
+#include "engine/renderer/image.hpp"
 #include "engine/core/timer.hpp"
 #include "engine/renderer/tilesheet.hpp"
 #include "engine/ui/ui_system.hpp"
@@ -19,11 +19,11 @@ public:
     MyComponent(unsigned int id, const std::string& name): engine::Component(id, name) {}
 
     void OnInit() override {
-        Logt("init");
+        Logt("component init");
     }
 
     void OnQuit() override {
-        Logt("quit");
+        Logt("component quit");
     }
 
     int value = 123;
@@ -33,12 +33,9 @@ class TestSystem: public engine::System {
 public:
     TestSystem(engine::World* world): engine::System(world) {}
 
-    void Update() override {
-        const auto& entities = World()->Entities();
-        for (auto& entity : entities) {
-            if (entity->GetComponent<MyComponent>()) {
-                Logt1("entity has MyComponent");
-            }
+    void Update(engine::Entity* entity) override {
+        if (entity->GetComponent<MyComponent>()) {
+            Logt1("entity has MyComponent");
         }
     }
 };
@@ -46,15 +43,15 @@ public:
 class TestBehavior: public engine::Behavior {
 public:
     void OnInit() override {
-        Logw("inited");
+        Logw("behavior init");
     }
 
     void OnUpdate() override {
-        Logw1("update");
+        Logw1("behavior update");
     }
 
     void OnQuit() override {
-        Logw("quit");
+        Logw("behavior quit");
     }
 private:
 };
@@ -63,9 +60,10 @@ class GameStart: public engine::Scene {
 public:
     GameStart(const std::string& name): engine::Scene(name) {}
     void OnInit() override {
-        world_ = engine::World::Instance();
-        world_->AddSystem<TestSystem>();
-        world_->AddSystem<engine::UISystem>();
+        engine::World* world = engine::World::Instance();
+        world = engine::World::Instance();
+        world->AddSystem<TestSystem>();
+        world->AddSystem<engine::UISystem>();
 
         auto texture = engine::TextureFactory::Create("./resources/test.jpg", "test");
 
@@ -73,10 +71,10 @@ public:
         engine::Mouse::Hide();
         engine::Renderer::GetPerspCamera()->MoveTo(engine::Vec3(0, 1, 1));
 
-        entity_ = world_->CreateEntity("Entity1");
+        entity_ = world->CreateEntity("Entity1");
         entity_->SetBehavior(std::make_unique<TestBehavior>());
-        entity_->SetComponent<MyComponent>(world_->CreateComponent<MyComponent>("MyComponent"));
-        Logw("parent name = {}", entity_->GetComponent<MyComponent>()->Parent()->Name().c_str());
+        entity_->SetComponent<MyComponent>(world->CreateComponent<MyComponent>("MyComponent"));
+        Attach(entity_);
 
         engine::TimerID id = engine::Timer::AddTimer([](engine::Timer& timer, double time, void* param){
             static int tick = 0;
@@ -95,9 +93,10 @@ public:
         tile2_ = tilesheet_->Get(0, 2);
         tile3_ = tilesheet_->Get(0, 3);
 
-        button_ = world_->CreateEntity("test button");
-        button_->SetComponent(world_->CreateComponent<engine::RectTransform>("recttransform"));
-        button_->SetComponent(world_->CreateComponent<engine::ButtonComponent>("buttonComponent"));
+        button_ = world->CreateEntity("test button");
+        button_->SetComponent(world->CreateComponent<engine::RectTransform>("recttransform"));
+        button_->SetComponent(world->CreateComponent<engine::ButtonComponent>("buttonComponent"));
+        Attach(button_);
 
         cppImage_.reset(new engine::Image(engine::TextureFactory::Find("test")));
         button_->GetComponent<engine::RectTransform>()->position.Set(20, 40);
@@ -110,19 +109,14 @@ public:
         button_->GetComponent<engine::ButtonComponent>()->motionCb = [](engine::ButtonComponent*) {
             Logw("motioned");
         };
-
-        engine::Logger logger(std::cout);
-        Logd("Vec2 = {}, Vec3 = {}, {123}, {", engine::Vec2(1, 2), engine::Vec3(1, 2, 3));
     }
     void OnUpdate() override;
     void OnQuit() override {
-        world_->Shutdown();
         trianglePrymaid_.reset();
     }
 
 private:
     engine::Entity* entity_;
-    engine::World* world_;
     std::shared_ptr<engine::Image> tile1_;
     std::shared_ptr<engine::Image> tile2_;
     std::shared_ptr<engine::Image> tile3_;
@@ -221,17 +215,36 @@ private:
 };
 
 void GameStart::OnUpdate() {
+    if (engine::Input::IsKeyPressed(Key_C)) {
+        engine::SceneMgr::ChangeScene("Scene2");
+    }
     engine::Renderer::Begin3D();
     draw3d();
     engine::Renderer::Begin2D();
     draw2d();
     update3d();
     // update2d();
-    world_->Update();
-    world_->CleanUp();
 }
+
+class Scene2: public engine::Scene {
+public:
+    Scene2(const std::string& name): engine::Scene(name) {}
+
+    void OnInit() override {}
+
+    void OnUpdate() override {
+        if (engine::Input::IsKeyPressed(Key_C)) {
+            engine::SceneMgr::ChangeScene("GameStart");
+        }
+        engine::Renderer::SetDrawColor(engine::Color(0, 1, 0));
+        engine::Renderer::DrawRect(engine::Rect(engine::Vec2(100, 100), engine::Size(300, 100)));
+    }
+
+    void OnQuit() override {}
+};
 
 SCENE_CONFIG() {
     LOAD_SCENE(GameStart);
+    LOAD_SCENE(Scene2);
     ENTER_SCENE(GameStart);
 }

@@ -3,13 +3,14 @@
 namespace engine {
 
 class World;
+class Entity;
 
 class System {
 public:
     System(World* world): world_(world) {}
     virtual ~System() = default;
 
-    virtual void Update() = 0;
+    virtual void Update(Entity*) = 0;
 
     World* World() const { return world_; }
 

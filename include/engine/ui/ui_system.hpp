@@ -12,7 +12,7 @@ namespace engine {
 class UISystem final: public System {
 public:
     UISystem(class World* world): System(world) {}
-    void Update() override;
+    void Update(Entity*) override;
 
 private:
     void drawButton(RectTransform*, ButtonComponent*);

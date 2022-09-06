@@ -33,32 +33,20 @@ int main(int argc, char** argv) {
 
     GameInit();
 
-    engine::Scene* scene = engine::SceneMgr::CurrentScene();
-
     engine::Renderer::SetClearColor(engine::Color(0.1, 0.1, 0.1, 1));
     while (!engine::Context::ShouldClose()) {
         glfwPollEvents();
         engine::Renderer::Clear();
-        for (auto& entity : engine::World::Instance()->Entities()) {
-            if (auto behavior = entity->GetBehavior(); behavior != nullptr) {
-                if (!behavior->IsInited()) {
-                    behavior->OnInit();
-                    behavior->Inited();
-                }
-            }
-        }
-        scene->OnUpdate();
-        for (auto& entity : engine::World::Instance()->Entities()) {
-            if (auto behavior = entity->GetBehavior(); behavior != nullptr) {
-                behavior->OnUpdate();
-            }
-        }
+        engine::World::Instance()->TryInitEntities();
+        engine::SceneMgr::CurrentScene()->OnUpdate();
         engine::Timer::UpdateElapse();
         engine::Timer::UpdateTimers();
         engine::Timer::CleanUpTimers();
-        engine::Context::SwapBuffers();
         engine::Input::UpdateStates();
+        engine::World::Instance()->Update();
         engine::SceneMgr::QuitOldScene();
+        engine::World::Instance()->CleanUp();
+        engine::Context::SwapBuffers();
     }
 
     engine::SceneMgr::Quit();

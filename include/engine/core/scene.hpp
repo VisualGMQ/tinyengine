@@ -1,15 +1,21 @@
 #pragma once
 
 #include "engine/core/pch.hpp"
+#include "engine/components/node.hpp"
+#include "engine/ecs/entity.hpp"
 
 namespace engine {
 
 class Scene {
 public:
-    Scene(const std::string& name): name_(name) {}
+    friend class SceneMgr;
+
+    Scene(const std::string& name);
     virtual ~Scene() = default;
 
     const std::string& Name() const { return name_; }
+    Entity* GetRootEntity() const { return root_; }
+    void Attach(Entity*);
 
     virtual void OnInit() = 0;
     virtual void OnUpdate() = 0;
@@ -17,6 +23,7 @@ public:
 
 private:
     std::string name_;
+    Entity* root_;
 };
 
 
