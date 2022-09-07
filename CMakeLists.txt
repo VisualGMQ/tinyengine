@@ -15,8 +15,7 @@ add_subdirectory(3rdlibs/glfw)
 add_subdirectory(3rdlibs/glad)
 add_subdirectory(3rdlibs/stb)
 add_subdirectory(3rdlibs/nuklear)
-
-set(AUDIO_LIB "miniaudio")
+add_subdirectory(3rdlibs/miniaudio)
 
 ############# build engine ##############
 set(ENGINE_NAME "engine")
@@ -29,28 +28,11 @@ aux_source_directory(src/engine/components ENGINE_COMPONENTS_SRC)
 aux_source_directory(src/engine/UI ENGINE_UI_SRC)
 
 add_library(${ENGINE_NAME} STATIC ${ENGINE_CORE_SRC} ${ENGINE_RENDERER_SRC} ${ENGINE_INPUT_SRC} ${ENGINE_ECS_SRC} ${ENGINE_COMPONENTS_SRC} ${ENGINE_UI_SRC})
-target_link_libraries(${ENGINE_NAME} PUBLIC glad glfw stb_image)
+target_link_libraries(${ENGINE_NAME} PUBLIC glad glfw stb_image miniaudio)
 target_compile_features(${ENGINE_NAME} PUBLIC cxx_std_17)
 target_include_directories(${ENGINE_NAME} PUBLIC include)
 target_compile_definitions(${ENGINE_NAME} PRIVATE SHOULD_EXPORT)
-# target_compile_options(
-#     ${ENGINE_NAME}
-#     PUBLIC $<$<STREQUAL:$<UPPER_CASE:"${CMAKE_BUILD_TYPE}">,"Release">:-Os> -fno-rtti -fno-exceptions
-#            $<$<STREQUAL:$<UPPER_CASE:"${CMAKE_BUILD_TYPE}">,"MinSizeRel">:-Os> -fno-rtti -fno-exceptions
-# )
 target_precompile_headers(${ENGINE_NAME} PUBLIC "include/engine/core/pch.hpp")
-
-if (${AUDIO_LIB} STREQUAL "miniaudio")
-    add_subdirectory(3rdlibs/miniaudio)
-    target_link_libraries(${ENGINE_NAME} PUBLIC miniaudio)
-    message(STATUS "use miniaudio")
-elseif(${AUDIO_LIB} STREQUAL "portaudio")
-    add_subdirectory(3rdlibs/portaudio)
-    target_link_libraries(${ENGINE_NAME} PUBLIC portaudio)
-    message(STATUS "use portaudio")
-else()
-    message(WARNING "didn't config audio lib, your game can't play music")
-endif()
 
 ############# build game ##############
 set(GAME_NAME "game")

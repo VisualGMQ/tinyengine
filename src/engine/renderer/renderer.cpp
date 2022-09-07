@@ -31,7 +31,9 @@ void Renderer::Init(int orthoW, int orthoH) {
     perspCamera_ = std::make_unique<PerspCamera>(Radians(45), 1024 / 720.0f, 0.1f, 100.f);
 
     textTexture_ = TextureFactory::Create("./resources/numbers.png", "Engine::Renderer::Number");
+}
 
+void Renderer::ResestState() {
     GL_CALL(glEnable(GL_BLEND));
     GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     GL_CALL(glEnable(GL_CULL_FACE));

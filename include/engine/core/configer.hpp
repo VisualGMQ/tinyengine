@@ -47,6 +47,7 @@ public:
             }
             return std::get<std::string>(data);
         }
+
     };
 
     Configer(const std::string& filename);
@@ -60,6 +61,9 @@ public:
 
     template <typename T>
     std::optional<T> Get(const std::string& name);
+
+    template <typename T>
+    T GetOr(const std::string& name, T value);
 
     void Write2File(const std::string& filename);
 
@@ -105,6 +109,33 @@ std::optional<T> Configer::Get(const std::string& name) {
             default:
                 Logw("{} type unknown", name.c_str());
                 return std::nullopt;
+        }
+        return std::get<T>(it->second.data);
+    }
+}
+
+template <typename T>
+T Configer::GetOr(const std::string& name, T value) {
+    auto it = elements_.find(name);
+    if (it == elements_.end()) {
+        return value;
+    } else {
+        switch (it->second.type) {
+            case Configer::ElementType::Number:
+                if (!std::is_arithmetic_v<T>) {
+                    Logw("{} field is not number", name.c_str());
+                    return value;
+                }
+                break;
+            case Configer::ElementType::String:
+                if (!std::is_same_v<T, std::string>) {
+                    Logw("{} field is not string", name.c_str());
+                    return value;
+                }
+                break;
+            default:
+                Logw("{} type unknown", name.c_str());
+                return value;
         }
         return std::get<T>(it->second.data);
     }

@@ -1,0 +1,18 @@
+#pragma once
+
+#include "engine/ecs/component.hpp"
+
+namespace engine {
+
+class UIWindow final: public Component {
+public:
+    UIWindow(ComponentID id, const std::string& name): Component(id, name) {}
+    void OnInit() override;
+
+    std::string title;
+    bool isShowTitle;
+    uint32_t flags;
+    Rect rect;
+};
+
+};

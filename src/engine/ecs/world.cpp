@@ -2,10 +2,20 @@
 #include "engine/ecs/component.hpp"
 #include "engine/ecs/entity.hpp"
 #include "engine/core/scene.hpp"
+#include "engine/ui/ui_system.hpp"
+#include "engine/ui/ui.hpp"
 
 namespace engine {
 
 std::unique_ptr<World> World::instance_;
+
+World::World() {
+    uiSystem_ = new UISystem(this);
+}
+
+World::~World() {
+    delete uiSystem_;
+}
 
 World* World::Instance() {
     if (!instance_) {
@@ -14,7 +24,8 @@ World* World::Instance() {
     return instance_.get();
 }
 
-void World::Init() { }
+void World::Init() {
+}
 
 void World::Quit() {
     instance_.reset();
@@ -108,6 +119,11 @@ void World::Update() {
     for (auto& entity : node->children) {
         updateEntity(entity);
     }
+    
+    UI::NewFrame();
+    for (auto& entity : node->children) {
+        updateUIEntity(entity);
+    }
 }
 
 void World::updateEntity(Entity* entity) {
@@ -128,6 +144,22 @@ void World::updateEntity(Entity* entity) {
     }
 }
 
+void World::updateUIEntity(Entity* entity) {
+    if (!entity) return;
+
+    auto windowState = uiSystem_->BeginContainer(entity);
+    uiSystem_->Update(entity);
+
+    if (windowState.has_value() && windowState == true) {
+        if (auto node = entity->GetComponent<NodeComponent>(); node != nullptr) {
+            for (auto& ent : node->children) {
+                updateUIEntity(ent);
+            }
+        }
+    }
+
+    uiSystem_->EndContainer(entity);
+}
 
 void World::CleanUp() {
     size_t idx = 0;

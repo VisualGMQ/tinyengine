@@ -40,6 +40,10 @@ void TextureFactory::Quit() {
 }
 
 Texture* TextureFactory::Create(const std::string& filename, const std::string& name) {
+    if (auto texture = Find(name); texture) {
+        Logw("texture {} already exists, don't load again", name);
+        return texture;
+    }
     int channel, w, h;
     unsigned char* data = stbi_load(filename.c_str(), &w, &h, &channel, STBI_rgb_alpha);
     auto texture = std::make_unique<Texture>(name, data, w, h);
@@ -52,6 +56,10 @@ Texture* TextureFactory::Create(const std::string& filename, const std::string& 
 }
 
 Texture* TextureFactory::Create(const std::string& name, unsigned char* data, int w, int h) {
+    if (auto texture = Find(name); texture) {
+        Logw("texture {} already exists, don't load again", name);
+        return texture;
+    }
     auto texture = std::make_unique<Texture>(name, data, w, h);
     TextureID id = curId_++;
     texture->myId_ = id;

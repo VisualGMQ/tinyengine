@@ -21,6 +21,8 @@
 
 #include "stb/stb_image.h"
 
+#include "miniaudio/miniaudio.h"
+
 #include "engine/core/dllexport.hpp"
 #include "engine/core/log.hpp"
 #include "engine/core/vmath.hpp"

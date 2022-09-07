@@ -23,6 +23,9 @@ public:
     static void Init(int orthoW, int orthoH);
     static void Quit();
 
+    // for nuklear GUI
+    static void ResestState();
+
     static void SetClearColor(const Color&);
     static void Clear();
     static void SetDrawColor(const Color&);

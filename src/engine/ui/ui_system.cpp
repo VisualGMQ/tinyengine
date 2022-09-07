@@ -2,44 +2,28 @@
 
 namespace engine {
 
-void UISystem::Update(Entity* entity) {
-    Renderer::Begin2D();
-    Renderer::SetDrawColor(Color(1, 1, 1));
-    auto button = entity->GetComponent<ButtonComponent>();
-    auto transform = entity->GetComponent<RectTransform>();
-    if (button && transform) {
-        drawButton(transform, button);
+std::optional<bool> UISystem::BeginContainer(Entity* entity) {
+    if (auto window = entity->GetComponent<UIWindow>(); window) {
+        struct nk_rect rect{window->rect.position.x, window->rect.position.y, window->rect.size.w, window->rect.size.h};
+        return nk_begin(UI::NkContext(), window->title.c_str(), rect, window->flags);
+    }
+    return std::nullopt;
+}
+
+void UISystem::EndContainer(Entity* entity) {
+    if (auto window = entity->GetComponent<UIWindow>(); window) {
+        nk_end(UI::NkContext());
     }
 }
 
-void UISystem::drawButton(RectTransform* transform, ButtonComponent* button) {
-    Rect rect;
-    if (transform) {
-        rect.position = transform->position - MulEach(transform->anchor, transform->size);
-        rect.size = transform->size;
-    }
-
-    if (button->shouldRaycast && IsPointInRect(Input::MousePoition(), rect)) {
-        if (button->clickCb && Input::IsButtonPressed(MouseButton::Left)) {
-            button->clickCb(button);
-        }
-        if (Input::MouseRelative() != Vec2(0, 0)) {
-            if (button->motionCb) {
-                button->motionCb(button);
+void UISystem::Update(Entity* entity) {
+    if (auto button = entity->GetComponent<UIButton>(); button) {
+        if (nk_button_label(UI::NkContext(), button->text.c_str())) {
+            if (button->onClick) {
+                button->onClick(entity);
             }
         }
     }
-
-    if (button->image) {
-        button->image->SetPosition(rect.position);
-        button->image->SetSize(rect.size);
-        button->image->Draw();
-    } else {
-        Renderer::SetDrawColor(button->bgColor);
-        Renderer::FillRect(rect);
-    }
-    Renderer::SetDrawColor(button->borderColor);
-    Renderer::DrawRect(rect);
 }
 
 }

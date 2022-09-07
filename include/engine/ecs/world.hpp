@@ -6,11 +6,16 @@
 
 namespace engine {
 
+class UISystem;
+
 class World final {
 public:
     static World* Instance();
     static void Init();
     static void Quit();
+
+    World();
+    ~World();
 
     Entity* CreateEntity(const std::string& name);
     void DestroyEntity(unsigned int id);
@@ -44,6 +49,9 @@ private:
     unsigned int entityID_ = 0; 
     ComponentID componentID_ = 0; 
 
+    // special for UI
+    UISystem* uiSystem_;
+
     std::vector<std::unique_ptr<Entity>> entities_;
     std::stack<std::unique_ptr<Entity>> entityTrashes_;
     std::vector<std::unique_ptr<System>> systems_;
@@ -58,6 +66,7 @@ private:
 
     void destroyEntity(const std::vector<std::unique_ptr<Entity>>::const_iterator& it);
     void updateEntity(Entity* entity);
+    void updateUIEntity(Entity* entity);
     void initEntity(Entity* entity);
 };
 

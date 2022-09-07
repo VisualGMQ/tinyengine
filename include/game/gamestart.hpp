@@ -14,6 +14,8 @@
 #include "engine/core/timer.hpp"
 #include "engine/renderer/tilesheet.hpp"
 #include "engine/ui/ui_system.hpp"
+#include "engine/ui/window.hpp"
+#include "engine/ui/button.hpp"
 
 class MyComponent: public engine::Component {
 public:
@@ -77,6 +79,25 @@ public:
         entity_->SetComponent<MyComponent>(world->CreateComponent<MyComponent>("MyComponent"));
         Attach(entity_);
 
+        windowEntity_ = world->CreateEntity("WindowEntity");
+        auto uiwindow = world->CreateComponent<engine::UIWindow>("window");
+        windowEntity_->SetComponent<engine::UIWindow>(uiwindow);
+        uiwindow->title = "Demo";
+        uiwindow->rect.position.Set(50, 50);
+        uiwindow->rect.size.Set(230, 250);
+        uiwindow->flags = NK_WINDOW_BORDER | NK_WINDOW_MOVABLE | NK_WINDOW_SCALABLE |
+                          NK_WINDOW_MINIMIZABLE | NK_WINDOW_TITLE;
+
+        buttonEntity_ = world->CreateEntity("button");
+        auto button = world->CreateComponent<engine::UIButton>("button");
+        buttonEntity_->SetComponent<engine::UIButton>(button);
+
+        auto node = world->CreateComponent<engine::NodeComponent>("window node");
+        windowEntity_->SetComponent<engine::NodeComponent>(node);
+        node->Attach(buttonEntity_);
+
+        Attach(windowEntity_);
+
         engine::TimerID id = engine::Timer::AddTimer([](engine::Timer& timer, double time, void* param){
             static int tick = 0;
             tick++;
@@ -94,22 +115,7 @@ public:
         tile2_ = tilesheet_->Get(0, 2);
         tile3_ = tilesheet_->Get(0, 3);
 
-        button_ = world->CreateEntity("test button");
-        button_->SetComponent(world->CreateComponent<engine::RectTransform>("recttransform"));
-        button_->SetComponent(world->CreateComponent<engine::ButtonComponent>("buttonComponent"));
-        Attach(button_);
-
         cppImage_.reset(new engine::Image(engine::TextureFactory::Find("test")));
-        button_->GetComponent<engine::RectTransform>()->position.Set(20, 40);
-        button_->GetComponent<engine::RectTransform>()->anchor.Set(0, 0);
-        button_->GetComponent<engine::RectTransform>()->size = cppImage_->GetSize();
-        button_->GetComponent<engine::ButtonComponent>()->image = cppImage_;
-        button_->GetComponent<engine::ButtonComponent>()->clickCb = [](engine::ButtonComponent*) {
-            Logw("clicked");
-        };
-        button_->GetComponent<engine::ButtonComponent>()->motionCb = [](engine::ButtonComponent*) {
-            Logw("motioned");
-        };
     }
     void OnUpdate() override;
     void OnQuit() override {
@@ -118,13 +124,14 @@ public:
 
 private:
     engine::Entity* entity_;
+    engine::Entity* windowEntity_;
+    engine::Entity* buttonEntity_;
     std::shared_ptr<engine::Image> tile1_;
     std::shared_ptr<engine::Image> tile2_;
     std::shared_ptr<engine::Image> tile3_;
     engine::Vec2 rotation_;
     std::shared_ptr<engine::Image> cppImage_;
     std::unique_ptr<engine::TileSheet> tilesheet_;
-    engine::Entity* button_;
     float lineRotationY_ = 0;
 
     void update3d() {

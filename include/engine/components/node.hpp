@@ -11,6 +11,8 @@ public:
     virtual void OnInit() { children.clear(); }
     virtual void OnQuit() {}
 
+    void Attach(Entity* entity) { children.push_back(entity); }
+
     std::vector<Entity*> children;
 };
 
