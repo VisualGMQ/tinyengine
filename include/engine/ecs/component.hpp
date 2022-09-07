@@ -17,8 +17,7 @@ public:
     virtual ~Component() = default;
 
     const std::string& Name() const { return name_; }
-    virtual void OnInit() {}
-    virtual void OnQuit() {}
+    virtual void Reset() {}
     Entity* Parent() const { return parent_; }
 
     unsigned int ID() const { return id_; }

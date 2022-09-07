@@ -8,7 +8,7 @@ class UIButton: public Component {
 public:
     UIButton(ComponentID id, const std::string& name): Component(id, name) {}
 
-    void OnInit() override;
+    void Reset() override;
 
     std::string text;
     std::function<void(Entity*)> onClick;

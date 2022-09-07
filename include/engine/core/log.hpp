@@ -124,7 +124,7 @@ void Logger::Log(const char *level, const char *filename, const char *function, 
     }
     ptr++;
     stream_ << "[" << level << "]"
-            << "[" << ptr << " - " << function << "][" << linenum << "]: ";
+            << "[" << ptr << " - " << function << "][" << linenum << "]: " << std::flush;
     log(fmt.c_str(), std::forward<Args>(args)...);
 }
 
@@ -137,7 +137,7 @@ void Logger::log(const char *fmt, T &&value, Args &&... args) {
     if (*fmt == '{') {
         if (*(fmt + 1) == '}') {
             fmt += 2;
-            stream_ << value;
+            stream_ << value << std::flush;
         }
         log(fmt, std::forward<Args>(args)...);
     }

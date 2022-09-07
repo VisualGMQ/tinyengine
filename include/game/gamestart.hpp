@@ -16,17 +16,15 @@
 #include "engine/ui/ui_system.hpp"
 #include "engine/ui/window.hpp"
 #include "engine/ui/button.hpp"
+#include "engine/ui/checkbox.hpp"
+#include "engine/ui/layout.hpp"
 
 class MyComponent: public engine::Component {
 public:
     MyComponent(unsigned int id, const std::string& name): engine::Component(id, name) {}
 
-    void OnInit() override {
-        Logt("component init");
-    }
-
-    void OnQuit() override {
-        Logt("component quit");
+    void Reset() override {
+        Logt("component reset");
     }
 
     int value = 123;
@@ -66,37 +64,56 @@ public:
         engine::World* world = engine::World::Instance();
         world = engine::World::Instance();
         world->AddSystem<TestSystem>();
-        world->AddSystem<engine::UISystem>();
 
         auto texture = engine::TextureFactory::Create("./resources/test.jpg", "test");
 
         trianglePrymaid_ = engine::CreateCubeMesh();
-        engine::Mouse::Hide();
+        // engine::Mouse::Hide();
         engine::Renderer::GetPerspCamera()->MoveTo(engine::Vec3(0, 1, 1));
 
-        entity_ = world->CreateEntity("Entity1");
-        entity_->SetBehavior(std::make_unique<TestBehavior>());
-        entity_->SetComponent<MyComponent>(world->CreateComponent<MyComponent>("MyComponent"));
-        Attach(entity_);
+        auto entity = world->CreateEntity("Entity1");
+        entity->SetBehavior(std::make_unique<TestBehavior>());
+        entity->SetComponent(world->CreateComponent<MyComponent>("MyComponent"));
+        Attach(entity);
 
-        windowEntity_ = world->CreateEntity("WindowEntity");
+        auto windowEntity = world->CreateEntity("WindowEntity");
         auto uiwindow = world->CreateComponent<engine::UIWindow>("window");
-        windowEntity_->SetComponent<engine::UIWindow>(uiwindow);
+        windowEntity->SetComponent(uiwindow);
         uiwindow->title = "Demo";
         uiwindow->rect.position.Set(50, 50);
         uiwindow->rect.size.Set(230, 250);
         uiwindow->flags = NK_WINDOW_BORDER | NK_WINDOW_MOVABLE | NK_WINDOW_SCALABLE |
                           NK_WINDOW_MINIMIZABLE | NK_WINDOW_TITLE;
-
-        buttonEntity_ = world->CreateEntity("button");
-        auto button = world->CreateComponent<engine::UIButton>("button");
-        buttonEntity_->SetComponent<engine::UIButton>(button);
-
         auto node = world->CreateComponent<engine::NodeComponent>("window node");
-        windowEntity_->SetComponent<engine::NodeComponent>(node);
-        node->Attach(buttonEntity_);
+        windowEntity->SetComponent(node);
+        Attach(windowEntity);
 
-        Attach(windowEntity_);
+        auto layout = world->CreateEntity("layout");
+        auto rowLayout = world->CreateComponent<engine::UIDynamicRowLayout>("rowlayout");
+        auto layoutNode = world->CreateComponent<engine::NodeComponent>("layout node");
+        rowLayout->cols = 2;
+        rowLayout->height = 50;
+        layout->SetComponent(rowLayout);
+        layout->SetComponent(layoutNode);
+
+        node->Attach(layout);
+
+        auto buttonEntity = world->CreateEntity("button");
+        auto button = world->CreateComponent<engine::UIButton>("button");
+        buttonEntity->SetComponent(button);
+        layoutNode->Attach(buttonEntity);
+
+        auto checkboxEntity = world->CreateEntity("checkbox");
+        auto checkbox = world->CreateComponent<engine::UICheckbox>("checkbox");
+        checkbox->text = "checkbox 1";
+        checkbox->isSelected = false;
+        checkbox->callback = [](engine::Entity* self) {
+            Logt("clicked checkbox");
+            auto& select = self->GetComponent<engine::UICheckbox>()->isSelected;
+            select = !select;
+        };
+        checkboxEntity->SetComponent(checkbox);
+        layoutNode->Attach(checkboxEntity);
 
         engine::TimerID id = engine::Timer::AddTimer([](engine::Timer& timer, double time, void* param){
             static int tick = 0;
@@ -123,9 +140,6 @@ public:
     }
 
 private:
-    engine::Entity* entity_;
-    engine::Entity* windowEntity_;
-    engine::Entity* buttonEntity_;
     std::shared_ptr<engine::Image> tile1_;
     std::shared_ptr<engine::Image> tile2_;
     std::shared_ptr<engine::Image> tile3_;
@@ -202,7 +216,6 @@ private:
         tile2_->Draw();
         tile3_->SetPosition(engine::Vec2(400, 300));
         tile3_->Draw();
-
 
         engine::Renderer::SetDrawColor(engine::Color(1, 1, 1));
         engine::Renderer::DrawText("VisualGMQ made for 1MGames\ngithub: https://github.visualgmq.io\na simple framework makde for 1MGames", engine::Vec2(500, 0), 16);

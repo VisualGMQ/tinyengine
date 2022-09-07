@@ -61,7 +61,6 @@ void Entity::SetComponent(T* comp) {
         return;
     }
     components_[id] = comp;
-    comp->OnInit();
     comp->parent_ = this;
 }
 
@@ -82,7 +81,6 @@ void Entity::RemoveComponent() {
 
     unsigned int id = ComponentIDHelper::GetID<T>();
     auto component = components_[id];
-    component->OnQuit();
     components_.erase(id);
     world_->RemoveComponent(component);
 }

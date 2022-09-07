@@ -15,12 +15,12 @@ constexpr int WindowWidth = 1024;
 constexpr int WindowHeight = 720;
 
 int main(int argc, char** argv) {
+    engine::Logger::Init();
     engine::Configer configReader("init.cfg");
     auto title = configReader.GetOr<std::string>("title", "engine");
     auto width = configReader.GetOr<float>("width", WindowWidth);
     auto height = configReader.GetOr<float>("height", WindowHeight);
 
-    engine::Logger::Init();
     engine::Context::Init(title, width, height);
     engine::Renderer::Init(width, height);
     engine::TextureFactory::Init();

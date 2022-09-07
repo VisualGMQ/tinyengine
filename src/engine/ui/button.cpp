@@ -2,7 +2,7 @@
 
 namespace engine {
 
-void UIButton::OnInit() {
+void UIButton::Reset() {
     text = "button";
     onClick = nullptr;
 }

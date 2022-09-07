@@ -150,15 +150,16 @@ void World::updateUIEntity(Entity* entity) {
     auto windowState = uiSystem_->BeginContainer(entity);
     uiSystem_->Update(entity);
 
-    if (windowState.has_value() && windowState == true) {
+    if (!windowState.has_value() || windowState.value() == true) {
         if (auto node = entity->GetComponent<NodeComponent>(); node != nullptr) {
             for (auto& ent : node->children) {
                 updateUIEntity(ent);
             }
         }
     }
-
-    uiSystem_->EndContainer(entity);
+    if (windowState.has_value()) {
+        uiSystem_->EndContainer(entity);
+    }
 }
 
 void World::CleanUp() {
@@ -166,7 +167,6 @@ void World::CleanUp() {
     while (idx < entities_.size()) {
         if (entities_[idx]->shouldBeCleanUp_) {
             for (auto& component : entities_[idx]->components_) {
-                component.second->OnQuit();
                 RemoveComponent(component.second);
             }
             entities_[idx]->components_.clear();

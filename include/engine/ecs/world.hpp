@@ -79,6 +79,7 @@ T* World::CreateComponent(const std::string& name) {
 
     if (components_[id].componentTrashes_.empty()) {
         components_[id].components.emplace_back(std::make_unique<T>(componentID_++, name));
+        components_[id].components.back()->Reset();
         return (T*)components_[id].components.back().get();
     } else {
         std::unique_ptr<Component> component = std::move(components_[id].componentTrashes_.top());
@@ -86,6 +87,7 @@ T* World::CreateComponent(const std::string& name) {
         component->id_ = componentID_++;
         components_[id].components.push_back(std::move(component));
         components_[id].componentTrashes_.pop();
+        components_[id].components.back()->Reset();
         return (T*)components_[id].components.back().get();
     }
 }

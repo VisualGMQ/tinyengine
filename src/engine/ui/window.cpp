@@ -2,7 +2,7 @@
 
 namespace engine {
 
-void UIWindow::OnInit() {
+void UIWindow::Reset() {
     title.clear();
     isShowTitle = true;
     flags = 0;

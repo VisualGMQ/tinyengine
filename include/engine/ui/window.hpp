@@ -7,7 +7,7 @@ namespace engine {
 class UIWindow final: public Component {
 public:
     UIWindow(ComponentID id, const std::string& name): Component(id, name) {}
-    void OnInit() override;
+    void Reset() override;
 
     std::string title;
     bool isShowTitle;
