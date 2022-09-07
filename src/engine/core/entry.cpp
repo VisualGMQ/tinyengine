@@ -38,7 +38,9 @@ int main(int argc, char** argv) {
         glfwPollEvents();
         engine::Renderer::Clear();
         engine::World::Instance()->TryInitEntities();
-        engine::SceneMgr::CurrentScene()->OnUpdate();
+        if (auto scene = engine::SceneMgr::CurrentScene(); scene) {
+            scene->OnUpdate();
+        }
         engine::Timer::UpdateElapse();
         engine::Timer::UpdateTimers();
         engine::Timer::CleanUpTimers();

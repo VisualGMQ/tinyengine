@@ -14,6 +14,7 @@ set(GLFW_INSTALL OFF)
 add_subdirectory(3rdlibs/glfw)
 add_subdirectory(3rdlibs/glad)
 add_subdirectory(3rdlibs/stb)
+add_subdirectory(3rdlibs/nuklear)
 
 set(AUDIO_LIB "miniaudio")
 
@@ -56,5 +57,5 @@ set(GAME_NAME "game")
 
 aux_source_directory(src/game GAME_SRC)
 add_executable(${GAME_NAME} ${GAME_SRC})
-target_link_libraries(${GAME_NAME} PRIVATE ${ENGINE_NAME})
+target_link_libraries(${GAME_NAME} PRIVATE ${ENGINE_NAME} nuklear)
 target_precompile_headers(${GAME_NAME} REUSE_FROM ${ENGINE_NAME})
