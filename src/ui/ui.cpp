@@ -12,9 +12,13 @@ nk_font_atlas* UI::atlas = nullptr;
 
 void UI::Init() {
     ctx = nk_glfw3_init(&glfw, engine::Context::GetWindow(), NK_GLFW3_INSTALL_CALLBACKS);
+    struct nk_font_config config = nk_font_config(20);
+    config.oversample_h = 1;
+    config.oversample_v = 1;
+    config.range = nk_font_chinese_glyph_ranges();
     nk_font_atlas* atlas;
     nk_glfw3_font_stash_begin(&glfw, &atlas);
-    nk_font *font = nk_font_atlas_add_from_file(atlas, "C:/Windows/Fonts/simhei.ttf", 20, 0);
+    nk_font *font = nk_font_atlas_add_from_file(atlas, "C:/Windows/Fonts/simhei.ttf", 20, &config);
     nk_glfw3_font_stash_end(&glfw);
     nk_style_set_font(ctx, &font->handle);
 }
