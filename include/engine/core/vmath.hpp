@@ -10,7 +10,7 @@
 namespace engine {
 
 template <typename T, unsigned int W, unsigned int H>
-class Mat final {
+class DLLEXPORT Mat final {
 public:
     Mat() {
         memset(data_, 0, sizeof(T) * W * H);
@@ -93,7 +93,7 @@ private:
 
 
 template <typename T, typename U, unsigned int W, unsigned int H>
-bool operator==(const Mat<T, W, H>& m, const Mat<U, W, H>& o) {
+DLLEXPORT bool operator==(const Mat<T, W, H>& m, const Mat<U, W, H>& o) {
     for (int i = 0; i < W * H; i++) {
         if (m.Data()[i] != o.Data()[i])
             return false;
@@ -102,12 +102,12 @@ bool operator==(const Mat<T, W, H>& m, const Mat<U, W, H>& o) {
 }
 
 template <typename T, typename U, unsigned int W, unsigned int H>
-bool operator!=(const Mat<T, W, H>& m, const Mat<U, W, H>& o) {
+DLLEXPORT bool operator!=(const Mat<T, W, H>& m, const Mat<U, W, H>& o) {
     return !(m == o);
 }
 
 template <typename T, typename U, unsigned int W, unsigned int H>
-auto operator+(const Mat<T, W, H>& m, const Mat<U, W, H>& o) {
+DLLEXPORT auto operator+(const Mat<T, W, H>& m, const Mat<U, W, H>& o) {
     Mat<std::common_type_t<U, T>, W, H> result;
     for (int i = 0; i < W * H; i++) {
         result.Data()[i] = m.Data()[i] + o.Data()[i];
@@ -116,7 +116,7 @@ auto operator+(const Mat<T, W, H>& m, const Mat<U, W, H>& o) {
 }
 
 template <typename T, typename U, unsigned int W, unsigned int H>
-auto operator-(const Mat<T, W, H>& m, const Mat<U, W, H>& o) {
+DLLEXPORT auto operator-(const Mat<T, W, H>& m, const Mat<U, W, H>& o) {
     Mat<std::common_type_t<U, T>, W, H> result;
     for (int i = 0; i < W * H; i++) {
         result.Data()[i] = m.Data()[i] - o.Data()[i];
@@ -125,7 +125,7 @@ auto operator-(const Mat<T, W, H>& m, const Mat<U, W, H>& o) {
 }
 
 template <typename T, unsigned int W, unsigned int H>
-auto operator*(const Mat<T, W, H>& m, float value) {
+DLLEXPORT auto operator*(const Mat<T, W, H>& m, float value) {
     Mat<T, W, H> result;
     for (int i = 0; i < W * H; i++) {
         result.Data()[i] = m.Data()[i] * value;
@@ -134,12 +134,12 @@ auto operator*(const Mat<T, W, H>& m, float value) {
 }
 
 template <typename T, unsigned int W, unsigned int H>
-auto operator*(float value, const Mat<T, W, H>& m2) {
+DLLEXPORT auto operator*(float value, const Mat<T, W, H>& m2) {
     return m2 * value;
 }
 
 template <typename T, typename U, unsigned int W, unsigned int H>
-auto operator/(const Mat<T, W, H>& m, const U& value) {
+DLLEXPORT auto operator/(const Mat<T, W, H>& m, const U& value) {
     Mat<std::common_type_t<U, T>, W, H> result;
     for (int i = 0; i < W * H; i++) {
         result.Data()[i] = m.Data()[i] / value;
@@ -148,7 +148,7 @@ auto operator/(const Mat<T, W, H>& m, const U& value) {
 }
 
 template <typename T, typename U, unsigned int W, unsigned int H, unsigned int UW>
-auto operator*(const Mat<T, W, H>& m, const Mat<U, UW, W>& o) {
+DLLEXPORT auto operator*(const Mat<T, W, H>& m, const Mat<U, UW, W>& o) {
     Mat<std::common_type_t<U, T>, H, UW> result;
     for (int i = 0; i < H; i++) {
         for (int j = 0 ; j < UW; j++) {
@@ -162,7 +162,7 @@ auto operator*(const Mat<T, W, H>& m, const Mat<U, UW, W>& o) {
 }
 
 template <typename T, typename U, unsigned int W, unsigned int H>
-auto MulEach(const Mat<T, W, H>& m1, const Mat<U, W, H>& m2) {
+DLLEXPORT auto MulEach(const Mat<T, W, H>& m1, const Mat<U, W, H>& m2) {
     Mat<std::common_type_t<T, U>, W, H> result;
     for (int i = 0; i < W * H; i++) {
         result.Data()[i] = m1.Data()[i] * m2.Data()[i];
@@ -171,12 +171,12 @@ auto MulEach(const Mat<T, W, H>& m1, const Mat<U, W, H>& m2) {
 }
 
 template <typename T, unsigned int W, unsigned int H>
-auto operator-(const Mat<T, W, H>& m) {
+DLLEXPORT auto operator-(const Mat<T, W, H>& m) {
     return m * -1;
 }
 
 template <typename T, unsigned int W, unsigned int H>
-std::ostream& operator<<(std::ostream& o, const Mat<T, W, H>& m) {
+DLLEXPORT std::ostream& operator<<(std::ostream& o, const Mat<T, W, H>& m) {
     o << "[" << std::endl;
     for (int i = 0 ; i < H; i++) {
         for (int j = 0 ; j < W; j++) {
@@ -189,12 +189,12 @@ std::ostream& operator<<(std::ostream& o, const Mat<T, W, H>& m) {
 }
 
 template <unsigned int Len>
-Mat<float, Len, Len> CreateZeroMat() {
+DLLEXPORT Mat<float, Len, Len> CreateZeroMat() {
     return Mat<float, Len, Len>();
 }
 
 template <unsigned int Len>
-Mat<float, Len, Len> CreateIdentityMat() {
+DLLEXPORT Mat<float, Len, Len> CreateIdentityMat() {
     auto mat = Mat<float, Len, Len>();
     for (int i = 0; i < Len; i++) {
         mat(i, i) = 1;
@@ -203,7 +203,7 @@ Mat<float, Len, Len> CreateIdentityMat() {
 }
 
 template <unsigned int Len>
-Mat<float, Len, Len> CreateOnesMat() {
+DLLEXPORT Mat<float, Len, Len> CreateOnesMat() {
     auto mat = Mat<float, Len, Len>();
     for (int i = 0; i < Len * Len; i++) {
         mat(i % Len, i / Len) = 1;
@@ -212,7 +212,7 @@ Mat<float, Len, Len> CreateOnesMat() {
 }
 
 template <typename T>
-class Mat<T, 1, 3> final {
+class DLLEXPORT Mat<T, 1, 3> final {
 public:
     Mat() {
         memset(data_, 0, sizeof(T) * 3);
@@ -300,7 +300,7 @@ using Vec3 = Mat<float, 1, 3>;
 
 
 template <typename T>
-class Mat<T, 1, 2> final {
+class DLLEXPORT Mat<T, 1, 2> final {
 public:
     Mat() {
         memset(data_, 0, sizeof(T) * 2);
@@ -386,7 +386,7 @@ using Size = Mat<float, 1, 2>;
 
 
 template <typename T>
-class Mat<T, 1, 4> final {
+class DLLEXPORT Mat<T, 1, 4> final {
 public:
     Mat() {
         memset(data_, 0, sizeof(T) * 4);
@@ -476,7 +476,7 @@ template <typename T, unsigned int N>
 using Vec = Mat<T, 1, N>;
 
 template <typename T, unsigned int N>
-T Dot(const Vec<T, N>& v1, const Vec<T, N>& v2) {
+DLLEXPORT T Dot(const Vec<T, N>& v1, const Vec<T, N>& v2) {
     T result = T{};
     for (int i = 0; i < N; i++) {
         result += v1(0, i) * v2(0, i);
@@ -484,18 +484,18 @@ T Dot(const Vec<T, N>& v1, const Vec<T, N>& v2) {
     return result;
 }
 
-inline float Cross(const Vec2& v1, const Vec2& v2) {
+DLLEXPORT inline float Cross(const Vec2& v1, const Vec2& v2) {
     return v1.x * v2.y - v1.y * v2.x;
 }
 
-inline Vec3 Cross(const Vec3& v1, const Vec3& v2) {
+DLLEXPORT inline Vec3 Cross(const Vec3& v1, const Vec3& v2) {
     return Vec3(v1.y * v2.z - v1.z * v2.y,
                 v1.z * v2.x - v1.x * v2.z,
                 v1.x * v2.y - v1.y * v2.x);
 }
 
 template <typename T, unsigned int N>
-T Length2(const Vec<T, N>& v) {
+DLLEXPORT T Length2(const Vec<T, N>& v) {
     T sum = 0;
     for (int i = 0; i < N; i++) {
         sum += v(0, i) * v(0, i);
@@ -504,17 +504,17 @@ T Length2(const Vec<T, N>& v) {
 }
 
 template <typename T, unsigned int N>
-T Length(const Vec<T, N>& v) {
+DLLEXPORT T Length(const Vec<T, N>& v) {
     return std::sqrt(Length2(v));
 }
 
 template <typename T, unsigned int N>
-auto Normalize(const Vec<T, N>& v) {
+DLLEXPORT auto Normalize(const Vec<T, N>& v) {
     return v / Length(v);
 }
 
 template <typename T, unsigned int W, unsigned int H>
-auto Transpose(const Mat<T, W, H>& m) {
+DLLEXPORT auto Transpose(const Mat<T, W, H>& m) {
     Mat<T, H, W> result;
     for (int i = 0; i < W; i++) {
         for (int j = 0; j < H; j++) {
@@ -524,7 +524,7 @@ auto Transpose(const Mat<T, W, H>& m) {
     return result;
 }
 
-inline Mat4 CreateOrtho(float w, float h, float depth) {
+DLLEXPORT inline Mat4 CreateOrtho(float w, float h, float depth) {
     return Mat4({
         2 / w,     0,         0, -1,
             0,-2 / h,         0,  1,
@@ -533,7 +533,7 @@ inline Mat4 CreateOrtho(float w, float h, float depth) {
         });
 }
 
-inline Mat4 CreatePersp(float fov, float aspect, float near, float far) {
+DLLEXPORT inline Mat4 CreatePersp(float fov, float aspect, float near, float far) {
     float half_fov = std::tan(0.5 * fov);
     return Mat4({
             1 / (aspect * half_fov), 0,                             0,  0,
@@ -543,7 +543,7 @@ inline Mat4 CreatePersp(float fov, float aspect, float near, float far) {
         });
 }
 
-struct Rect {
+struct DLLEXPORT Rect {
     Vec2 position;
     Vec2 size;
 
@@ -552,31 +552,31 @@ struct Rect {
     Rect(const Vec2& pos, const Vec2& size) : position(pos), size(size) {}
 };
 
-inline std::ostream& operator<<(std::ostream& o, const Rect& rect) {
+DLLEXPORT inline std::ostream& operator<<(std::ostream& o, const Rect& rect) {
     o << "Rect(" << rect.position << ", " << rect.size << ")";
     return o;
 }
 
 constexpr float PI = 3.14159265358;
 
-inline float Radians(float degrees) {
+DLLEXPORT inline float Radians(float degrees) {
     return degrees * PI / 180.0;
 }
 
-inline float Degrees(float radians) {
+DLLEXPORT inline float Degrees(float radians) {
     return radians * 180.0 / PI;
 }
 
-inline Vec3 Radians(const Vec3& v) {
+DLLEXPORT inline Vec3 Radians(const Vec3& v) {
     return Vec3(Radians(v.x), Radians(v.y), Radians(v.z));
 }
 
-inline Vec3 Degrees(const Vec3& v) {
+DLLEXPORT inline Vec3 Degrees(const Vec3& v) {
     return Vec3(Degrees(v.x), Degrees(v.y), Degrees(v.z));
 }
 
 template <typename T>
-class Quaternion final {
+class DLLEXPORT Quaternion final {
 public:
     Quaternion();
     Quaternion(T x, T y, T z, T w): x(x), y(y), z(z), w(w) {}
@@ -620,66 +620,66 @@ public:
 
 // Hamilton Product
 template <typename T, typename U>
-auto operator*(const Quaternion<T>& q1, const Quaternion<U>& q2) {
+DLLEXPORT auto operator*(const Quaternion<T>& q1, const Quaternion<U>& q2) {
     return Quaternion<std::common_type_t<T, U>>(q1.v * q2.s + q1.s * q2.v + Cross(q1.v, q2.v), q1.s * q2.s - Dot(q1.v, q2.v));
 }
 
 template <typename T, typename U>
-auto operator*(const U& value, const Quaternion<U>& q2) {
+DLLEXPORT auto operator*(const U& value, const Quaternion<U>& q2) {
     return Quaternion<std::common_type_t<T, U>>(q2.v * value, q2.s * value);
 }
 
 template <typename T, typename U>
-auto operator*(const Quaternion<U>& q2, const U& value) {
+DLLEXPORT auto operator*(const Quaternion<U>& q2, const U& value) {
     return value * q2;
 }
 
 template <typename T, typename U>
-auto operator/(const Quaternion<U>& q2, const U& value) {
+DLLEXPORT auto operator/(const Quaternion<U>& q2, const U& value) {
     return Quaternion<std::common_type_t<T, U>>(q2.v / value, q2.s / value);
 }
 
 template <typename T, typename U>
-auto Dot(const Quaternion<T>& q1, const Quaternion<T>& q2) {
+DLLEXPORT auto Dot(const Quaternion<T>& q1, const Quaternion<T>& q2) {
     return Dot(q1.v, q2.v) + q1.s * q2.s;
 }
 
 template <typename T, typename U>
-auto operator+(const Quaternion<T>& q1, const Quaternion<U>& q2) {
+DLLEXPORT auto operator+(const Quaternion<T>& q1, const Quaternion<U>& q2) {
     return Quaternion<std::common_type_t<T, U>>(q1.v + q2.v, q1.s + q2.s);
 }
 
 template <typename T, typename U>
-auto operator-(const Quaternion<T>& q1, const Quaternion<U>& q2) {
+DLLEXPORT auto operator-(const Quaternion<T>& q1, const Quaternion<U>& q2) {
     return Quaternion<std::common_type_t<T, U>>(q1.v - q2.v, q1.s - q2.s);
 }
 
 template <typename T>
-auto Length2(const Quaternion<T>& q) {
+DLLEXPORT auto Length2(const Quaternion<T>& q) {
     return Length2(q.v) + q.s * q.s;
 }
 
 template <typename T>
-auto Length(const Quaternion<T>& q) {
+DLLEXPORT auto Length(const Quaternion<T>& q) {
     return std::sqrt(Length2(q));
 }
 
 template <typename T>
-auto Conjugate(const Quaternion<T>& q) {
+DLLEXPORT auto Conjugate(const Quaternion<T>& q) {
     return Quaternion<T>(-q.v, q.s);
 }
 
 template <typename T>
-auto Inverse(const Quaternion<T>& q) {
+DLLEXPORT auto Inverse(const Quaternion<T>& q) {
     return Conjugate(q) / Dot(q, q);
 }
 
 template <typename T>
-auto Normalize(const Quaternion<T>& q) {
+DLLEXPORT auto Normalize(const Quaternion<T>& q) {
     return q / Length(q);
 }
 
-inline Mat4 CreateTranslate(const Vec3& translate) {
+DLLEXPORT inline Mat4 CreateTranslate(const Vec3& translate) {
     return Mat4{
         1, 0, 0, translate.x,
         0, 1, 0, translate.y,
@@ -688,7 +688,7 @@ inline Mat4 CreateTranslate(const Vec3& translate) {
     };
 }
 
-inline Mat4 CreateScale(const Vec3& scale) {
+DLLEXPORT inline Mat4 CreateScale(const Vec3& scale) {
     return Mat4{
         scale.x, 0, 0, 0,
         0, scale.y, 0, 0,
@@ -697,7 +697,7 @@ inline Mat4 CreateScale(const Vec3& scale) {
     };
 }
 
-inline Mat4 CreateAxisRotationWithQuat(const Vec3& axis, float rotation) {
+DLLEXPORT inline Mat4 CreateAxisRotationWithQuat(const Vec3& axis, float rotation) {
     float half_angle = rotation * 0.5;
     float sin = std::sin(half_angle);
     float cos = std::cos(half_angle);
@@ -713,7 +713,7 @@ inline Mat4 CreateAxisRotationWithQuat(const Vec3& axis, float rotation) {
     };
 }
 
-inline Mat4 CreateAxisRotationWithEular(const Vec3& axis, float rotation) {
+DLLEXPORT inline Mat4 CreateAxisRotationWithEular(const Vec3& axis, float rotation) {
     float c = std::cos(rotation),
           s = std::sin(rotation),
           d = 1 - c; 
@@ -728,15 +728,15 @@ inline Mat4 CreateAxisRotationWithEular(const Vec3& axis, float rotation) {
     };
 }
 
-inline Vec3 Translate(const Vec3& v, const Vec3& pos) {
+DLLEXPORT inline Vec3 Translate(const Vec3& v, const Vec3& pos) {
     return v + pos;
 }
 
-inline Vec3 Scale(const Vec3& v, const Vec3& scale) {
+DLLEXPORT inline Vec3 Scale(const Vec3& v, const Vec3& scale) {
     return MulEach(v, scale);
 }
 
-inline Vec3 RotateWithQuat(const Vec3& v, float angle, const Vec3& axis) {
+DLLEXPORT inline Vec3 RotateWithQuat(const Vec3& v, float angle, const Vec3& axis) {
     float half_angle = angle * 0.5;
     float half_sin = std::sin(half_angle);
     Quaternion<float> q(axis.x * half_sin, axis.y * half_sin, axis.z * half_sin,
@@ -745,7 +745,7 @@ inline Vec3 RotateWithQuat(const Vec3& v, float angle, const Vec3& axis) {
     return v + Cross(2 * q.v, Cross(q.v, v) + q.s * v);
 }
 
-inline Mat4 CreateRotationX(float angle) {
+DLLEXPORT inline Mat4 CreateRotationX(float angle) {
     float cx = std::cos(angle),
           sx = std::sin(angle);
     return Mat4{
@@ -756,7 +756,7 @@ inline Mat4 CreateRotationX(float angle) {
     };
 }
 
-inline Mat4 CreateRotationY(float angle) {
+DLLEXPORT inline Mat4 CreateRotationY(float angle) {
     float cy = std::cos(angle),
           sy = std::sin(angle);
     return Mat4{
@@ -767,7 +767,7 @@ inline Mat4 CreateRotationY(float angle) {
     };
 }
 
-inline Mat4 CreateRotationZ(float angle) {
+DLLEXPORT inline Mat4 CreateRotationZ(float angle) {
     float cz = std::cos(angle),
           sz = std::sin(angle);
     return Mat4 {
@@ -778,7 +778,7 @@ inline Mat4 CreateRotationZ(float angle) {
     };
 }
 
-inline Mat4 CreateSRT(const Vec3& pos, const Vec3& rotation, const Vec3& scale) {
+DLLEXPORT inline Mat4 CreateSRT(const Vec3& pos, const Vec3& rotation, const Vec3& scale) {
     return
         Mat4{
             1, 0, 0, pos.x,
@@ -795,7 +795,7 @@ inline Mat4 CreateSRT(const Vec3& pos, const Vec3& rotation, const Vec3& scale) 
         };
 }
 
-inline Mat4 CreateLookAt(const Vec3& right, const Vec3& up, const Vec3& front, const Vec3& position) {
+DLLEXPORT inline Mat4 CreateLookAt(const Vec3& right, const Vec3& up, const Vec3& front, const Vec3& position) {
     return Mat4{
         right.x, right.y, right.z, -(position.x * right.x + position.y * right.y + position.z * right.z),
            up.x,    up.y,    up.z, -(position.x * up.x + position.y * up.y +  position.z * up.z),
@@ -805,15 +805,15 @@ inline Mat4 CreateLookAt(const Vec3& right, const Vec3& up, const Vec3& front, c
 }
 
 template <typename T>
-T Clamp(const T& value, const T& low, const T& high) {
+DLLEXPORT T Clamp(const T& value, const T& low, const T& high) {
     return value > high ? high : (value < low ? low : value);
 }
 
-inline bool IsPointInRect(const Vec2& p, const Rect& r) {
+DLLEXPORT inline bool IsPointInRect(const Vec2& p, const Rect& r) {
     return p.x >= r.position.x && p.x <= r.position.x + r.size.w &&
            p.y >= r.position.y && p.y <= r.position.y + r.size.h;
 }
 
-extern const Mat4 IdentityMat4;
+DLLEXPORT extern const Mat4 IdentityMat4;
 
 }

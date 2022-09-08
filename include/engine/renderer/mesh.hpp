@@ -6,7 +6,7 @@
 
 namespace engine {
 
-class Vertex final {
+class DLLEXPORT Vertex final {
 public:
     Vec3 position;
     Vec2 texcoord;
@@ -16,7 +16,7 @@ public:
     Vertex(const Vec3& position, const Vec2& texcoord): position(position), texcoord(texcoord) {}
 };
 
-class Mesh final {
+class DLLEXPORT Mesh final {
 public:
     friend class Renderer;
 

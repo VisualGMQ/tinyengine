@@ -4,7 +4,7 @@
 
 namespace engine {
 
-class Image final {
+class DLLEXPORT Image final {
 public:
     Image(Texture* texture, const Rect& rect);
     Image(Texture* texture);

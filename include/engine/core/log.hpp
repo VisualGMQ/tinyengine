@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include "engine/core/dllexport.hpp"
 
 namespace engine {
 
@@ -68,7 +69,7 @@ namespace engine {
         }                                                                                                   \
     } while (0)
 
-class Logger final {
+class DLLEXPORT Logger final {
 public:
     static void Init();
     static void Quit();

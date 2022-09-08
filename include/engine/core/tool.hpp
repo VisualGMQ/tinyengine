@@ -4,6 +4,6 @@
 
 namespace engine {
 
-std::string ReadWholeFile(const std::string& filename);
+std::string DLLEXPORT ReadWholeFile(const std::string& filename);
 
 }

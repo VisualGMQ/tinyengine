@@ -4,7 +4,7 @@
 
 namespace engine {
 
-class UIButton: public Component {
+class DLLEXPORT UIButton: public Component {
 public:
     UIButton(ComponentID id, const std::string& name): Component(id, name) {}
 

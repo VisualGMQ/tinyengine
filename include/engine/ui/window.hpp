@@ -4,7 +4,7 @@
 
 namespace engine {
 
-class UIWindow final: public Component {
+class DLLEXPORT UIWindow final: public Component {
 public:
     UIWindow(ComponentID id, const std::string& name): Component(id, name) {}
     void Reset() override;

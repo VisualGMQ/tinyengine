@@ -5,7 +5,7 @@
 
 namespace engine {
 
-class RectTransform final: public Component {
+class DLLEXPORT RectTransform final: public Component {
 public:
     RectTransform(ComponentID id, const std::string& name): Component(id, name) {}
     void OnInit() override {

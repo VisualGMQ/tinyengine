@@ -1,6 +1,8 @@
 #pragma once
 
-enum KeyCode {
+#include "engine/core/dllexport.hpp"
+
+enum DLLEXPORT KeyCode {
     Key_Unknown = GLFW_KEY_UNKNOWN,
 
     Key_Space = GLFW_KEY_SPACE,
@@ -128,7 +130,7 @@ enum KeyCode {
     KEY_NUM = GLFW_KEY_MENU + 1,
 };
 
-enum MouseButton {
+enum DLLEXPORT MouseButton {
     Left = GLFW_MOUSE_BUTTON_LEFT,
     Right = GLFW_MOUSE_BUTTON_RIGHT,
     Middle = GLFW_MOUSE_BUTTON_MIDDLE,

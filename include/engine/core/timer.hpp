@@ -6,7 +6,7 @@ namespace engine {
 
 using TimerID = unsigned int;
 
-class Timer final {
+class DLLEXPORT Timer final {
 public:
     using Callback = std::function<double(Timer&, double, void*)>;
 

@@ -11,11 +11,11 @@
 #define NK_INCLUDE_DEFAULT_FONT
 #define NK_KEYSTATE_BASED_INPUT
 #include "nuklear/nuklear.h"
-#include "engine/ui/nuklear_glfw_gl3.hpp"
+#include "nuklear/nuklear_glfw_gl3.hpp"
 
 namespace engine {
 
-class UI final {
+class DLLEXPORT UI final {
 public:
     static void Init();
     static void Quit();

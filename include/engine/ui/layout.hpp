@@ -5,7 +5,7 @@
 
 namespace engine {
 
-class UIStaticRowLayout final: public Component {
+class DLLEXPORT UIStaticRowLayout final: public Component {
 public:
     UIStaticRowLayout(ComponentID id, const std::string& name): Component(id, name) {}
     void Reset() override;
@@ -15,7 +15,7 @@ public:
     int cols;
 };
 
-class UIDynamicRowLayout final: public Component {
+class DLLEXPORT UIDynamicRowLayout final: public Component {
 public:
     UIDynamicRowLayout(ComponentID id, const std::string& name): Component(id, name) {}
     void Reset() override;

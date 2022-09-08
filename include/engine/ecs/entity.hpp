@@ -3,16 +3,20 @@
 #include "engine/ecs/component.hpp"
 #include "engine/ecs/world.hpp"
 #include "engine/ecs/behavior.hpp"
+#include "engine/core/dllexport.hpp"
 
 namespace engine {
 
 using EntityID = unsigned int;
 
-class Entity final {
+class DLLEXPORT Entity final {
 public:
     friend class World;
 
     Entity(World* world, EntityID id, const std::string& name): world_(world), id_(id), name_(name) {}
+
+    Entity(const Entity&) = delete;
+    Entity& operator=(const Entity&) = delete;
 
     template <typename T>
     void SetComponent(T*);

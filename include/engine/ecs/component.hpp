@@ -8,13 +8,16 @@ class Entity;
 
 using ComponentID = unsigned int;
 
-class Component {
+class DLLEXPORT Component {
 public:
     friend class Entity;
     friend class World;
 
     Component(ComponentID id, const std::string& name): id_(id), name_(name) {}
     virtual ~Component() = default;
+
+    Component(const Component&) = delete;
+    Component& operator=(const Component&) = delete;
 
     const std::string& Name() const { return name_; }
     virtual void Reset() {}
@@ -28,7 +31,7 @@ private:
     Entity* parent_ = nullptr;
 };
 
-class ComponentIDHelper final {
+class DLLEXPORT ComponentIDHelper final {
 public:
     template <typename T>
     static unsigned int GetID() {

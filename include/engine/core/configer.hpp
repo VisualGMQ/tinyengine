@@ -6,7 +6,7 @@
 
 namespace engine {
 
-class Configer final {
+class DLLEXPORT Configer final {
 public:
     enum class ElementType {
         Unknown = 0,

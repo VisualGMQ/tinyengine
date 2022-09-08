@@ -6,7 +6,7 @@
 
 namespace engine {
 
-class ShaderModule final {
+class DLLEXPORT ShaderModule final {
 public:
     enum Type {
         Vertex = GL_VERTEX_SHADER,
@@ -22,9 +22,11 @@ private:
     GLuint id_;
 };
 
-class Shader final {
+class DLLEXPORT Shader final {
 public:
     Shader(const ShaderModule& vertex, const ShaderModule& fragment);
+    Shader(const Shader&) = delete;
+    Shader& operator=(const Shader&) = delete;
     ~Shader();
 
     void Use() const;

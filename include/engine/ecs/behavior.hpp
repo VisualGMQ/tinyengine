@@ -7,10 +7,14 @@ namespace engine {
 
 class Entity;
 
-class Behavior {
+class DLLEXPORT Behavior {
 public:
     friend class Entity;
 
+    Behavior(const Behavior&) = delete;
+    Behavior& operator=(const Behavior&) = delete;
+
+    Behavior() = default;
     virtual ~Behavior() = default;
 
     virtual void OnInit() = 0;

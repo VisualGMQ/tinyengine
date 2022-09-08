@@ -3,12 +3,13 @@
 #include "engine/ecs/component.hpp"
 #include "engine/ecs/system.hpp"
 #include "engine/ecs/entity.hpp"
+#include "engine/core/dllexport.hpp"
 
 namespace engine {
 
 class UISystem;
 
-class World final {
+class DLLEXPORT World final {
 public:
     static World* Instance();
     static void Init();
@@ -16,6 +17,8 @@ public:
 
     World();
     ~World();
+    World(const World&) = delete;
+    World& operator=(const World&) = delete;
 
     Entity* CreateEntity(const std::string& name);
     void DestroyEntity(unsigned int id);

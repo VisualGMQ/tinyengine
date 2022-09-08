@@ -6,12 +6,15 @@
 
 namespace engine {
 
-class Scene {
+class DLLEXPORT Scene {
 public:
     friend class SceneMgr;
 
     Scene(const std::string& name);
+    Scene(const Scene&) = delete;
     virtual ~Scene() = default;
+
+    Scene& operator=(const Scene&) = delete;
 
     const std::string& Name() const { return name_; }
     Entity* GetRootEntity() const { return root_; }
@@ -27,7 +30,7 @@ private:
 };
 
 
-class SceneMgr final {
+class DLLEXPORT SceneMgr final {
 public:
     static void Init();
     static void Quit();

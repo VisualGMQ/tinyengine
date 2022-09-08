@@ -4,7 +4,7 @@
 
 namespace engine {
 
-class Camera {
+class DLLEXPORT Camera {
 public:
     virtual ~Camera() = default;
 
@@ -12,7 +12,7 @@ public:
     virtual const Mat4& View() = 0;
 };
 
-class OrthoCamera: public Camera {
+class DLLEXPORT OrthoCamera: public Camera {
 public:
     OrthoCamera(float w, float h, float near);
     const Mat4& Project() override;
@@ -29,7 +29,7 @@ private:
     void tryCalcViewMat();
 };
 
-class PerspCamera: public Camera {
+class DLLEXPORT PerspCamera: public Camera {
 public:
     PerspCamera(float fov, float aspect, float znear, float zfar);
     const Mat4& Project() override;

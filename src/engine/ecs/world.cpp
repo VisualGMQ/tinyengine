@@ -68,8 +68,7 @@ void World::DestroyEntity(Entity* entity) {
 }
 
 void World::destroyEntity(const std::vector<std::unique_ptr<Entity>>::const_iterator& it) {
-    auto& entity = *it;
-    entity->shouldBeCleanUp_ = true;
+    (*it)->shouldBeCleanUp_ = true;
 }
 
 void World::RemoveComponent(Component* component) {

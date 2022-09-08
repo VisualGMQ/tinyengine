@@ -4,7 +4,7 @@
 
 namespace engine {
 
-class UICheckbox: public Component {
+class DLLEXPORT UICheckbox: public Component {
 public:
     UICheckbox(ComponentID id, const std::string& name): Component(id, name) {}
     void Reset() override;

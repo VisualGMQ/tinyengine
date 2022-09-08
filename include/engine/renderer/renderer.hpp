@@ -10,7 +10,7 @@
 
 namespace engine {
 
-enum class DrawType {
+enum class DLLEXPORT DrawType {
     Triangles = GL_TRIANGLES,
     Lines = GL_LINES,
     LineStrip = GL_LINE_STRIP,
@@ -18,8 +18,10 @@ enum class DrawType {
     Fans = GL_TRIANGLE_FAN,
 };
 
-class Renderer final {
+class DLLEXPORT Renderer final {
 public:
+    Renderer() = delete;
+
     static void Init(int orthoW, int orthoH);
     static void Quit();
 

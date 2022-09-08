@@ -6,7 +6,7 @@
 
 namespace engine {
 
-class TileSheet final {
+class DLLEXPORT TileSheet final {
 public:
     TileSheet(const std::string& name, int col, int row);
     TileSheet(TextureID id, int col, int row);

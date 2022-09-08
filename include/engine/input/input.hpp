@@ -7,8 +7,10 @@
 
 namespace engine {
 
-class Input final {
+class DLLEXPORT Input final {
 public:
+    Input() = delete;
+
     static void Init();
     static void Quit();
 

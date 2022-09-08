@@ -5,8 +5,10 @@
 
 namespace engine {
 
-class Mouse final {
+class DLLEXPORT Mouse final {
 public:
+    Mouse() = delete;
+
     static void Hide();
     static void Show();
     static bool IsShowing();
