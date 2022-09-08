@@ -115,6 +115,9 @@ public:
         tile3_ = tilesheet_->Get(0, 3);
 
         cppImage_.reset(new engine::Image(engine::TextureFactory::Find("test")));
+
+        sound1_ = engine::SoundFactory::Load("resources/test1.wav", "test1");
+        sound2_ = engine::SoundFactory::Load("resources/test2.wav", "test2");
     }
     void OnUpdate() override;
     void OnQuit() override {
@@ -129,6 +132,8 @@ private:
     std::shared_ptr<engine::Image> cppImage_;
     std::unique_ptr<engine::TileSheet> tilesheet_;
     float lineRotationY_ = 0;
+    engine::Sound* sound1_;
+    engine::Sound* sound2_;
 
     void update3d() {
         auto camera = engine::Renderer::GetPerspCamera();
@@ -162,6 +167,12 @@ private:
             } else {
                 engine::Mouse::Show();
             }
+        }
+        if (engine::Input::IsKeyPressed(Key_U)) {
+            sound1_->Play();
+        }
+        if (engine::Input::IsKeyPressed(Key_I)) {
+            sound2_->Play();
         }
         rotation_.y -= engine::Input::MouseRelative().x * 0.001;
         rotation_.x -= engine::Input::MouseRelative().y * 0.001;

@@ -9,6 +9,7 @@
 #include "engine/ecs/entity.hpp"
 #include "engine/ui/ui.hpp"
 #include "engine/core/dllexport.hpp"
+#include "engine/sound/sound.hpp"
 
 constexpr int WindowWidth = 800;
 constexpr int WindowHeight = 600;
@@ -27,6 +28,8 @@ int main(int argc, char** argv) {
     engine::TextureFactory::Init();
     engine::UI::Init();
     engine::Input::Init();
+    engine::Sound::Init();
+    engine::SoundFactory::Init();
     engine::World::Init();
     engine::SceneMgr::Init();
 
@@ -54,6 +57,8 @@ int main(int argc, char** argv) {
 
     engine::SceneMgr::Quit();
     engine::World::Quit();
+    engine::SoundFactory::Quit();
+    engine::Sound::Quit();
     engine::Input::Quit();
     engine::UI::Quit();
     engine::TextureFactory::Quit();

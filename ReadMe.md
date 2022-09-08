@@ -4,7 +4,7 @@
 
 TinyEngine是一个为编写1MGames而搭建的底层（我实在是不想每次参赛都写新底层了）。
 
-在Release模式下，库本身是300KB。但是由于使用了模板，helloworld的Demo编译出来有600KB。但使用UPX压一压能压到200多KB。
+在Release模式下，库本身是300+KB。但是由于使用了模板，helloworld的Demo编译出来有1.07M。但使用UPX压一压能压到400多KB。
 
 ## 目录结构
 
@@ -51,7 +51,7 @@ cmake -S . -B build
 * [x] TileSheet
 * [x] GUI (使用nuklear)
 * [x] 文字绘制 (使用位图文字，只能绘制英文，数字和标点)
-* [ ] 音频系统 (使用miniaudio)
+* [x] 音频系统 (使用miniaudio)
 * [ ] 2D 物理系统
 * [ ] 2D Animation
 

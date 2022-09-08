@@ -31,4 +31,6 @@
 #include "engine/ui/text.hpp"
 #include "engine/ui/window.hpp"
 
+#include "engine/sound/sound.hpp"
+
 #include "engine/components/node.hpp"
