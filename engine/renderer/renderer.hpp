@@ -22,7 +22,7 @@ class DLLEXPORT Renderer final {
 public:
     Renderer() = delete;
 
-    static void Init(int orthoW, int orthoH);
+    static void Init(int w, int h);
     static void Quit();
 
     // for nuklear GUI
@@ -43,16 +43,19 @@ public:
     // 3D draw functions
     static void DrawMeshFrame(const Mesh&, const Mat4&, const Texture* = nullptr);
     static void DrawMeshSolid(const Mesh&, const Mat4&, const Texture* = nullptr);
-    static void DrawLine(const Vec3& p1, const Vec3& p2);
+    static void DrawLine(const Vec3&, const Vec3&);
+    static void DrawLines(const std::vector<Vec3>&);
+    static void DrawLineLoop(const std::vector<Vec3>&);
 
     // for debug, for location
     static void DrawGrid();
 
     // 2D draw functions
     static void DrawRect(const Rect&);
-    static void DrawLine(const Vec2& p1, const Vec2& p2);
+    static void DrawLine(const Vec2&, const Vec2&);
 
-    static void DrawLines(const std::vector<Vec2>& points);
+    static void DrawLines(const std::vector<Vec2>&);
+    static void DrawLineLoop(const std::vector<Vec2>&);
 
     template <size_t N>
     static void DrawLines(const std::array<Vec2, N>& points) {

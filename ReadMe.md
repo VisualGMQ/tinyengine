@@ -33,6 +33,7 @@ git submodule update --init --recursive
 
 ```bash
 cmake -S . -B build
+cmake --build build
 ```
 
 ## 注意事项
@@ -54,6 +55,9 @@ cmake -S . -B build
 * [x] 音频系统 (使用miniaudio)
 * [ ] 2D 物理系统
 * [ ] 2D Animation
+
+* [ ] 将底层更换为SDL
+* [ ] 制作编辑器
 
 
 ## 目前效果：

@@ -16,7 +16,7 @@ Mat4 Renderer::oldModelMat_;
 GLenum Renderer::oldPolygonMode_ = GL_FILL;
 Camera* Renderer::camera_ = nullptr;
 
-void Renderer::Init(int orthoW, int orthoH) {
+void Renderer::Init(int w, int h) {
     stbi_set_flip_vertically_on_load(true);
     ShaderModule vertexModule(ReadWholeFile("shader/shader.vert"), ShaderModule::Type::Vertex);
     ShaderModule fragModule(ReadWholeFile("shader/shader.frag"), ShaderModule::Type::Fragment);
@@ -27,8 +27,8 @@ void Renderer::Init(int orthoW, int orthoH) {
     whiteTexture_ = TextureFactory::Create("Engine::Renderer::White", value, 1, 1);
     mesh_ = std::make_unique<Mesh>();
 
-    orthoCamera_ = std::make_unique<OrthoCamera>(orthoW, orthoH, 1.0f);
-    perspCamera_ = std::make_unique<PerspCamera>(Radians(45), 1024 / 720.0f, 0.1f, 100.f);
+    orthoCamera_ = std::make_unique<OrthoCamera>(w, h, 1.0f);
+    perspCamera_ = std::make_unique<PerspCamera>(Radians(45), w / h, 0.1f, 100.f);
 
     textTexture_ = TextureFactory::Create("./resources/numbers.png", "Engine::Renderer::Number");
 }
@@ -206,6 +206,32 @@ void Renderer::DrawLine(const Vec2& p1, const Vec2& p2) {
     drawMeshSolid(*mesh_, DrawType::Lines, CreateIdentityMat<4>());
 }
 
+void Renderer::DrawLines(const std::vector<Vec3>& points) {
+    if (points.empty()) return;
+    auto& vertices = mesh_->GetVertices();
+    vertices.clear();
+    vertices.resize(points.size());
+    for (int i = 0; i < points.size(); i++) {
+        vertices[i].position = points[i];
+        vertices[i].texcoord.Set(0, 0);
+    }
+    mesh_->Update2GPU();
+    drawMeshSolid(*mesh_, DrawType::LineStrip, CreateIdentityMat<4>());
+}
+
+void Renderer::DrawLineLoop(const std::vector<Vec3>& points) {
+    if (points.empty()) return;
+    auto& vertices = mesh_->GetVertices();
+    vertices.clear();
+    vertices.resize(points.size());
+    for (int i = 0; i < points.size(); i++) {
+        vertices[i].position = points[i];
+        vertices[i].texcoord.Set(0, 0);
+    }
+    mesh_->Update2GPU();
+    drawMeshSolid(*mesh_, DrawType::LineLoop, CreateIdentityMat<4>());
+}
+
 void Renderer::FillRect(const Rect& rect) {
     auto& vertices = mesh_->GetVertices();
     mesh_->GetIndices().clear();
@@ -232,6 +258,7 @@ void Renderer::FillRect(const Rect& rect) {
 }
 
 void Renderer::DrawLines(const std::vector<Vec2>& points) {
+    if (points.empty()) return;
     auto& vertices = mesh_->GetVertices();
     vertices.clear();
     vertices.resize(points.size());
@@ -241,6 +268,19 @@ void Renderer::DrawLines(const std::vector<Vec2>& points) {
     }
     mesh_->Update2GPU();
     drawMeshSolid(*mesh_, DrawType::LineStrip, CreateIdentityMat<4>());
+}
+
+void Renderer::DrawLineLoop(const std::vector<Vec2>& points) {
+    if (points.empty()) return;
+    auto& vertices = mesh_->GetVertices();
+    vertices.clear();
+    vertices.resize(points.size());
+    for (int i = 0; i < points.size(); i++) {
+        vertices[i].position.Set(points[i].x, points[i].y, 0);
+        vertices[i].texcoord.Set(0, 0);
+    }
+    mesh_->Update2GPU();
+    drawMeshSolid(*mesh_, DrawType::LineLoop, CreateIdentityMat<4>());
 }
 
 void Renderer::DrawTexture(const Texture& texture, Rect* src, const Size& size, const Mat4& transform) {
