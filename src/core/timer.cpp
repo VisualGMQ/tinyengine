@@ -2,68 +2,59 @@
 
 namespace engine {
 
-std::unordered_map<unsigned int, Timer> Timer::timers_;
-unsigned int Timer::curID_ = 0;
-double Timer::sElapse_ = 0;
-double Timer::sTime_ = 0;
+uint64_t Timer::sElapse_ = 0;
+uint64_t Timer::sTime_ = 0;
+std::unordered_map<SDL_TimerID, std::unique_ptr<Timer>> Timer::timerMap_;
 
-double Timer::GetTime() {
-    return glfwGetTime();
+uint64_t Timer::GetTime() {
+    return SDL_GetTicks64();
 }
 
-double Timer::GetElapse() {
+uint64_t Timer::GetElapse() {
     return sElapse_;
 }
 
 void Timer::UpdateElapse() {
-    sElapse_ = glfwGetTime() - sTime_;
-    sTime_ = glfwGetTime();
+    sElapse_ = GetTime() - sTime_;
+    sTime_ = GetTime();
 }
 
-void Timer::UpdateTimers() {
-    for (auto& [id, timer] : timers_) {
-        timer.Update();
-    }
+Uint32 Timer::myCallback(Uint32 interval, void *param) {
+    SDL_Event event;
+    SDL_UserEvent userevent;
+
+    userevent.type = SDL_USEREVENT;
+    userevent.code = 0;
+    userevent.data1 = param;
+    userevent.data2 = nullptr;
+
+    event.type = SDL_USEREVENT;
+    event.user = userevent;
+
+    SDL_PushEvent(&event);
+    return(interval);
 }
 
-TimerID Timer::AddTimer(Timer::Callback callback, double time, void* param) {
-    TimerID id = curID_++;
-    timers_.emplace(std::piecewise_construct,
-                    std::forward_as_tuple(id),
-                    std::forward_as_tuple(id, callback, time, param));
-    return id; 
+Timer* Timer::AddTimer(Timer::Callback callback, uint32_t interval, void* param) {
+    std::unique_ptr<Timer> timer = std::make_unique<Timer>(callback, interval, param);
+    Timer* result = timer.get();
+    SDL_TimerID id = timer->ID();
+    timerMap_[id] = std::move(timer);
+    return result;
 }
 
-void Timer::RemoveTimer(unsigned int id) {
-    auto it = timers_.find(id);
-    if (it != timers_.end()) {
-        it->second.shouldDie_ = true;
-    }
+void Timer::RemoveTimer(SDL_TimerID id) {
+    timerMap_.erase(id);
 }
 
-void Timer::CleanUpTimers() {
-    auto it = timers_.begin();
-    while (it != timers_.end()) {
-        if (it->second.shouldDie_) {
-            timers_.erase(it);
-            it = timers_.begin();
-        } else {
-            it ++;
-        }
-    }
+Timer::Timer(Callback callback, uint32_t interval, void* param): callback_(callback), interval_(interval) {
+    param_.owner = this;
+    param_.userParam = param;
+    id_ = SDL_AddTimer(interval, myCallback, (void*)&param_);
 }
 
-
-Timer::Timer(TimerID id, Callback callback, double time, void* param): id_(id), callback_(callback), elapse_(0), time_(time), param_(param) {}
-
-void Timer::Update() {
-    elapse_ += Timer::GetElapse();
-    while (elapse_ >= time_) {
-        elapse_ -= time_;
-        if (callback_) {
-            time_ = callback_(*this, time_, param_);
-        }
-    }
+Timer::~Timer() {
+    SDL_RemoveTimer(id_);
 }
 
 }

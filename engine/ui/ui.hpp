@@ -9,9 +9,8 @@
 #define NK_INCLUDE_VERTEX_BUFFER_OUTPUT
 #define NK_INCLUDE_FONT_BAKING
 #define NK_INCLUDE_DEFAULT_FONT
-#define NK_KEYSTATE_BASED_INPUT
-#include "nuklear/nuklear.h"
-#include "nuklear/nuklear_glfw_gl3.hpp"
+#include "nuklear.h"
+#include "nuklear_sdl_gl3.h"
 
 namespace engine {
 
@@ -19,15 +18,16 @@ class UI final {
 public:
     DLLEXPORT static void Init();
     DLLEXPORT static void Quit();
-    DLLEXPORT static void Update();
-    DLLEXPORT static void NewFrame();
-    DLLEXPORT static nk_glfw& GlfwContext() { return glfw; }
-    DLLEXPORT static nk_context* NkContext() { return ctx; }
+    static void Update();
+    static void NewFrame();
+    static nk_context* NkContext() { return ctx_; }
+    static void HandleEvent(SDL_Event*);
+    static void InputBegin();
+    static void InputEnd();
 
 private:
-    static nk_glfw glfw;
-    static nk_context* ctx;
-    static nk_font_atlas *atlas;
+    static nk_context* ctx_;
+    static nk_font_atlas *atlas_;
 };
 
 }

@@ -9,9 +9,12 @@ class DLLEXPORT Mouse final {
 public:
     Mouse() = delete;
 
-    static void Hide();
-    static void Show();
-    static bool IsShowing();
+    DLLEXPORT static void Hide();
+    DLLEXPORT static void Show();
+    DLLEXPORT static bool IsShowing();
+
+private:
+    static bool isShow_;
 };
 
 }

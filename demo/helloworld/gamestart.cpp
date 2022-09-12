@@ -1,7 +1,7 @@
 #include "gamestart.hpp"
 
 void GameStart::OnUpdate() {
-    if (engine::Input::IsKeyPressed(Key_C)) {
+    if (engine::Input::IsKeyPressed(SDL_SCANCODE_C)) {
         engine::SceneMgr::ChangeScene("UIScene");
         engine::Mouse::Show();
     }

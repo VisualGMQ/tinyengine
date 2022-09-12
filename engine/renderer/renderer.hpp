@@ -7,6 +7,7 @@
 #include "engine/renderer/shader.hpp"
 #include "engine/renderer/texture.hpp"
 #include "engine/renderer/camera.hpp"
+#include "engine/renderer/font.hpp"
 
 namespace engine {
 
@@ -72,7 +73,7 @@ public:
 
     static void FillRect(const Rect& rect);
     static void DrawTexture(const Texture& texture, Rect* src, const Size& size, const Mat4& transform = CreateIdentityMat<4>());
-    static void DrawText(const std::string& text, Vec2 pos, int ptSize);
+    static void DrawText(Font* font, const std::string& text, const Vec2& pos);
 
 private:
     static std::unique_ptr<Shader> shader_;
@@ -95,7 +96,6 @@ private:
     static void drawMesh(const Mesh&, DrawType, const Mat4&, const Texture* texture);
     static void drawMeshFrame(const Mesh&, DrawType, const Mat4&, const Texture* = nullptr);
     static void drawMeshSolid(const Mesh&, DrawType, const Mat4&, const Texture* = nullptr);
-    static void drawOneChar(char c, int index, const Vec2& initPos, int ptSize);
 };
 
 }

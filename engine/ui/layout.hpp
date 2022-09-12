@@ -1,7 +1,7 @@
 #pragma once
 
 #include "engine/ecs/component.hpp"
-#include "nuklear/nuklear.h"
+#include "nuklear.h"
 
 namespace engine {
 

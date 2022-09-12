@@ -2,57 +2,51 @@
 
 namespace engine {
 
-bool Input::oldKeyState_[KEY_NUM] = {0};
-bool Input::keyState_[KEY_NUM] = {0};
-bool Input::oldBtnState_[MOUSEBUTTON_NUM] = {0};
-bool Input::btnState_[MOUSEBUTTON_NUM] = {0};
+bool Input::oldKeyState_[SDL_NUM_SCANCODES] = {0};
+bool Input::keyState_[SDL_NUM_SCANCODES] = {0};
+bool Input::oldBtnState_[MOUSE_BTN_NUM] = {0};
+bool Input::btnState_[MOUSE_BTN_NUM] = {0};
 Vec2 Input::position_;
 Vec2 Input::offset_;
 
+void Input::UpdateKeyState(Key key, bool isPress) {
+    keyState_[key] = isPress;
+}
+
+void Input::UpdateMouseBtnState(Uint8 btn, bool isPress) {
+    btnState_[btn] = isPress;
+}
+
+void Input::UpdateMousePosition(const Vec2& position, const Vec2& relpos) {
+    offset_ = relpos;
+    position_ = position;
+}
+
 void Input::Init() {
-    auto window = Context::GetWindow();
-    glfwSetCursorPosCallback(window,
-                             [](GLFWwindow* window, double xpos, double ypos){
-                                offset_.Set(xpos - position_.x, ypos - position_.y);
-                                position_.x = xpos;  
-                                position_.y = ypos;
-                             });  
-    glfwSetKeyCallback(window,
-                       [](GLFWwindow* window, int key, int scancode, int action, int mods){
-                            if (action == GLFW_PRESS) {
-                                keyState_[key] = true;
-                            }
-                            if (action == GLFW_RELEASE) {
-                                keyState_[key] = false;
-                            }
-                       });
-    glfwSetMouseButtonCallback(window,
-                               [](GLFWwindow* window, int button, int action, int mods){
-                                   if (action == GLFW_PRESS) {
-                                       btnState_[button] = true;
-                                   }
-                                   if (action == GLFW_RELEASE) {
-                                       btnState_[button] = false;
-                                   }
-                               });
+    memset(oldKeyState_, 0, SDL_NUM_SCANCODES);
+    memset(keyState_, 0, SDL_NUM_SCANCODES);
+    memset(oldBtnState_, 0, MOUSE_BTN_NUM);
+    memset(btnState_, 0, MOUSE_BTN_NUM);
+    position_.Set(0, 0);
+    offset_.Set(0, 0);
 }
 
 void Input::Quit() { }
 
 
-bool Input::IsKeyPressed(KeyCode code) {
+bool Input::IsKeyPressed(Key code) {
     return !oldKeyState_[code] && keyState_[code];
 }
 
-bool Input::IsKeyPressing(KeyCode code) {
+bool Input::IsKeyPressing(Key code) {
     return oldKeyState_[code] && keyState_[code] || IsKeyPressed(code);
 }
 
-bool Input::IsKeyReleased(KeyCode code) {
+bool Input::IsKeyReleased(Key code) {
     return oldKeyState_[code] && !keyState_[code];
 }
 
-bool Input::IsKeyReleasing(KeyCode code) {
+bool Input::IsKeyReleasing(Key code) {
     return !oldKeyState_[code] && !keyState_[code] || IsKeyReleased(code);
 }
 

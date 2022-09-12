@@ -2,17 +2,20 @@
 
 namespace engine {
 
+bool Mouse::isShow_ = true;
+
 void Mouse::Hide() {
-    glfwSetInputMode(Context::GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    isShow_ = false;
+    SDL_ShowCursor(false);
 }
 
 void Mouse::Show() {
-    glfwSetInputMode(Context::GetWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    isShow_ = true;
+    SDL_ShowCursor(true);
 }
 
 bool Mouse::IsShowing() {
-    auto mode = glfwGetInputMode(Context::GetWindow(), GLFW_CURSOR);
-    return mode != GLFW_CURSOR_DISABLED && mode != GLFW_CURSOR_HIDDEN;
+    return isShow_;
 }
 
 }

@@ -10,11 +10,45 @@
 #include "engine/ui/ui.hpp"
 #include "engine/core/dllexport.hpp"
 #include "engine/sound/sound.hpp"
+#include "engine/renderer/font.hpp"
+#include "engine/core/timer.hpp"
 
 constexpr int WindowWidth = 800;
 constexpr int WindowHeight = 600;
 
 __declspec(dllexport) extern void GameInit(void);
+
+void PollEvent(SDL_Event& event) {
+    while (SDL_PollEvent(&event)) {
+        if (event.type == SDL_QUIT) {
+            engine::Context::Close();
+        }
+        if (event.type == SDL_KEYDOWN) {
+            engine::Input::UpdateKeyState(event.key.keysym.scancode, true);
+        }
+        if (event.type == SDL_KEYUP) {
+            engine::Input::UpdateKeyState(event.key.keysym.scancode, false);
+        }
+        if (event.type == SDL_MOUSEBUTTONDOWN) {
+            engine::Input::UpdateMouseBtnState(event.button.button, true);
+        }
+        if (event.type == SDL_MOUSEBUTTONUP) {
+            engine::Input::UpdateMouseBtnState(event.button.button, false);
+        }
+        if (event.type == SDL_MOUSEMOTION) {
+            engine::Input::UpdateMousePosition(engine::Vec2(event.motion.x, event.motion.y),
+                                               engine::Vec2(event.motion.xrel, event.motion.yrel));
+        }
+        if (event.type == SDL_USEREVENT) {
+            engine::Timer::Param* param =  (engine::Timer::Param*)event.user.data1;
+            auto callback = param->owner->GetCallback();
+            if (callback) {
+                callback(*param->owner, param->owner->Interval(), param->userParam);
+            }
+        }
+        engine::UI::HandleEvent(&event);
+    }
+}
 
 int main(int argc, char** argv) {
     engine::Logger::Init();
@@ -25,6 +59,7 @@ int main(int argc, char** argv) {
 
     engine::Context::Init(title, width, height);
     engine::Renderer::Init(width, height);
+    engine::FontFactory::Init();
     engine::TextureFactory::Init();
     engine::UI::Init();
     engine::Input::Init();
@@ -35,9 +70,13 @@ int main(int argc, char** argv) {
 
     GameInit();
 
+    SDL_Event event;
+
     engine::Renderer::SetClearColor(engine::Color(0.1, 0.1, 0.1, 1));
     while (!engine::Context::ShouldClose()) {
-        glfwPollEvents();
+        engine::UI::InputBegin();
+        PollEvent(event);
+        engine::UI::InputEnd();
         engine::Renderer::ResestState();
         engine::Renderer::Clear();
         engine::World::Instance()->TryInitEntities();
@@ -47,8 +86,6 @@ int main(int argc, char** argv) {
         engine::World::Instance()->Update();
         engine::UI::Update();
         engine::Timer::UpdateElapse();
-        engine::Timer::UpdateTimers();
-        engine::Timer::CleanUpTimers();
         engine::Input::UpdateStates();
         engine::SceneMgr::QuitOldScene();
         engine::World::Instance()->CleanUp();
@@ -62,6 +99,7 @@ int main(int argc, char** argv) {
     engine::Input::Quit();
     engine::UI::Quit();
     engine::TextureFactory::Quit();
+    engine::FontFactory::Quit();
     engine::Renderer::Quit();
     engine::Context::Quit();
     engine::Logger::Quit();

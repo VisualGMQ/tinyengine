@@ -8,8 +8,6 @@ public:
     void Reset() override {
         Logt("component reset");
     }
-
-    int value = 123;
 };
 
 class TestSystem: public engine::System {
@@ -50,7 +48,6 @@ public:
         auto texture = engine::TextureFactory::Create("./resources/test.jpg", "test");
 
         trianglePrymaid_ = engine::CreateCubeMesh();
-        // engine::Mouse::Hide();
         engine::Renderer::GetPerspCamera()->MoveTo(engine::Vec3(0, 1, 1));
 
         auto entity = world->CreateEntity("Entity1");
@@ -97,15 +94,17 @@ public:
         checkboxEntity->SetComponent(checkbox);
         layoutNode->Attach(checkboxEntity);
 
-        engine::TimerID id = engine::Timer::AddTimer([](engine::Timer& timer, double time, void* param){
+        engine::Timer::AddTimer([](engine::Timer& timer, uint32_t time, void* param){
             static int tick = 0;
+            float& lineRotation = *(float*)param;
+            lineRotation += 0.1;
             tick++;
             Logi("ticked");
             if (tick == 5) {
                 engine::Timer::RemoveTimer(timer.ID());
             }
             return time;
-        }, 1, nullptr);
+        }, 1000, &lineRotationY_);
 
         texture = engine::TextureFactory::Create("./resources/tilesheet.png", "tilesheet");
         Logw("texture id = {}", texture->ID());
@@ -118,6 +117,8 @@ public:
 
         sound1_ = engine::SoundFactory::Load("resources/test1.wav", "test1");
         sound2_ = engine::SoundFactory::Load("resources/test2.wav", "test2");
+
+        font_ = engine::FontFactory::Create("C:/windows/fonts/arial.ttf", "arial", 20);
     }
     void OnUpdate() override;
     void OnQuit() override {
@@ -129,50 +130,45 @@ private:
     std::shared_ptr<engine::Image> tile2_;
     std::shared_ptr<engine::Image> tile3_;
     engine::Vec2 rotation_;
-    std::shared_ptr<engine::Image> cppImage_;
-    std::unique_ptr<engine::TileSheet> tilesheet_;
-    float lineRotationY_ = 0;
     engine::Sound* sound1_;
     engine::Sound* sound2_;
+    std::shared_ptr<engine::Image> cppImage_;
+    std::unique_ptr<engine::TileSheet> tilesheet_;
+    engine::Font* font_;
+    float lineRotationY_ = 0;
 
     void update3d() {
         auto camera = engine::Renderer::GetPerspCamera();
-        if (engine::Input::IsKeyPressing(Key_W)) {
+        if (engine::Input::IsKeyPressing(SDL_SCANCODE_W)) {
             camera->MoveFront(0.01);
         }
-        if (engine::Input::IsKeyPressing(Key_S)) {
+        if (engine::Input::IsKeyPressing(SDL_SCANCODE_S)) {
             camera->MoveFront(-0.01);
         }
-        if (engine::Input::IsKeyPressing(Key_A)) {
+        if (engine::Input::IsKeyPressing(SDL_SCANCODE_A)) {
             camera->MoveRight(-0.01);
         }
-        if (engine::Input::IsKeyPressing(Key_D)) {
+        if (engine::Input::IsKeyPressing(SDL_SCANCODE_D)) {
             camera->MoveRight(0.01);
         }
-        if (engine::Input::IsKeyPressing(Key_Q)) {
+        if (engine::Input::IsKeyPressing(SDL_SCANCODE_Q)) {
             camera->MoveUp(0.01);
         }
-        if (engine::Input::IsKeyPressing(Key_E)) {
+        if (engine::Input::IsKeyPressing(SDL_SCANCODE_E)) {
             camera->MoveUp(-0.01);
         }
-        if (engine::Input::IsKeyPressing(Key_H)) {
+        if (engine::Input::IsKeyPressing(SDL_SCANCODE_H)) {
             lineRotationY_ -= 0.01;
         }
-        if (engine::Input::IsKeyPressing(Key_L)) {
+        if (engine::Input::IsKeyPressing(SDL_SCANCODE_L)) {
             lineRotationY_ += 0.01;
         }
-        if (engine::Input::IsKeyPressed(Key_M)) {
+        if (engine::Input::IsKeyPressed(SDL_SCANCODE_M)) {
             if (engine::Mouse::IsShowing()) {
                 engine::Mouse::Hide();
             } else {
                 engine::Mouse::Show();
             }
-        }
-        if (engine::Input::IsKeyPressed(Key_U)) {
-            sound1_->Play();
-        }
-        if (engine::Input::IsKeyPressed(Key_I)) {
-            sound2_->Play();
         }
         rotation_.y -= engine::Input::MouseRelative().x * 0.001;
         rotation_.x -= engine::Input::MouseRelative().y * 0.001;
@@ -180,17 +176,23 @@ private:
 
         camera->RotateTo(rotation_.x, rotation_.y);
 
-        if (engine::Input::IsKeyPressed(Key_Escape)) {
+        if (engine::Input::IsKeyPressed(SDL_SCANCODE_ESCAPE)) {
             engine::Context::Close();
+        }
+        if (engine::Input::IsKeyPressed(SDL_SCANCODE_0)) {
+            sound1_->Play();
+        }
+        if (engine::Input::IsKeyPressed(SDL_SCANCODE_1)) {
+            sound2_->Play();
         }
     }
 
     void update2d() {
         auto& orthoCamera = engine::Renderer::GetOrthoCamera();
-        if (engine::Input::IsKeyPressing(Key_A)) {
+        if (engine::Input::IsKeyPressing(SDL_SCANCODE_A)) {
             orthoCamera->Move(engine::Vec3(-0.1, 0, 0));
         }
-        if (engine::Input::IsKeyPressing(Key_D)) {
+        if (engine::Input::IsKeyPressing(SDL_SCANCODE_D)) {
             orthoCamera->Move(engine::Vec3(0.1, 0, 0));
         }
     }
@@ -211,8 +213,7 @@ private:
         tile3_->Draw();
 
         engine::Renderer::SetDrawColor(engine::Color(1, 1, 1));
-        engine::Renderer::DrawText("VisualGMQ made for 1MGames\ngithub: https://github.visualgmq.io\na simple framework makde for 1MGames", engine::Vec2(500, 0), 16);
-        engine::Renderer::DrawText(".,\"':;/?!\n@#$%^&*()_+-=", engine::Vec2(500, 100), 32);
+        engine::Renderer::DrawText(font_, "VisualGMQ made for 1MGames", engine::Vec2(500, 0));
     }
 
     void draw3d() {

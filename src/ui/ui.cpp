@@ -6,33 +6,43 @@
 
 namespace engine {
 
-nk_glfw UI::glfw = {0};
-nk_context* UI::ctx = nullptr;
-nk_font_atlas* UI::atlas = nullptr;
+nk_context* UI::ctx_ = nullptr;
+nk_font_atlas* UI::atlas_ = nullptr;
 
 void UI::Init() {
-    ctx = nk_glfw3_init(&glfw, engine::Context::GetWindow(), NK_GLFW3_INSTALL_CALLBACKS);
+    ctx_ = nk_sdl_init(Context::GetWindow());
     struct nk_font_config config = nk_font_config(20);
     config.oversample_h = 1;
     config.oversample_v = 1;
     config.range = nk_font_chinese_glyph_ranges();
     nk_font_atlas* atlas;
-    nk_glfw3_font_stash_begin(&glfw, &atlas);
+    nk_sdl_font_stash_begin(&atlas);
     nk_font *font = nk_font_atlas_add_from_file(atlas, "C:/Windows/Fonts/simhei.ttf", 20, &config);
-    nk_glfw3_font_stash_end(&glfw);
-    nk_style_set_font(ctx, &font->handle);
+    nk_sdl_font_stash_end();
+    nk_style_set_font(ctx_, &font->handle);
 }
 
 void UI::Quit() {
-    nk_glfw3_shutdown(&glfw);
+    nk_sdl_shutdown();
 }
 
 void UI::Update() {
-    nk_glfw3_render(&glfw, NK_ANTI_ALIASING_ON, MAX_VERTEX_BUFFER, MAX_ELEMENT_BUFFER);
+    nk_sdl_render(NK_ANTI_ALIASING_ON, MAX_VERTEX_BUFFER, MAX_ELEMENT_BUFFER);
 }
 
 void UI::NewFrame() {
-    nk_glfw3_new_frame(&glfw);
+}
+
+void UI::InputBegin() {
+    nk_input_begin(ctx_);
+}
+
+void UI::InputEnd() {
+    nk_input_end(ctx_);
+}
+
+void UI::HandleEvent(SDL_Event* event) {
+    nk_sdl_handle_event(event);
 }
 
 }

@@ -17,9 +17,11 @@
 #include <functional>
 
 #include "glad/glad.h"
-#include "GLFW/glfw3.h"
+#include "SDL.h"
+#include "SDL_ttf.h"
+#include "SDL_mixer.h"
 
-#include "stb/stb_image.h"
+#include "stb_image.h"
 
 #include "engine/core/dllexport.hpp"
 #include "engine/core/log.hpp"

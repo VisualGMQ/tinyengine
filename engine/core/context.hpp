@@ -15,10 +15,11 @@ public:
     static bool ShouldClose();
     static void Close();
 
-    static GLFWwindow* GetWindow();
+    static SDL_Window* GetWindow();
 
 private:
-    static GLFWwindow* window_;
+    static SDL_Window* window_;
+    static bool shouldClose_;
 };
 
 }

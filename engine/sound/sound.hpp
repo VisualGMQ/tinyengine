@@ -1,6 +1,5 @@
 #pragma once
 
-#include "miniaudio/miniaudio.h"
 #include "engine/core/vmath.hpp"
 
 namespace engine {
@@ -11,29 +10,26 @@ class Sound {
 public:
     static void Init();
     static void Quit();
-    static void PlaySound(const std::string& filename);
+    static void PlaySound(const std::string& filename, int loop = 0);
 
-    Sound(SoundID id, const std::string& filename, const std::string& name, bool async = false, bool is3D = false);
+    Sound(SoundID id, const std::string& filename, const std::string& name);
     ~Sound();
-    void Play();
+    void Play(int loops = 0);
     void Stop();
-    void SetPosition(const Vec3& position);
-    void SetDirection(const Vec3& dir);
-    void SetVelocity(const Vec3& vel);
+    void SetPosition(const Vec2& position);
     void FadeIn(int milliseconds);
     void FadeOut(int milliseconds);
     bool IsStop() const;
     void SetLoop(bool);
-    bool IsLooping() const;
     const std::string& Name() const { return name_; }
     SoundID ID() const { return id_; }
 
 private:
-    static ma_engine engine_;
-
+    static Mix_Music* music_;
     std::string name_;
-    ma_sound sound_;
+    Mix_Chunk* chunk_;
     SoundID id_;
+    std::uint32_t channel_;
 };
 
 class SoundFactory final {

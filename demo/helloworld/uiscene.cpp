@@ -4,7 +4,7 @@ void UIScene::OnInit() {
 }
 
 void UIScene::OnUpdate() {
-    if (engine::Input::IsKeyPressed(Key_C)) {
+    if (engine::Input::IsKeyPressed(SDL_SCANCODE_C)) {
         engine::SceneMgr::ChangeScene("GameStart");
     }
 

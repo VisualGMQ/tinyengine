@@ -2,60 +2,60 @@
 
 namespace engine {
 
-GLFWwindow* Context::window_ = nullptr;
+SDL_Window* Context::window_ = nullptr;
+bool Context::shouldClose_ = false;
 
 
-GLFWwindow* Context::GetWindow() {
+SDL_Window* Context::GetWindow() {
     return window_;
 }
 
-void FramebufferResizeCallback(GLFWwindow* window, int width, int height) {
-    glViewport(0, 0, width, height);
-}
-
 void Context::Init(const std::string& title, int w, int h) {
-    if (!glfwInit()) {
-        Loge("glfw init failed");
+    if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
+        Loge("SDL init failed: {}", SDL_GetError());
         exit(1);
     }
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-    window_ = glfwCreateWindow(w, h, title.c_str(), NULL, NULL);
+    SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, "0");
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute (SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+    window_ = SDL_CreateWindow(title.c_str(),
+                              SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                              w, h,
+                              SDL_WINDOW_OPENGL|SDL_WINDOW_SHOWN|SDL_WINDOW_RESIZABLE|SDL_WINDOW_ALLOW_HIGHDPI);
+
     if (!window_) {
-        glfwTerminate();
+        SDL_Quit();
         Loge("window create failed");
         exit(2);
     }
 
-    glfwMakeContextCurrent(window_);
-
+    SDL_GL_CreateContext(window_);
     gladLoadGL();
 
     glViewport(0, 0, w, h);
-
-    glfwSetFramebufferSizeCallback(window_, FramebufferResizeCallback);
+    shouldClose_ = false;
 }
 
 void Context::Quit() {
-    glfwDestroyWindow(window_);
-    glfwTerminate();
+    SDL_DestroyWindow(window_);
+    SDL_Quit();
 }
 
 void Context::SwapBuffers() {
-    glfwSwapBuffers(window_);
+    SDL_GL_SwapWindow(window_);
 }
 
 bool Context::ShouldClose() {
-    return glfwWindowShouldClose(window_);
+    return shouldClose_;
 }
 
 void Context::Close() {
-    glfwSetWindowShouldClose(window_, 1);
+    shouldClose_ = true;
 }
 
 }

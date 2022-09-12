@@ -7,15 +7,12 @@ project(
     VERSION 0.1.0
 )
 
-set(GLFW_BUILD_EXAMPLES OFF)
-set(GLFW_BUILD_TESTS OFF)
-set(GLFW_BUILD_DOCS OFF)
-set(GLFW_INSTALL OFF)
-add_subdirectory(3rdlibs/glfw)
+include(cmake/FindSDL2.cmake)
+include(cmake/FindSDL2_mixer.cmake)
+include(cmake/FindSDL2_ttf.cmake) 
 add_subdirectory(3rdlibs/glad)
 add_subdirectory(3rdlibs/stb)
 add_subdirectory(3rdlibs/nuklear)
-add_subdirectory(3rdlibs/miniaudio)
 
 ############# build options ##############
 option(ENGINE_BUILD_DEMOS "do you want to build demos" OFF)
@@ -32,11 +29,17 @@ aux_source_directory(src/ui ENGINE_UI_SRC)
 aux_source_directory(src/sound ENGINE_SOUND_SRC)
 
 add_library(${ENGINE_NAME} STATIC)
-target_sources(${ENGINE_NAME} PRIVATE ${ENGINE_CORE_SRC} ${ENGINE_RENDERER_SRC} ${ENGINE_INPUT_SRC} ${ENGINE_ECS_SRC} ${ENGINE_COMPONENTS_SRC} ${ENGINE_UI_SRC} ${ENGINE_SOUND_SRC})
-target_link_libraries(${ENGINE_NAME} PUBLIC glad glfw stb_image miniaudio)
+target_sources(${ENGINE_NAME} PRIVATE
+                ${ENGINE_CORE_SRC}
+                ${ENGINE_RENDERER_SRC}
+                ${ENGINE_INPUT_SRC}
+                ${ENGINE_ECS_SRC}
+                ${ENGINE_COMPONENTS_SRC}
+                ${ENGINE_UI_SRC}
+                ${ENGINE_SOUND_SRC})
+target_link_libraries(${ENGINE_NAME} PUBLIC glad SDL2 SDL2_ttf SDL2_mixer nuklear stb_image)
 target_compile_features(${ENGINE_NAME} PUBLIC cxx_std_17)
 target_include_directories(${ENGINE_NAME} PUBLIC ./)
-target_compile_definitions(${ENGINE_NAME} PUBLIC SHOULD_EXPORT)
 target_precompile_headers(${ENGINE_NAME} PUBLIC "engine/core/pch.hpp")
 
 ############# build demo ##############
