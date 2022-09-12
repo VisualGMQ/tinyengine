@@ -25,9 +25,13 @@ TinyEngine是一个为编写1MGames而搭建的底层（我实在是不想每次
 ## 编译
 
 ```bash
-cmake -S . -B build
+cmake -S . -B build -DSDL2_ROOT=<your sdl2 root dir> -DSDL2_TTF_ROOT=<your sdl2_ttf root dir> -DSDL2_MIXER_ROOT=<your sdl2_mixer root dir>
 cmake --build build
 ```
+
+如果觉得设置路径的命令麻烦，也可以使用cmake-gui:
+
+![cmake-gui](./snapshots/cmake-gui.png)
 
 ## 注意事项
 
@@ -48,8 +52,8 @@ MinGW由于自己有一套库，发布的时候要带这些库，所以最后结
 * [x] 定时器
 * [x] TileSheet
 * [x] GUI (使用nuklear)
-* [x] 文字绘制 (使用位图文字，只能绘制英文，数字和标点)
-* [x] 音频系统 (使用miniaudio)
+* [x] 文字绘制
+* [x] 音频系统
 * [x] 将底层更换为SDL
 * [ ] 加入json或toml
 * [ ] 2D 物理系统
