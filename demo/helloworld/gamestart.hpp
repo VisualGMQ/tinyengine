@@ -41,6 +41,9 @@ class GameStart: public engine::Scene {
 public:
     GameStart(const std::string& name): engine::Scene(name) {}
     void OnInit() override {
+        auto camera = engine::Renderer::GetPerspCamera();
+        camera->MoveFront(-100);
+
         engine::World* world = engine::World::Instance();
         world = engine::World::Instance();
         world->AddSystem<TestSystem>();
@@ -96,15 +99,14 @@ public:
 
         engine::Timer::AddTimer([](engine::Timer& timer, uint32_t time, void* param){
             static int tick = 0;
-            float& lineRotation = *(float*)param;
-            lineRotation += 0.1;
             tick++;
             Logi("ticked");
             if (tick == 5) {
-                engine::Timer::RemoveTimer(timer.ID());
+                timer.Stop();
+                // engine::Timer::RemoveTimer(timer.ID());
             }
             return time;
-        }, 1000, &lineRotationY_);
+        }, 1000, nullptr)->Start();
 
         texture = engine::TextureFactory::Create("./resources/tilesheet.png", "tilesheet");
         Logw("texture id = {}", texture->ID());
@@ -119,6 +121,12 @@ public:
         sound2_ = engine::SoundFactory::Load("resources/test2.wav", "test2");
 
         font_ = engine::FontFactory::Create("C:/windows/fonts/arial.ttf", "arial", 20);
+
+        animation_.reset(new engine::Animation<float>({
+            engine::KeyFrame(engine::PI / 2, 2000),
+            engine::KeyFrame(engine::PI, 6000),
+        }, std::ref(lineRotationY_)));
+        animation_->Play();
     }
     void OnUpdate() override;
     void OnQuit() override {
@@ -135,6 +143,7 @@ private:
     std::shared_ptr<engine::Image> cppImage_;
     std::unique_ptr<engine::TileSheet> tilesheet_;
     engine::Font* font_;
+    std::unique_ptr<engine::Animation<float>> animation_;
     float lineRotationY_ = 0;
 
     void update3d() {
@@ -157,18 +166,16 @@ private:
         if (engine::Input::IsKeyPressing(SDL_SCANCODE_E)) {
             camera->MoveUp(-0.01);
         }
-        if (engine::Input::IsKeyPressing(SDL_SCANCODE_H)) {
-            lineRotationY_ -= 0.01;
-        }
-        if (engine::Input::IsKeyPressing(SDL_SCANCODE_L)) {
-            lineRotationY_ += 0.01;
-        }
         if (engine::Input::IsKeyPressed(SDL_SCANCODE_M)) {
             if (engine::Mouse::IsShowing()) {
                 engine::Mouse::Hide();
             } else {
                 engine::Mouse::Show();
             }
+        }
+        if (engine::Input::IsKeyPressed(SDL_SCANCODE_R)) {
+            animation_->Rewind();
+            animation_->Play();
         }
         rotation_.y -= engine::Input::MouseRelative().x * 0.001;
         rotation_.x -= engine::Input::MouseRelative().y * 0.001;
@@ -185,6 +192,8 @@ private:
         if (engine::Input::IsKeyPressed(SDL_SCANCODE_1)) {
             sound2_->Play();
         }
+
+        animation_->Update();
     }
 
     void update2d() {

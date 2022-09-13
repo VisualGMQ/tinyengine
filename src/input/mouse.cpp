@@ -18,4 +18,8 @@ bool Mouse::IsShowing() {
     return isShow_;
 }
 
+void Mouse::Capture(bool enable) {
+    SDL_CaptureMouse(enable ? SDL_TRUE : SDL_FALSE);
+}
+
 }

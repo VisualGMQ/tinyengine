@@ -36,3 +36,5 @@
 #include "engine/sound/sound.hpp"
 
 #include "engine/components/node.hpp"
+
+#include "engine/animation/animation.hpp"

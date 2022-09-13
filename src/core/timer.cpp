@@ -50,10 +50,17 @@ void Timer::RemoveTimer(SDL_TimerID id) {
 Timer::Timer(Callback callback, uint32_t interval, void* param): callback_(callback), interval_(interval) {
     param_.owner = this;
     param_.userParam = param;
-    id_ = SDL_AddTimer(interval, myCallback, (void*)&param_);
 }
 
 Timer::~Timer() {
+    SDL_RemoveTimer(id_);
+}
+
+void Timer::Start() {
+    id_ = SDL_AddTimer(interval_, myCallback, (void*)&param_);
+}
+
+void Timer::Stop() {
     SDL_RemoveTimer(id_);
 }
 

@@ -816,4 +816,9 @@ DLLEXPORT inline bool IsPointInRect(const Vec2& p, const Rect& r) {
 
 DLLEXPORT extern const Mat4 IdentityMat4;
 
+template <typename T, typename RetT>
+DLLEXPORT RetT Lerp(const T& a, const T& b, float s) {
+    return a + (b - a) * s;
+}
+
 }

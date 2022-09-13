@@ -30,6 +30,9 @@ public:
 
     Callback GetCallback() const { return callback_; }
 
+    void Start();
+    void Stop();
+
 private:
     Callback callback_;
     Param param_;

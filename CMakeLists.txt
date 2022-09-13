@@ -32,6 +32,7 @@ aux_source_directory(src/ecs ENGINE_ECS_SRC)
 aux_source_directory(src/components ENGINE_COMPONENTS_SRC)
 aux_source_directory(src/ui ENGINE_UI_SRC)
 aux_source_directory(src/sound ENGINE_SOUND_SRC)
+aux_source_directory(src/animation ENGINE_ANIMATION_SRC)
 
 add_library(${ENGINE_NAME} STATIC)
 target_sources(${ENGINE_NAME} PRIVATE
@@ -41,6 +42,7 @@ target_sources(${ENGINE_NAME} PRIVATE
                 ${ENGINE_ECS_SRC}
                 ${ENGINE_COMPONENTS_SRC}
                 ${ENGINE_UI_SRC}
+                ${ENGINE_ANIMATION_SRC}
                 ${ENGINE_SOUND_SRC})
 target_link_libraries(${ENGINE_NAME} PUBLIC glad SDL2 SDL2_ttf SDL2_mixer nuklear stb_image)
 target_compile_features(${ENGINE_NAME} PUBLIC cxx_std_17)
