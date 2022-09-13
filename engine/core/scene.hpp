@@ -16,6 +16,12 @@ public:
 
     Scene& operator=(const Scene&) = delete;
 
+    virtual void OnKeyDown(const SDL_KeyboardEvent&) {}
+    virtual void OnKeyUp(const SDL_KeyboardEvent&) {}
+    virtual void OnMouseBtnDown(const SDL_MouseButtonEvent&) {}
+    virtual void OnMouseBtnUp(const SDL_MouseButtonEvent&) {}
+    virtual void OnMouseMotion(const SDL_MouseMotionEvent&) {}
+
     const std::string& Name() const { return name_; }
     Entity* GetRootEntity() const { return root_; }
     void Attach(Entity*);

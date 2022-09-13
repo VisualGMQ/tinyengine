@@ -27,7 +27,8 @@ public:
     DLLEXPORT static bool IsButtonReleased(MouseButton);
     DLLEXPORT static bool IsButtonReleasing(MouseButton);
 
-    DLLEXPORT static const Vec2& MousePoition();
+    DLLEXPORT static Vec2 MousePoition();
+    DLLEXPORT static const Vec2& MouseRealPoition();
     DLLEXPORT static const Vec2& MouseRelative();
 
     static void UpdateStates();

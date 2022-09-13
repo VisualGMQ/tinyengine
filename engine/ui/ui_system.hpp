@@ -10,6 +10,8 @@
 #include "engine/ui/button.hpp"
 #include "engine/ui/checkbox.hpp"
 #include "engine/ui/layout.hpp"
+#include "engine/ui/tree.hpp"
+#include "engine/ui/label.hpp"
 
 namespace engine {
 

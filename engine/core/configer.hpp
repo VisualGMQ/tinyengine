@@ -106,6 +106,12 @@ std::optional<T> Configer::Get(const std::string& name) {
                     return std::nullopt;
                 }
                 break;
+            case Configer::ElementType::Bool:
+                if (!std::is_same_v<T, bool>) {
+                    Logw("{} field is not bool", name.c_str());
+                    return std::nullopt;
+                }
+                break;
             default:
                 Logw("{} type unknown", name.c_str());
                 return std::nullopt;
@@ -130,6 +136,12 @@ T Configer::GetOr(const std::string& name, T value) {
             case Configer::ElementType::String:
                 if (!std::is_same_v<T, std::string>) {
                     Logw("{} field is not string", name.c_str());
+                    return value;
+                }
+                break;
+            case Configer::ElementType::Bool:
+                if (!std::is_same_v<T, bool>) {
+                    Logw("{} field is not bool", name.c_str());
                     return value;
                 }
                 break;

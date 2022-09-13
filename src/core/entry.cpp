@@ -20,6 +20,7 @@ __declspec(dllexport) extern void GameInit(void);
 
 void PollEvent(SDL_Event& event) {
     while (SDL_PollEvent(&event)) {
+        engine::UI::HandleEvent(&event);
         if (event.type == SDL_QUIT) {
             engine::Context::Close();
         }
@@ -46,7 +47,11 @@ void PollEvent(SDL_Event& event) {
                 callback(*param->owner, param->owner->Interval(), param->userParam);
             }
         }
-        engine::UI::HandleEvent(&event);
+        if (event.type == SDL_WINDOWEVENT) {
+            if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+                GL_CALL(glViewport(0, 0, event.window.data1, event.window.data2));
+            }
+        }
     }
 }
 
@@ -56,8 +61,9 @@ int main(int argc, char** argv) {
     auto title = configReader.GetOr<std::string>("title", "engine");
     auto width = configReader.GetOr<float>("width", WindowWidth);
     auto height = configReader.GetOr<float>("height", WindowHeight);
+    auto resizable = configReader.GetOr<bool>("resizable", false);
 
-    engine::Context::Init(title, width, height);
+    engine::Context::Init(title, width, height, resizable);
     engine::Renderer::Init(width, height);
     engine::FontFactory::Init();
     engine::TextureFactory::Init();

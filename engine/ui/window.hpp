@@ -10,7 +10,6 @@ public:
     void Reset() override;
 
     std::string title;
-    bool isShowTitle;
     uint32_t flags;
     Rect rect;
 };

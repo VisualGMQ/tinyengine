@@ -5,6 +5,7 @@ namespace engine {
 void UIButton::Reset() {
     text = "button";
     onClick = nullptr;
+    param = nullptr;
 }
 
 }

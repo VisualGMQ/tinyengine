@@ -30,6 +30,8 @@
 #include "engine/ui/layout.hpp"
 #include "engine/ui/text.hpp"
 #include "engine/ui/window.hpp"
+#include "engine/ui/label.hpp"
+#include "engine/ui/tree.hpp"
 
 #include "engine/sound/sound.hpp"
 

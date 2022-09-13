@@ -66,12 +66,18 @@ bool Input::IsButtonReleasing(MouseButton button) {
     return !oldBtnState_[button] && !btnState_[button] || IsButtonReleasing(button);
 }
 
-const Vec2& Input::MousePoition() {
-    return position_;
+Vec2 Input::MousePoition() {
+    auto size = Context::GetWindowSize();
+    auto& initSize = Context::GetInitSize();
+    return MulEach(position_, Vec2(initSize.w / size.w, initSize.h / size.h));
 }
 
 const Vec2& Input::MouseRelative() {
     return offset_;
+}
+
+const Vec2& Input::MouseRealPoition() {
+    return position_;
 }
 
 void Input::UpdateStates() {
