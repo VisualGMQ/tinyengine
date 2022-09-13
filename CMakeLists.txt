@@ -15,6 +15,7 @@ add_subdirectory(3rdlibs/stb)
 add_subdirectory(3rdlibs/nuklear)
 
 include(cmake/shader2inc.cmake)
+include(cmake/copydll.cmake)
 
 ############# build options ##############
 option(ENGINE_BUILD_DEMOS "do you want to build demos" OFF)
