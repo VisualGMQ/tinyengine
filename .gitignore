@@ -3,3 +3,4 @@ build
 vs-build
 .cache
 test.cfg
+.inc

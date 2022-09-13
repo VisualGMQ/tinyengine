@@ -80,7 +80,6 @@ private:
     
     static Texture* blackTexture_;
     static Texture* whiteTexture_;
-    static Texture* textTexture_;
     static Color currentColor_;
     static std::unique_ptr<Mesh> mesh_;
     static std::shared_ptr<OrthoCamera> orthoCamera_;

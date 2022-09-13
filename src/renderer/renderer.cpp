@@ -1,11 +1,12 @@
 #include "engine/renderer/renderer.hpp"
 
+#include "shader.inc"
+
 namespace engine {
 
 std::unique_ptr<Shader> Renderer::shader_ = nullptr;
 Texture* Renderer::blackTexture_ = nullptr;
 Texture* Renderer::whiteTexture_ = nullptr;
-Texture* Renderer::textTexture_ = nullptr;
 Color Renderer::currentColor_(0, 0, 0, 1);
 std::unique_ptr<Mesh> Renderer::mesh_ = nullptr;
 std::shared_ptr<OrthoCamera> Renderer::orthoCamera_ = nullptr;
@@ -21,8 +22,10 @@ void Renderer::Init(int w, int h) {
         Loge("SDL ttf init failed: {}", TTF_GetError());
     }
     stbi_set_flip_vertically_on_load(true);
-    ShaderModule vertexModule(ReadWholeFile("shader/shader.vert"), ShaderModule::Type::Vertex);
-    ShaderModule fragModule(ReadWholeFile("shader/shader.frag"), ShaderModule::Type::Fragment);
+    // ShaderModule vertexModule(ReadWholeFile("shader/shader.vert"), ShaderModule::Type::Vertex);
+    // ShaderModule fragModule(ReadWholeFile("shader/shader.frag"), ShaderModule::Type::Fragment);
+    ShaderModule vertexModule(VertexShaderSource, ShaderModule::Type::Vertex);
+    ShaderModule fragModule(FragShaderSource, ShaderModule::Type::Fragment);
     shader_ = std::make_unique<Shader>(vertexModule, fragModule);
     unsigned char value[4] = {0x00, 0x00, 0x00, 0xFF};
     blackTexture_ = TextureFactory::Create("Engine::Renderer::Black", value, 1, 1);
@@ -32,8 +35,6 @@ void Renderer::Init(int w, int h) {
 
     orthoCamera_ = std::make_unique<OrthoCamera>(w, h, 1.0f);
     perspCamera_ = std::make_unique<PerspCamera>(Radians(45), w / h, 0.1f, 100.f);
-
-    textTexture_ = TextureFactory::Create("./resources/numbers.png", "Engine::Renderer::Number");
 }
 
 void Renderer::ResestState() {

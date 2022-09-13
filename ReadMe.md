@@ -18,7 +18,7 @@ TinyEngine是一个为编写1MGames而搭建的底层（我实在是不想每次
 * demo：一些Demo，指定`ENGINE_BUILD_DEMOS=ON`可以编译Demo。请在工程跟目录下运行Demo
 * engine：底层的头文件
 * src：底层的源文件
-* shader：底层的着色器，需要和底层一起发布
+* shader：底层的着色器
 * resources：测试使用的资源
 * snapshots：截图
 

@@ -14,11 +14,15 @@ add_subdirectory(3rdlibs/glad)
 add_subdirectory(3rdlibs/stb)
 add_subdirectory(3rdlibs/nuklear)
 
+include(cmake/shader2inc.cmake)
+
 ############# build options ##############
 option(ENGINE_BUILD_DEMOS "do you want to build demos" OFF)
 
 ############# build engine ##############
 set(ENGINE_NAME "tinyengine")
+
+Shader2Inc()
 
 aux_source_directory(src/core ENGINE_CORE_SRC)
 aux_source_directory(src/renderer ENGINE_RENDERER_SRC)
