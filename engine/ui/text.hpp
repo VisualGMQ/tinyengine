@@ -6,7 +6,7 @@ namespace engine {
 
 class UIText: public Component {
 public:
-    UIText(ComponentID id, const std::string& name): Component(id, name) {}
+    UIText(ComponentID id): Component(id) {}
 
     void Reset() override;
 

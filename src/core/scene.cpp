@@ -8,7 +8,7 @@ std::unordered_map<std::string, std::unique_ptr<Scene>> SceneMgr::scenes_;
 
 Scene::Scene(const std::string& name): name_(name) {
     root_ = World::Instance()->CreateEntity(name + " root");
-    root_->SetComponent<NodeComponent>(World::Instance()->CreateComponent<NodeComponent>("node"));
+    root_->SetComponent<NodeComponent>(World::Instance()->CreateComponent<NodeComponent>());
 }
 
 void SceneMgr::Init() {}

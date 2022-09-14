@@ -7,7 +7,7 @@ namespace engine {
 
 class DLLEXPORT NodeComponent: public Component {
 public:
-    NodeComponent(ComponentID id, const std::string& name): Component(id, name) {}
+    NodeComponent(ComponentID id): Component(id) {}
 
     virtual void Reset() override { children.clear(); }
 

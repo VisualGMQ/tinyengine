@@ -7,7 +7,7 @@ namespace engine {
 
 class DLLEXPORT RectTransform final: public Component {
 public:
-    RectTransform(ComponentID id, const std::string& name): Component(id, name) {}
+    RectTransform(ComponentID id): Component(id) {}
     void OnInit() override {
         anchor.Set(0, 0);
         size(0, 0);

@@ -1,4 +1,4 @@
-#include "engine/core/context.hpp"
+#include "engine/core/video.hpp"
 #include "engine/core/configer.hpp"
 #include "engine/core/scene.hpp"
 #include "engine/input/input.hpp"
@@ -22,7 +22,7 @@ void PollEvent(SDL_Event& event) {
     while (SDL_PollEvent(&event)) {
         engine::UI::HandleEvent(&event);
         if (event.type == SDL_QUIT) {
-            engine::Context::Close();
+            engine::Video::Close();
         }
         if (event.type == SDL_KEYDOWN) {
             engine::Input::UpdateKeyState(event.key.keysym.scancode, true);
@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
     auto height = configReader.GetOr<float>("height", WindowHeight);
     auto resizable = configReader.GetOr<bool>("resizable", false);
 
-    engine::Context::Init(title, width, height, resizable);
+    engine::Video::Init(title, width, height, resizable);
     engine::Renderer::Init(width, height);
     engine::FontFactory::Init();
     engine::TextureFactory::Init();
@@ -80,7 +80,7 @@ int main(int argc, char** argv) {
     SDL_Event event;
 
     engine::Renderer::SetClearColor(engine::Color(0.1, 0.1, 0.1, 1));
-    while (!engine::Context::ShouldClose()) {
+    while (!engine::Video::ShouldClose()) {
         engine::UI::InputBegin();
         PollEvent(event);
         engine::UI::InputEnd();
@@ -96,7 +96,7 @@ int main(int argc, char** argv) {
         engine::Input::UpdateStates();
         engine::SceneMgr::QuitOldScene();
         engine::World::Instance()->CleanUp();
-        engine::Context::SwapBuffers();
+        engine::Video::SwapBuffers();
     }
 
     engine::SceneMgr::Quit();
@@ -109,7 +109,7 @@ int main(int argc, char** argv) {
     engine::TextureFactory::Quit();
     engine::FontFactory::Quit();
     engine::Renderer::Quit();
-    engine::Context::Quit();
+    engine::Video::Quit();
     engine::Logger::Quit();
     return 0;
 }

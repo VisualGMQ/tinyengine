@@ -3,7 +3,7 @@
 
 class MyComponent: public engine::Component {
 public:
-    MyComponent(unsigned int id, const std::string& name): engine::Component(id, name) {}
+    MyComponent(unsigned int id): engine::Component(id) {}
 
     void Reset() override {
         Logt("component reset");
@@ -55,24 +55,24 @@ public:
 
         auto entity = world->CreateEntity("Entity1");
         entity->SetBehavior(std::make_unique<TestBehavior>());
-        entity->SetComponent(world->CreateComponent<MyComponent>("MyComponent"));
+        entity->SetComponent(world->CreateComponent<MyComponent>());
         Attach(entity);
 
         auto windowEntity = world->CreateEntity("WindowEntity");
-        auto uiwindow = world->CreateComponent<engine::UIWindow>("window");
+        auto uiwindow = world->CreateComponent<engine::UIWindow>();
         windowEntity->SetComponent(uiwindow);
         uiwindow->title = "Demo";
         uiwindow->rect.position.Set(50, 50);
         uiwindow->rect.size.Set(230, 250);
         uiwindow->flags = NK_WINDOW_BORDER | NK_WINDOW_MOVABLE | NK_WINDOW_SCALABLE |
                           NK_WINDOW_MINIMIZABLE | NK_WINDOW_TITLE;
-        auto node = world->CreateComponent<engine::NodeComponent>("window node");
+        auto node = world->CreateComponent<engine::NodeComponent>();
         windowEntity->SetComponent(node);
         Attach(windowEntity);
 
         auto layout = world->CreateEntity("layout");
-        auto rowLayout = world->CreateComponent<engine::UIDynamicRowLayout>("rowlayout");
-        auto layoutNode = world->CreateComponent<engine::NodeComponent>("layout node");
+        auto rowLayout = world->CreateComponent<engine::UIDynamicRowLayout>();
+        auto layoutNode = world->CreateComponent<engine::NodeComponent>();
         rowLayout->cols = 2;
         rowLayout->height = 50;
         layout->SetComponent(rowLayout);
@@ -81,12 +81,13 @@ public:
         node->Attach(layout);
 
         auto buttonEntity = world->CreateEntity("button");
-        auto button = world->CreateComponent<engine::UIButton>("button");
+        auto button = world->CreateComponent<engine::UIButton>();
+        button->text = "button";
         buttonEntity->SetComponent(button);
         layoutNode->Attach(buttonEntity);
 
         auto checkboxEntity = world->CreateEntity("checkbox");
-        auto checkbox = world->CreateComponent<engine::UICheckbox>("checkbox");
+        auto checkbox = world->CreateComponent<engine::UICheckbox>();
         checkbox->text = "checkbox 1";
         checkbox->isSelected = false;
         checkbox->callback = [](engine::Entity* self) {
@@ -123,9 +124,9 @@ public:
 
         animation_.reset(new engine::Animation<float>({
             engine::KeyFrame(engine::PI, 2000),
-            engine::KeyFrame(1.5f * engine::PI, 3000),
             engine::KeyFrame(1.5f * engine::PI, 4000),
-        }, imgRotation_, false));
+            engine::KeyFrame(1.5f * engine::PI, 5000),
+        }, imgRotation_, true));
         animation_->SetLoop(1);
         animation_->Play();
     }
@@ -185,7 +186,7 @@ private:
         camera->RotateTo(rotation_.x, rotation_.y);
 
         if (engine::Input::IsKeyPressed(SDL_SCANCODE_ESCAPE)) {
-            engine::Context::Close();
+            engine::Video::Close();
         }
         if (engine::Input::IsKeyPressed(SDL_SCANCODE_0)) {
             sound1_->Play();

@@ -14,20 +14,18 @@ public:
     friend class Entity;
     friend class World;
 
-    Component(ComponentID id, const std::string& name): id_(id), name_(name) {}
+    Component(ComponentID id): id_(id) {}
     virtual ~Component() = default;
 
     Component(const Component&) = delete;
     Component& operator=(const Component&) = delete;
 
-    const std::string& Name() const { return name_; }
     virtual void Reset() {}
     Entity* Parent() const { return parent_; }
 
     unsigned int ID() const { return id_; }
 
 private:
-    std::string name_;
     ComponentID id_;
     Entity* parent_ = nullptr;
 };

@@ -7,7 +7,7 @@ namespace engine {
 
 class UITree: public Component {
 public:
-    UITree(ComponentID id, const std::string& name): Component(id, name), treeID_(curId_++) {}
+    UITree(ComponentID id): Component(id), treeID_(curId_++) {}
 
     void Reset() override;
     int TreeID() const { return treeID_; }

@@ -1,5 +1,5 @@
 #include "engine/ui/ui.hpp"
-#include "engine/core/context.hpp"
+#include "engine/core/video.hpp"
 
 #define MAX_VERTEX_BUFFER 512 * 1024
 #define MAX_ELEMENT_BUFFER 128 * 1024
@@ -10,7 +10,7 @@ nk_context* UI::ctx_ = nullptr;
 nk_font_atlas* UI::atlas_ = nullptr;
 
 void UI::Init() {
-    ctx_ = nk_sdl_init(Context::GetWindow());
+    ctx_ = nk_sdl_init((SDL_Window*)Video::GetWindow());
     struct nk_font_config config = nk_font_config(20);
     config.oversample_h = 1;
     config.oversample_v = 1;

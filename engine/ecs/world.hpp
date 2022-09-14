@@ -25,7 +25,7 @@ public:
     void DestroyEntity(Entity* entity);
 
     template <typename T>
-    T* CreateComponent(const std::string& name);
+    T* CreateComponent();
 
     std::vector<std::unique_ptr<Entity>>& Entities() { return entities_; }
     const std::vector<std::unique_ptr<Entity>>& Entities() const { return entities_; }
@@ -74,18 +74,17 @@ private:
 };
 
 template <typename T>
-T* World::CreateComponent(const std::string& name) {
+T* World::CreateComponent() {
     unsigned int id = ComponentIDHelper::GetID<T>();
     if (components_.find(id) == components_.end()) {
         components_[id] = ComponentCell{};
     }
 
     if (components_[id].componentTrashes_.empty()) {
-        components_[id].components.emplace_back(std::make_unique<T>(componentID_++, name));
+        components_[id].components.emplace_back(std::make_unique<T>(componentID_++));
         return (T*)components_[id].components.back().get();
     } else {
         std::unique_ptr<Component> component = std::move(components_[id].componentTrashes_.top());
-        component->name_ = name;
         component->id_ = componentID_++;
         components_[id].components.push_back(std::move(component));
         components_[id].componentTrashes_.pop();

@@ -7,7 +7,7 @@ namespace engine {
 
 class DLLEXPORT UIStaticRowLayout final: public Component {
 public:
-    UIStaticRowLayout(ComponentID id, const std::string& name): Component(id, name) {}
+    UIStaticRowLayout(ComponentID id): Component(id) {}
     void Reset() override;
 
     float height;
@@ -17,7 +17,7 @@ public:
 
 class DLLEXPORT UIDynamicRowLayout final: public Component {
 public:
-    UIDynamicRowLayout(ComponentID id, const std::string& name): Component(id, name) {}
+    UIDynamicRowLayout(ComponentID id): Component(id) {}
     void Reset() override;
 
     float height;
@@ -27,7 +27,7 @@ public:
 /*
 class UIRowLayout final: public Component {
 public:
-    UIRowLayout(ComponentID id, const std::string& name): Component(id, name) {}
+    UIRowLayout(ComponentID id): Component(id) {}
     void Reset() override;
 
     nk_layout_format format;
