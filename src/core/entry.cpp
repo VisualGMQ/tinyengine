@@ -71,6 +71,7 @@ int main(int argc, char** argv) {
     engine::Input::Init();
     engine::Sound::Init();
     engine::SoundFactory::Init();
+    engine::TimerFactory::Init();
     engine::World::Init();
     engine::SceneMgr::Init();
 
@@ -100,6 +101,7 @@ int main(int argc, char** argv) {
 
     engine::SceneMgr::Quit();
     engine::World::Quit();
+    engine::TimerFactory::Quit();
     engine::SoundFactory::Quit();
     engine::Sound::Quit();
     engine::Input::Quit();

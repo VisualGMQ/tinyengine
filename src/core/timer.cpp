@@ -4,7 +4,6 @@ namespace engine {
 
 uint64_t Timer::sElapse_ = 0;
 uint64_t Timer::sTime_ = 0;
-std::unordered_map<SDL_TimerID, std::unique_ptr<Timer>> Timer::timerMap_;
 
 uint64_t Timer::GetTime() {
     return SDL_GetTicks64();
@@ -35,33 +34,48 @@ Uint32 Timer::myCallback(Uint32 interval, void *param) {
     return(interval);
 }
 
-Timer* Timer::AddTimer(Timer::Callback callback, uint32_t interval, void* param) {
-    std::unique_ptr<Timer> timer = std::make_unique<Timer>(callback, interval, param);
-    Timer* result = timer.get();
-    SDL_TimerID id = timer->ID();
-    timerMap_[id] = std::move(timer);
-    return result;
-}
-
-void Timer::RemoveTimer(SDL_TimerID id) {
-    timerMap_.erase(id);
-}
-
-Timer::Timer(Callback callback, uint32_t interval, void* param): callback_(callback), interval_(interval) {
+Timer::Timer(TimerID id, Callback callback, uint32_t interval, void* param): id_(id), callback_(callback), interval_(interval) {
     param_.owner = this;
     param_.userParam = param;
 }
 
 Timer::~Timer() {
-    SDL_RemoveTimer(id_);
+    Stop();
 }
 
 void Timer::Start() {
-    id_ = SDL_AddTimer(interval_, myCallback, (void*)&param_);
+    innerId_ = SDL_AddTimer(interval_, myCallback, (void*)&param_);
+    if (innerId_ == 0) {
+        Loge("Timer start failed: {}", SDL_GetError());
+    }
 }
 
 void Timer::Stop() {
-    SDL_RemoveTimer(id_);
+    SDL_RemoveTimer(innerId_);
+}
+
+
+std::unordered_map<SDL_TimerID, std::unique_ptr<Timer>> TimerFactory::timerMap_;
+TimerID TimerFactory::curId_ = 0;
+
+Timer* TimerFactory::Create(Timer::Callback callback, uint32_t interval, void* param) {
+    TimerID id = curId_++;
+    std::unique_ptr<Timer> timer = std::make_unique<Timer>(id, callback, interval, param);
+    Timer* result = timer.get();
+    timerMap_[id] = std::move(timer);
+    return result;
+}
+
+Timer* TimerFactory::Find(TimerID) {
+    if (auto it = timerMap_.begin(); it != timerMap_.end()) {
+        return it->second.get();
+    } else {
+        return nullptr;
+    }
+}
+
+void TimerFactory::Remove(TimerID id) {
+    timerMap_.erase(id);
 }
 
 }

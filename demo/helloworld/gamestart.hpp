@@ -97,13 +97,12 @@ public:
         checkboxEntity->SetComponent(checkbox);
         layoutNode->Attach(checkboxEntity);
 
-        engine::Timer::AddTimer([](engine::Timer& timer, uint32_t time, void* param){
+        engine::TimerFactory::Create([](engine::Timer& timer, uint32_t time, void* param){
             static int tick = 0;
             tick++;
             Logi("ticked");
-            if (tick == 5) {
+            if (tick == 3) {
                 timer.Stop();
-                // engine::Timer::RemoveTimer(timer.ID());
             }
             return time;
         }, 1000, nullptr)->Start();
@@ -123,9 +122,11 @@ public:
         font_ = engine::FontFactory::Create("C:/windows/fonts/arial.ttf", "arial", 20);
 
         animation_.reset(new engine::Animation<float>({
-            engine::KeyFrame(engine::PI / 2, 2000),
-            engine::KeyFrame(engine::PI, 6000),
-        }, std::ref(lineRotationY_)));
+            engine::KeyFrame(engine::PI, 2000),
+            engine::KeyFrame(1.5f * engine::PI, 3000),
+            engine::KeyFrame(1.5f * engine::PI, 4000),
+        }, imgRotation_, false));
+        animation_->SetLoop(1);
         animation_->Play();
     }
     void OnUpdate() override;
@@ -145,6 +146,7 @@ private:
     engine::Font* font_;
     std::unique_ptr<engine::Animation<float>> animation_;
     float lineRotationY_ = 0;
+    float imgRotation_ = 0;
 
     void update3d() {
         auto camera = engine::Renderer::GetPerspCamera();
@@ -174,7 +176,6 @@ private:
             }
         }
         if (engine::Input::IsKeyPressed(SDL_SCANCODE_R)) {
-            animation_->Rewind();
             animation_->Play();
         }
         rotation_.y -= engine::Input::MouseRelative().x * 0.001;
@@ -220,6 +221,10 @@ private:
         tile2_->Draw();
         tile3_->SetPosition(engine::Vec2(400, 300));
         tile3_->Draw();
+
+        engine::Renderer::SetDrawColor(engine::Color(1, 1, 1));
+        cppImage_->SetPosition(engine::Vec2(400, 100));
+        cppImage_->Draw(engine::CreateRotationZ(imgRotation_));
 
         engine::Renderer::SetDrawColor(engine::Color(1, 1, 1));
         engine::Renderer::DrawText(font_, "VisualGMQ made for 1MGames", engine::Vec2(500, 0));

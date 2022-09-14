@@ -54,13 +54,13 @@ MinGW由于自己有一套库，发布的时候要带这些库，所以最后结
 * [x] GUI (使用nuklear)
 * [x] 文字绘制
 * [x] 音频系统
-* [x] 将底层更换为SDL
-* [ ] 加入json或toml
-* [ ] 2D 物理系统
-* [ ] 2D Animation
-* [ ] 制作编辑器
+* [x] 2D Animation
 
+* 延后：
+  * [ ] 加入json或toml
+  * [ ] 2D 物理系统
+  * [ ] 制作编辑器
 
-## 目前效果：
+## 目前效果
 
 ![snapshots](./snapshots/snapshot.png)

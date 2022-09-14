@@ -8,7 +8,7 @@ namespace engine {
 template <typename T>
 class KeyFrame final {
 public:
-    KeyFrame::KeyFrame(T data, int time): data_(data), time_(time) { }
+    KeyFrame(T data, int time): data_(data), time_(time) { }
     int Time() const { return time_; }
     void SetTime(int time) { time_ = time; }
     T& Data() { return data_; }
@@ -19,17 +19,10 @@ private:
     int time_;
 };
 
-/*
-Animation animation({
-    KeyFrame<float>(3.0, 1200),
-    KeyFrame<Vec2>(Vec2(1, 2), 2300),
-});
-*/
-
 template <typename T>
 class Animation final {
 public:
-    Animation(const std::initializer_list<KeyFrame<T>>& frames, const std::reference_wrapper<T>& attribute);
+    Animation(const std::initializer_list<KeyFrame<T>>& frames, T& attribute, bool shouldInterpolation = true);
     ~Animation() = default;
 
     void Play();
@@ -37,10 +30,14 @@ public:
     void Stop();
     void Rewind();
     bool IsPlay() const { return isPlay_; }
+    bool WillInterpolation() const { return shouldInterpolation_; }
 
     void Update();
 
-    void SetLoop(int loop) { loop_ = loop; }
+    void SetLoop(int loop) {
+        loop_ = loop;
+        curLoop_ = loop;
+    }
 
 private:
     struct KeyFrameOrderByTime {
@@ -53,19 +50,21 @@ private:
     bool isPlay_ = false;
     uint32_t curTime_ = 0;
     uint32_t curFrameIdx_ = 0;
-    std::reference_wrapper<T> attribute_;
+    T& attribute_;
     T initAttr_;
     int loop_ = 0;
+    int curLoop_ = 0;
+    bool shouldInterpolation_;
 };
 
 template <typename T>
-Animation<T>::Animation(const std::initializer_list<KeyFrame<T>>& frames, const std::reference_wrapper<T>& attribute)
-: attribute_(attribute) {
+Animation<T>::Animation(const std::initializer_list<KeyFrame<T>>& frames, T& attribute, bool shouldInterpolation)
+: attribute_(attribute), shouldInterpolation_(shouldInterpolation) {
     std::set<KeyFrame<T>, KeyFrameOrderByTime> keyframeSet(frames);
     for (auto& frame : keyframeSet) {
         keyframes_.push_back(frame);
     }
-    initAttr_ = attribute.get();
+    initAttr_ = attribute;
 }
 
 template <typename T>
@@ -89,6 +88,8 @@ template <typename T>
 void Animation<T>::Rewind() {
     curTime_ = 0;
     curFrameIdx_ = 0;
+    attribute_ = initAttr_;
+    curLoop_ = loop_;
 }
 
 template <typename T>
@@ -99,15 +100,15 @@ void Animation<T>::Update() {
 
     while (curFrameIdx_ < keyframes_.size() && 
            keyframes_[curFrameIdx_].Time() < curTime_) {
-        Loge("time = {}", keyframes_[curFrameIdx_].Time());
-        Loge("curTime_ = {}", curTime_);
         curFrameIdx_++;
     }
 
     if (curFrameIdx_ >= keyframes_.size()) {
-        if (loop_ == -1 || loop_ > 0) {
-            if (loop_ > 0) loop_ --;
+        if (curLoop_ == -1 || curLoop_ > 0) {
+            if (curLoop_ > 0) curLoop_ --;
+            int tmpLoop = curLoop_;
             Rewind();
+            curLoop_ = tmpLoop;
         } else {
             Pause();
             attribute_ = keyframes_.back().Data();
@@ -115,12 +116,17 @@ void Animation<T>::Update() {
         }
     }
 
-    const T& curAttr = keyframes_[curFrameIdx_].Data();
-    T prevAttr = curFrameIdx_ == 0 ? initAttr_ : keyframes_[curFrameIdx_ - 1].Data();
-    uint32_t curFrameTime = keyframes_[curFrameIdx_].Time(),
-             prevFrameTime = curFrameIdx_ == 0 ? 0 : keyframes_[curFrameIdx_ - 1].Time();
-    uint32_t deltaTime = curFrameTime - prevFrameTime;
-    attribute_.get() = Lerp<T, T>(prevAttr, curAttr, (float)(curTime_ - prevFrameTime) / float(deltaTime));
+    uint32_t prevFrameIdx = curFrameIdx_ - 1;
+    if (WillInterpolation()) {
+        const T& curAttr = keyframes_[curFrameIdx_].Data();
+        T prevAttr = curFrameIdx_ == 0 ? initAttr_ : keyframes_[prevFrameIdx].Data();
+        uint32_t curFrameTime = keyframes_[curFrameIdx_].Time(),
+                 prevFrameTime = curFrameIdx_ == 0 ? 0 : keyframes_[prevFrameIdx].Time();
+        uint32_t deltaTime = curFrameTime - prevFrameTime;
+        attribute_ = Lerp<T, T>(prevAttr, curAttr, (float)(curTime_ - prevFrameTime) / float(deltaTime));
+    } else {
+        attribute_ = curFrameIdx_ == 0 ? initAttr_ : keyframes_[prevFrameIdx].Data();
+    }
 }
 
 }
