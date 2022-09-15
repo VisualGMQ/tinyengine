@@ -5,6 +5,9 @@ namespace engine {
 std::optional<bool> UISystem::BeginContainer(Entity* entity) {
     nk_context* ctx = UI::NkContext();
 
+    if (nk_window_is_any_hovered(ctx)) {
+        Event::GetDispatcher().EventedTriggedOnUI();
+    }
     if (auto window = entity->GetComponent<UIWindow>(); window) {
         struct nk_rect rect{window->rect.position.x, window->rect.position.y, window->rect.size.w, window->rect.size.h};
         return nk_begin(UI::NkContext(), window->title.c_str(), rect, window->flags);
@@ -32,6 +35,7 @@ void UISystem::EndContainer(Entity* entity) {
 
 void UISystem::Update(Entity* entity) {
     nk_context* ctx = UI::NkContext();
+
     if (auto button = entity->GetComponent<UIButton>(); button) {
         if (nk_button_label(UI::NkContext(), button->text.c_str())) {
             if (button->onClick) button->onClick(entity, button->param);

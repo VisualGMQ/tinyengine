@@ -16,23 +16,26 @@ public:
 
     Scene& operator=(const Scene&) = delete;
 
-    virtual void OnKeyDown(const SDL_KeyboardEvent&) {}
-    virtual void OnKeyUp(const SDL_KeyboardEvent&) {}
-    virtual void OnMouseBtnDown(const SDL_MouseButtonEvent&) {}
-    virtual void OnMouseBtnUp(const SDL_MouseButtonEvent&) {}
-    virtual void OnMouseMotion(const SDL_MouseMotionEvent&) {}
-
     const std::string& Name() const { return name_; }
     Entity* GetRootEntity() const { return root_; }
+    Entity* Get2DRoot() const { return node2d_; }
+    Entity* Get3DRoot() const { return node3d_; }
+    Entity* GetUIRoot() const { return nodeUI_; }
+
+    void Attach2D(Entity*);
+    void Attach3D(Entity*);
+    void AttachUI(Entity*);
     void Attach(Entity*);
 
-    virtual void OnInit() = 0;
-    virtual void OnUpdate() = 0;
-    virtual void OnQuit() = 0;
+    virtual void OnInit() {}
+    virtual void OnQuit() {}
 
 private:
     std::string name_;
     Entity* root_;
+    Entity* node2d_;
+    Entity* node3d_;
+    Entity* nodeUI_;
 };
 
 

@@ -22,6 +22,9 @@ public:
     std::optional<bool> BeginContainer(Entity*);
     void EndContainer(Entity*);
     void Update(Entity*) override;
+
+private:
+    void judgeEventOnUI();
 };
 
 }

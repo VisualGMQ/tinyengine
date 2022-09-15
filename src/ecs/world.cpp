@@ -3,7 +3,6 @@
 #include "engine/ecs/entity.hpp"
 #include "engine/core/scene.hpp"
 #include "engine/ui/ui_system.hpp"
-#include "engine/ui/ui.hpp"
 
 namespace engine {
 
@@ -121,12 +120,30 @@ void World::Update() {
     
     UI::NewFrame();
     for (auto& entity : node->children) {
-        updateUIEntity(entity);
+        if (entity->GetComponent<NodeUIRoot>()) {
+            updateUIEntity(entity);
+        }
+    }
+
+    auto& eventDispatcher = Event::GetDispatcher();
+    if (!eventDispatcher.IsEventedTriggedOnUI()) {
+        for (auto& entity : node->children) {
+            if (!entity->GetComponent<NodeUIRoot>()) {
+                dispatchEvent2Entity(entity);
+            }
+        }
     }
 }
 
 void World::updateEntity(Entity* entity) {
     if (!entity) return;
+
+    if (entity->GetComponent<Node2DRoot>()) {
+        Renderer::Begin2D();
+    }
+    if (entity->GetComponent<Node3DRoot>()) {
+        Renderer::Begin3D();
+    }
 
     auto& systems = World::Instance()->Systems();
     if (auto behavior = entity->GetBehavior(); behavior != nullptr) {
@@ -158,6 +175,19 @@ void World::updateUIEntity(Entity* entity) {
     }
     if (windowState.has_value()) {
         uiSystem_->EndContainer(entity);
+    }
+}
+
+void World::dispatchEvent2Entity(Entity* entity) {
+    if (!entity) return;
+
+    if (entity->GetBehavior()) {
+        Event::GetDispatcher().Dispatch(entity->GetBehavior());
+    }
+    if (auto node = entity->GetComponent<NodeComponent>(); node) {
+        for (auto& child : node->children) {
+            dispatchEvent2Entity(child);
+        }
     }
 }
 

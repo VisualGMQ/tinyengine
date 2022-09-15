@@ -4,6 +4,7 @@
 #include "engine/ecs/system.hpp"
 #include "engine/ecs/entity.hpp"
 #include "engine/core/dllexport.hpp"
+#include "engine/core/event.hpp"
 
 namespace engine {
 
@@ -68,9 +69,10 @@ private:
     static std::unique_ptr<World> instance_;
 
     void destroyEntity(const std::vector<std::unique_ptr<Entity>>::const_iterator& it);
-    void updateEntity(Entity* entity);
-    void updateUIEntity(Entity* entity);
-    void initEntity(Entity* entity);
+    void updateEntity(Entity*);
+    void updateUIEntity(Entity*);
+    void initEntity(Entity*);
+    void dispatchEvent2Entity(Entity*);
 };
 
 template <typename T>

@@ -12,51 +12,16 @@
 #include "engine/sound/sound.hpp"
 #include "engine/renderer/font.hpp"
 #include "engine/core/timer.hpp"
+#include "engine/core/event.hpp"
 
 constexpr int WindowWidth = 800;
 constexpr int WindowHeight = 600;
 
 __declspec(dllexport) extern void GameInit(void);
 
-void PollEvent(SDL_Event& event) {
-    while (SDL_PollEvent(&event)) {
-        engine::UI::HandleEvent(&event);
-        if (event.type == SDL_QUIT) {
-            engine::Video::Close();
-        }
-        if (event.type == SDL_KEYDOWN) {
-            engine::Input::UpdateKeyState(event.key.keysym.scancode, true);
-        }
-        if (event.type == SDL_KEYUP) {
-            engine::Input::UpdateKeyState(event.key.keysym.scancode, false);
-        }
-        if (event.type == SDL_MOUSEBUTTONDOWN) {
-            engine::Input::UpdateMouseBtnState(event.button.button, true);
-        }
-        if (event.type == SDL_MOUSEBUTTONUP) {
-            engine::Input::UpdateMouseBtnState(event.button.button, false);
-        }
-        if (event.type == SDL_MOUSEMOTION) {
-            engine::Input::UpdateMousePosition(engine::Vec2(event.motion.x, event.motion.y),
-                                               engine::Vec2(event.motion.xrel, event.motion.yrel));
-        }
-        if (event.type == SDL_USEREVENT) {
-            engine::Timer::Param* param =  (engine::Timer::Param*)event.user.data1;
-            auto callback = param->owner->GetCallback();
-            if (callback) {
-                callback(*param->owner, param->owner->Interval(), param->userParam);
-            }
-        }
-        if (event.type == SDL_WINDOWEVENT) {
-            if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
-                GL_CALL(glViewport(0, 0, event.window.data1, event.window.data2));
-            }
-        }
-    }
-}
-
 int main(int argc, char** argv) {
     engine::Logger::Init();
+
     engine::Configer configReader("init.cfg");
     auto title = configReader.GetOr<std::string>("title", "engine");
     auto width = configReader.GetOr<float>("width", WindowWidth);
@@ -64,6 +29,7 @@ int main(int argc, char** argv) {
     auto resizable = configReader.GetOr<bool>("resizable", false);
 
     engine::Video::Init(title, width, height, resizable);
+    engine::Event::Init();
     engine::Renderer::Init(width, height);
     engine::FontFactory::Init();
     engine::TextureFactory::Init();
@@ -77,25 +43,20 @@ int main(int argc, char** argv) {
 
     GameInit();
 
-    SDL_Event event;
-
     engine::Renderer::SetClearColor(engine::Color(0.1, 0.1, 0.1, 1));
     while (!engine::Video::ShouldClose()) {
-        engine::UI::InputBegin();
-        PollEvent(event);
-        engine::UI::InputEnd();
+        engine::Event::HandleEvent();
+
         engine::Renderer::ResestState();
         engine::Renderer::Clear();
         engine::World::Instance()->TryInitEntities();
-        if (auto scene = engine::SceneMgr::CurrentScene(); scene) {
-            scene->OnUpdate();
-        }
         engine::World::Instance()->Update();
         engine::UI::Update();
         engine::Timer::UpdateElapse();
         engine::Input::UpdateStates();
         engine::SceneMgr::QuitOldScene();
         engine::World::Instance()->CleanUp();
+        engine::Event::ClearState();
         engine::Video::SwapBuffers();
     }
 
@@ -109,6 +70,7 @@ int main(int argc, char** argv) {
     engine::TextureFactory::Quit();
     engine::FontFactory::Quit();
     engine::Renderer::Quit();
+    engine::Event::Quit();
     engine::Video::Quit();
     engine::Logger::Quit();
     return 0;

@@ -1,13 +1,14 @@
 #pragma once
 
 #include "engine/core/pch.hpp"
+#include "engine/core/event.hpp"
 #include "engine/ecs/system.hpp"
 
 namespace engine {
 
 class Entity;
 
-class DLLEXPORT Behavior {
+class DLLEXPORT Behavior: public EventAcceptable {
 public:
     friend class Entity;
 
