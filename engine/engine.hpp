@@ -32,6 +32,9 @@
 #include "engine/ui/window.hpp"
 #include "engine/ui/label.hpp"
 #include "engine/ui/tree.hpp"
+#include "engine/ui/edit.hpp"
+#include "engine/ui/property.hpp"
+#include "engine/ui/group.hpp"
 
 #include "engine/sound/sound.hpp"
 

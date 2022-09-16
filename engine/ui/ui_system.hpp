@@ -12,6 +12,9 @@
 #include "engine/ui/layout.hpp"
 #include "engine/ui/tree.hpp"
 #include "engine/ui/label.hpp"
+#include "engine/ui/edit.hpp"
+#include "engine/ui/property.hpp"
+#include "engine/ui/group.hpp"
 
 namespace engine {
 
@@ -20,7 +23,7 @@ public:
     UISystem(class World* world): System(world) {}
 
     std::optional<bool> BeginContainer(Entity*);
-    void EndContainer(Entity*);
+    void EndContainer(Entity*, bool);
     void Update(Entity*) override;
 
 private:

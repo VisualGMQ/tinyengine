@@ -14,49 +14,22 @@ void GameStart::OnInit() {
 }
 
 void GameStart::initUI() {
-    engine::World* world = engine::World::Instance();
+    auto window = engine::CreateUIWindow("window", "demo",
+                                         NK_WINDOW_TITLE|NK_WINDOW_MOVABLE|NK_WINDOW_SCALABLE,
+                                         engine::Rect(50, 50, 230, 300), nullptr);
+    AttachUI(window);
 
-    auto windowEntity = world->CreateEntity("WindowEntity");
-    auto uiwindow = world->CreateComponent<engine::UIWindow>();
-    windowEntity->SetComponent(uiwindow);
-    uiwindow->title = "Demo";
-    uiwindow->rect.position.Set(50, 50);
-    uiwindow->rect.size.Set(230, 250);
-    uiwindow->flags = NK_WINDOW_BORDER | NK_WINDOW_MOVABLE | NK_WINDOW_SCALABLE |
-                        NK_WINDOW_MINIMIZABLE | NK_WINDOW_TITLE;
-    auto node = world->CreateComponent<engine::NodeComponent>();
-    windowEntity->SetComponent(node);
-    AttachUI(windowEntity);
+    auto windowLayout = engine::CreateUIDynamicRowLayout("window layout", 50, 2, window);
 
-    auto layout = world->CreateEntity("layout");
-    auto rowLayout = world->CreateComponent<engine::UIDynamicRowLayout>();
-    auto layoutNode = world->CreateComponent<engine::NodeComponent>();
-    rowLayout->cols = 2;
-    rowLayout->height = 50;
-    layout->SetComponent(rowLayout);
-    layout->SetComponent(layoutNode);
+    engine::CreateUIButton("button", "button", nullptr, nullptr, windowLayout);
+    engine::CreateUICheckbox("checkbox", "checkbox", nullptr, windowLayout);
+    engine::CreateUIEdit("edit", NK_EDIT_FIELD, 1023, nk_filter_ascii, windowLayout);
+    engine::CreateUIText("edit", "text", NK_TEXT_ALIGN_LEFT, windowLayout);
+    engine::CreateUIProperty("value", "int value", engine::UIProperty::Type::Int, 0, 100, 20, 1, 1, windowLayout);
 
-    node->Attach(layout);
-
-    auto buttonEntity = world->CreateEntity("button");
-    auto button = world->CreateComponent<engine::UIButton>();
-    button->text = "button";
-    buttonEntity->SetComponent(button);
-    layoutNode->Attach(buttonEntity);
-
-    auto checkboxEntity = world->CreateEntity("checkbox");
-    auto checkbox = world->CreateComponent<engine::UICheckbox>();
-    checkbox->text = "checkbox 1";
-    checkbox->isSelected = false;
-    checkbox->callback = [](engine::Entity* self) {
-        Logt("clicked checkbox");
-        auto& select = self->GetComponent<engine::UICheckbox>()->isSelected;
-        select = !select;
-    };
-    checkboxEntity->SetComponent(checkbox);
-    layoutNode->Attach(checkboxEntity);
-
-
+    auto tree = engine::CreateUITreeTab("scene tree", "root tree", NK_MINIMIZED, windowLayout);
+    engine::CreateUITreeNode("node1", "node1", NK_MINIMIZED, tree);
+    engine::CreateUITreeNode("node2", "node2", NK_MINIMIZED, tree);
 }
 
 void GameStart::loadResources() {

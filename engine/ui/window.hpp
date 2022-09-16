@@ -1,6 +1,9 @@
 #pragma once
 
 #include "engine/ecs/component.hpp"
+#include "engine/ecs/world.hpp"
+#include "engine/components/node.hpp"
+#include "nuklear.h"
 
 namespace engine {
 
@@ -10,8 +13,10 @@ public:
     void Reset() override;
 
     std::string title;
-    uint32_t flags;
+    nk_flags flags;
     Rect rect;
 };
+
+Entity* CreateUIWindow(const std::string& name, const std::string& title, nk_flags flags, const Rect& rect, Entity* parent);
 
 };

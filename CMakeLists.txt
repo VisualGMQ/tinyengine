@@ -31,6 +31,7 @@ aux_source_directory(src/input ENGINE_INPUT_SRC)
 aux_source_directory(src/ecs ENGINE_ECS_SRC)
 aux_source_directory(src/ui ENGINE_UI_SRC)
 aux_source_directory(src/sound ENGINE_SOUND_SRC)
+aux_source_directory(src/debug ENGINE_DEBUG_SRC)
 
 add_library(${ENGINE_NAME} STATIC)
 target_sources(${ENGINE_NAME} PRIVATE
@@ -39,7 +40,9 @@ target_sources(${ENGINE_NAME} PRIVATE
                 ${ENGINE_INPUT_SRC}
                 ${ENGINE_ECS_SRC}
                 ${ENGINE_UI_SRC}
-                ${ENGINE_SOUND_SRC})
+                ${ENGINE_SOUND_SRC}
+                ${ENGINE_DEBUG_SRC}
+                src/entry.cpp)
 target_link_libraries(${ENGINE_NAME} PUBLIC glad SDL2 SDL2_ttf SDL2_mixer nuklear stb_image)
 target_compile_features(${ENGINE_NAME} PUBLIC cxx_std_17)
 target_include_directories(${ENGINE_NAME} PUBLIC ./)

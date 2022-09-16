@@ -1,6 +1,8 @@
 #pragma once
 
 #include "engine/ecs/component.hpp"
+#include "engine/ecs/world.hpp"
+#include "engine/components/node.hpp"
 #include "nuklear.h"
 
 namespace engine {
@@ -20,5 +22,8 @@ private:
     static int curId_;
     int treeID_;
 };
+
+Entity* CreateUITreeTab(const std::string& name, const std::string& text, nk_collapse_states state, Entity* parent);
+Entity* CreateUITreeNode(const std::string& name, const std::string& text, nk_collapse_states state, Entity* parent);
 
 }

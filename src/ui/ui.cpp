@@ -30,9 +30,6 @@ void UI::Update() {
     nk_sdl_render(NK_ANTI_ALIASING_ON, MAX_VERTEX_BUFFER, MAX_ELEMENT_BUFFER);
 }
 
-void UI::NewFrame() {
-}
-
 void UI::InputBegin() {
     nk_input_begin(ctx_);
 }

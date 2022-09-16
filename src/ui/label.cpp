@@ -7,4 +7,22 @@ void UILabel::Reset() {
     align = NK_TEXT_ALIGN_LEFT;
 }
 
+Entity* CreateUILabel(const std::string& name, const std::string& text, nk_flags align, Entity* parent) {
+    Entity* entity = World::Instance()->CreateEntity(name);
+    auto label = World::Instance()->CreateComponent<UILabel>();
+    label->text = text;
+    label->align = align;
+    entity->SetComponent(label);
+
+    if (parent) {
+        auto node = parent->GetComponent<NodeComponent>();
+        if (!node) {
+            node = World::Instance()->CreateComponent<NodeComponent>();
+            parent->SetComponent(node);
+        }
+        node->Attach(entity);
+    }
+    return entity;
+}
+
 }

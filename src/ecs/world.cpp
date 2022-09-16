@@ -118,7 +118,6 @@ void World::Update() {
         updateEntity(entity);
     }
     
-    UI::NewFrame();
     for (auto& entity : node->children) {
         if (entity->GetComponent<NodeUIRoot>()) {
             updateUIEntity(entity);
@@ -174,7 +173,7 @@ void World::updateUIEntity(Entity* entity) {
         }
     }
     if (windowState.has_value()) {
-        uiSystem_->EndContainer(entity);
+        uiSystem_->EndContainer(entity, windowState.value());
     }
 }
 

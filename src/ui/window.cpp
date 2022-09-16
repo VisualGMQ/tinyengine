@@ -9,4 +9,23 @@ void UIWindow::Reset() {
     rect.size.Set(200, 200);
 }
 
+Entity* CreateUIWindow(const std::string& name, const std::string& title, nk_flags flags, const Rect& rect, Entity* parent) {
+    Entity* entity = World::Instance()->CreateEntity(name);
+    auto window = World::Instance()->CreateComponent<UIWindow>();
+    window->title = title;
+    window->flags = flags;
+    window->rect = rect;
+    entity->SetComponent(window);
+
+    if (parent) {
+        auto node = parent->GetComponent<NodeComponent>();
+        if (!node) {
+            node = World::Instance()->CreateComponent<NodeComponent>();
+            parent->SetComponent(node);
+        }
+        node->Attach(entity);
+    }
+    return entity;
+}
+
 }

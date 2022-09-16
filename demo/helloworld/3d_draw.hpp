@@ -8,11 +8,6 @@ public:
     void OnUpdate() override;
     void OnQuit() override;
 
-    bool OnMouseButtonDown(const SDL_MouseButtonEvent&) override {
-        Loge("clicked");
-        return true;
-    }
-
 private:
     std::shared_ptr<engine::Mesh> cube_;
     float lineRotationY_;

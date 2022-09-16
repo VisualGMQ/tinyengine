@@ -19,15 +19,23 @@ std::optional<bool> UISystem::BeginContainer(Entity* entity) {
         return std::nullopt;
     } else if (auto tree = entity->GetComponent<UITree>(); tree) {
         return nk_tree_push_id(ctx, tree->type, tree->text.c_str(), tree->state, tree->TreeID());
+    } else if (auto group = entity->GetComponent<UIGroup>(); group) {
+        return nk_group_begin(ctx, group->title.c_str(), group->options);
     }
     return std::nullopt;
 }
 
-void UISystem::EndContainer(Entity* entity) {
+void UISystem::EndContainer(Entity* entity, bool isShowed) {
     nk_context* ctx = UI::NkContext();
 
     if (auto tree = entity->GetComponent<UITree>(); tree) {
-        nk_tree_pop(ctx);
+        if (isShowed) {
+            nk_tree_pop(ctx);
+        }
+    } else if (auto group = entity->GetComponent<UIGroup>(); group) {
+        if (isShowed) {
+            nk_group_end(ctx);
+        }
     } else {
         nk_end(ctx);
     }
@@ -46,6 +54,16 @@ void UISystem::Update(Entity* entity) {
         }
     } else if (auto label = entity->GetComponent<UILabel>(); label) {
         nk_label(ctx, label->text.c_str(), label->align);
+    } else if (auto edit = entity->GetComponent<UIEdit>(); edit) {
+        nk_edit_string(ctx, edit->options, edit->buffer, &edit->len, edit->maxLength, edit->filter);
+    } else if (auto property = entity->GetComponent<UIProperty>(); property) {
+        if (property->type == UIProperty::Int) {
+            nk_property_int(ctx, property->text.c_str(), property->min, &property->ivalue, property->max, property->incStep, property->incPerPixel);
+        } else if (property->type == UIProperty::Float) {
+            nk_property_float(ctx, property->text.c_str(), property->min, &property->fvalue, property->max, property->incStep, property->incPerPixel);
+        } else if (property->type == UIProperty::Double) {
+            nk_property_double(ctx, property->text.c_str(), property->min, &property->dvalue, property->max, property->incStep, property->incPerPixel);
+        }
     }
 }
 

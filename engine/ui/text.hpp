@@ -1,6 +1,8 @@
 #pragma once
 
 #include "engine/ecs/component.hpp"
+#include "engine/ecs/world.hpp"
+#include "engine/components/node.hpp"
 
 namespace engine {
 
@@ -13,5 +15,7 @@ public:
     int flags;
     std::string text; 
 };
+
+Entity* CreateUIText(const std::string& name, const std::string& text, int flags, Entity* parent);
 
 }

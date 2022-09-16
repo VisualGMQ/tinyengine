@@ -1,6 +1,8 @@
 #pragma once
 
 #include "engine/ecs/component.hpp"
+#include "engine/ecs/world.hpp"
+#include "engine/components/node.hpp"
 #include "nuklear.h"
 
 namespace engine {
@@ -23,6 +25,9 @@ public:
     float height;
     int cols;
 };
+
+Entity* CreateUIStaticRowLayout(const std::string& name, float height, int widgetWidth, int cols, Entity* parent);
+Entity* CreateUIDynamicRowLayout(const std::string& name, float height, int cols, Entity* parent);
 
 /*
 class UIRowLayout final: public Component {

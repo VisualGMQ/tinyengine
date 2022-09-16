@@ -1,6 +1,8 @@
 #pragma once
 
 #include "engine/ecs/component.hpp"
+#include "engine/ecs/world.hpp"
+#include "engine/components/node.hpp"
 
 namespace engine {
 
@@ -15,5 +17,7 @@ public:
     CallbackType onClick;
     void* param;
 };
+
+Entity* CreateUIButton(const std::string& name, const std::string& text, UIButton::CallbackType callback, void* param, Entity* parent);
 
 }

@@ -19,7 +19,6 @@ public:
     DLLEXPORT static void Init();
     DLLEXPORT static void Quit();
     static void Update();
-    static void NewFrame();
     static nk_context* NkContext() { return ctx_; }
     static void HandleEvent(SDL_Event*);
     static void InputBegin();
