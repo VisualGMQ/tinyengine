@@ -8,6 +8,7 @@ void UITree::Reset() {
     type = NK_TREE_TAB;
     state = NK_MINIMIZED;
     text = "tree node";
+    treeID_ = curId_++;
 }
 
 Entity* CreateUITreeTab(const std::string& name, const std::string& text, nk_collapse_states state, Entity* parent) {

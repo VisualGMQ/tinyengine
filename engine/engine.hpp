@@ -41,3 +41,5 @@
 #include "engine/components/node.hpp"
 
 #include "engine/animation/animation.hpp"
+
+#include "engine/debug/scene_tree.hpp"

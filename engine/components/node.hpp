@@ -2,6 +2,7 @@
 
 #include "engine/ecs/component.hpp"
 #include "engine/core/dllexport.hpp"
+#include "engine/ecs/world.hpp"
 
 namespace engine {
 
@@ -9,7 +10,12 @@ class DLLEXPORT NodeComponent: public Component {
 public:
     NodeComponent(ComponentID id): Component(id) {}
 
-    virtual void Reset() override { children.clear(); }
+    virtual void Reset() override {
+        for (auto& child : children) {
+            World::Instance()->DestroyEntity(child);
+        }
+        children.clear();
+    }
 
     void Attach(Entity* entity) { children.push_back(entity); }
 

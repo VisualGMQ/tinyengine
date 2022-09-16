@@ -3,6 +3,7 @@
 #include "engine/ecs/entity.hpp"
 #include "engine/core/scene.hpp"
 #include "engine/ui/ui_system.hpp"
+#include "engine/components/node.hpp"
 
 namespace engine {
 
@@ -57,6 +58,8 @@ void World::DestroyEntity(EntityID id) {
 }
 
 void World::DestroyEntity(Entity* entity) {
+    if (!entity) return;
+
     auto it = entities_.begin();
     while (it != entities_.end() && (*it)->ID() != entity->ID()) {
         it++;
@@ -72,6 +75,7 @@ void World::destroyEntity(const std::vector<std::unique_ptr<Entity>>::const_iter
 
 void World::RemoveComponent(Component* component) {
     if(!component) return;
+
     for (auto& [id, info] : components_) {
         auto it = info.components.begin(); 
         while (it != info.components.end() && (*it)->ID() != component->ID()) {
@@ -79,6 +83,7 @@ void World::RemoveComponent(Component* component) {
         }
         if (it != info.components.end()) {
             info.componentTrashes_.push(std::move(*it));
+            info.componentTrashes_.top()->Reset();
             info.components.erase(it);
         }
     }
