@@ -7,6 +7,7 @@
 #include "engine/ui/window.hpp"
 #include "engine/ui/layout.hpp"
 #include "engine/components/node.hpp"
+#include "engine/ui/group.hpp"
 
 namespace engine::debug {
 

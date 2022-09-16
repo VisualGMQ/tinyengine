@@ -1,18 +1,4 @@
-#include "engine/core/video.hpp"
-#include "engine/core/configer.hpp"
-#include "engine/core/scene.hpp"
-#include "engine/input/input.hpp"
-#include "engine/renderer/renderer.hpp"
-#include "engine/renderer/texture.hpp"
-#include "engine/core/timer.hpp"
-#include "engine/ecs/world.hpp"
-#include "engine/ecs/entity.hpp"
-#include "engine/ui/ui.hpp"
-#include "engine/core/dllexport.hpp"
-#include "engine/sound/sound.hpp"
-#include "engine/renderer/font.hpp"
-#include "engine/core/timer.hpp"
-#include "engine/core/event.hpp"
+#include "engine/engine.hpp"
 
 constexpr int WindowWidth = 800;
 constexpr int WindowHeight = 600;
@@ -28,6 +14,7 @@ int main(int argc, char** argv) {
     auto height = configReader.GetOr<float>("height", WindowHeight);
     auto resizable = configReader.GetOr<bool>("resizable", false);
 
+    engine::Random::Init();
     engine::Video::Init(title, width, height, resizable);
     engine::Event::Init();
     engine::Renderer::Init(width, height);
@@ -72,5 +59,6 @@ int main(int argc, char** argv) {
     engine::Event::Quit();
     engine::Video::Quit();
     engine::Logger::Quit();
+    engine::Random::Quit();
     return 0;
 }

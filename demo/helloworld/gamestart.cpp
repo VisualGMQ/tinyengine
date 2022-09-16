@@ -24,12 +24,7 @@ void GameStart::initUI() {
     engine::CreateUIButton("button", "button", nullptr, nullptr, windowLayout);
     engine::CreateUICheckbox("checkbox", "checkbox", nullptr, windowLayout);
     engine::CreateUIEdit("edit", NK_EDIT_FIELD, 1023, nk_filter_ascii, windowLayout);
-    engine::CreateUIText("edit", "text", NK_TEXT_ALIGN_LEFT, windowLayout);
     engine::CreateUIProperty("value", "int value", engine::UIProperty::Type::Int, 0, 100, 20, 1, 1, windowLayout);
-
-    auto tree = engine::CreateUITreeTab("scene tree", "root tree", NK_MINIMIZED, windowLayout);
-    engine::CreateUITreeNode("node1", "node1", NK_MINIMIZED, tree);
-    engine::CreateUITreeNode("node2", "node2", NK_MINIMIZED, tree);
 
     engine::debug::DebugAttachSceneTree();
 }
