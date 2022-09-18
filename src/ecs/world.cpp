@@ -6,7 +6,6 @@
 #include "engine/components/node.hpp"
 #include "engine/renderer/render_system.hpp"
 #include "engine/components/sprite.hpp"
-#include "engine/components/transform2d.hpp"
 
 namespace engine {
 
@@ -117,6 +116,11 @@ void World::initEntity(Entity* entity) {
             initEntity(ent);
         }
     }
+    if (auto node = entity->GetComponent<Node2DComponent>(); node != nullptr) {
+        for (auto& ent : node->children) {
+            initEntity(ent);
+        }
+    }
 }
 
 void World::Update() {
@@ -169,6 +173,11 @@ void World::updateEntity(Entity* entity, const Mat4& parentTransform) {
             updateEntity(ent, newTransform);
         }
     }
+    if (auto node = entity->GetComponent<Node2DComponent>(); node != nullptr) {
+        for (auto& ent : node->children) {
+            updateEntity(ent, newTransform);
+        }
+    }
 }
 
 void World::updateUIEntity(Entity* entity) {
@@ -179,6 +188,11 @@ void World::updateUIEntity(Entity* entity) {
 
     if (!windowState.has_value() || windowState.value() == true) {
         if (auto node = entity->GetComponent<NodeComponent>(); node != nullptr) {
+            for (auto& ent : node->children) {
+                updateUIEntity(ent);
+            }
+        }
+        if (auto node = entity->GetComponent<Node2DComponent>(); node != nullptr) {
             for (auto& ent : node->children) {
                 updateUIEntity(ent);
             }
@@ -196,6 +210,11 @@ void World::dispatchEvent2Entity(Entity* entity) {
         Event::GetDispatcher().Dispatch(entity->GetBehavior());
     }
     if (auto node = entity->GetComponent<NodeComponent>(); node) {
+        for (auto& child : node->children) {
+            dispatchEvent2Entity(child);
+        }
+    }
+    if (auto node = entity->GetComponent<Node2DComponent>(); node) {
         for (auto& child : node->children) {
             dispatchEvent2Entity(child);
         }

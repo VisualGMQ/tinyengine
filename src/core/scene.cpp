@@ -113,6 +113,12 @@ Entity* doFindEntity(Entity* entity, const std::string& name) {
             if (result) return result;
         }
     }
+    if (auto node = entity->GetComponent<Node2DComponent>(); node) {
+        for (auto& child : node->children) {
+            auto result = doFindEntity(child, name);
+            if (result) return result;
+        }
+    }
     return nullptr;
 }
 
@@ -127,6 +133,11 @@ void doFindEntities(Entity* entity, const std::string& name, std::vector<Entity*
         result.push_back(entity);
     }
     if (auto node = entity->GetComponent<NodeComponent>(); node) {
+        for (auto& child : node->children) {
+            doFindEntities(child, name, result);
+        }
+    }
+    if (auto node = entity->GetComponent<Node2DComponent>(); node) {
         for (auto& child : node->children) {
             doFindEntities(child, name, result);
         }

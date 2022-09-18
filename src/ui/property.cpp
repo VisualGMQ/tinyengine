@@ -12,7 +12,7 @@ void UIProperty::Reset() {
     incPerPixel = 1;
 }
 
-Entity* CreateUIProperty(const std::string& name, const std::string& text, UIProperty::Type type, float min, float max, float value, float incStep, float incPerPixel, Entity* parent) {
+Entity* CreateUIProperty(const std::string& name, const std::string& text, UIProperty::CallbackType onValueChange, UIProperty::Type type, float min, float max, float value, float incStep, float incPerPixel, Entity* parent) {
     Entity* entity = World::Instance()->CreateEntity(name);
     auto property = World::Instance()->CreateComponent<UIProperty>();
     property->type = type;
@@ -26,6 +26,7 @@ Entity* CreateUIProperty(const std::string& name, const std::string& text, UIPro
     property->incStep = incStep;
     property->text = text;
     property->incPerPixel = incPerPixel;
+    property->callback = onValueChange;
     entity->SetComponent(property);
 
     if (parent) {

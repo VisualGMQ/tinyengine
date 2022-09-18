@@ -40,9 +40,9 @@
 #include "engine/sound/sound.hpp"
 
 #include "engine/components/node.hpp"
-#include "engine/components/transform2d.hpp"
 #include "engine/components/sprite.hpp"
 
 #include "engine/animation/animation.hpp"
 
 #include "engine/debug/scene_tree.hpp"
+#include "engine/debug/property_watcher.hpp"

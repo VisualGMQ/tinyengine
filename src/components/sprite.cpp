@@ -9,6 +9,7 @@ void SpriteComponent::Reset() {
     color.Set(1, 1, 1);
     size.Set(0, 0);
     flip = None;
+    offset.Set(0, 0);
 }
 
 }

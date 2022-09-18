@@ -61,12 +61,16 @@ void UISystem::Update(Entity* entity) {
     } else if (auto edit = entity->GetComponent<UIEdit>(); edit) {
         nk_edit_string(ctx, edit->options, edit->buffer, &edit->len, edit->maxLength, edit->filter);
     } else if (auto property = entity->GetComponent<UIProperty>(); property) {
+        property->oldValue = property->Value();
         if (property->type == UIProperty::Int) {
             nk_property_int(ctx, property->text.c_str(), property->min, &property->ivalue, property->max, property->incStep, property->incPerPixel);
         } else if (property->type == UIProperty::Float) {
             nk_property_float(ctx, property->text.c_str(), property->min, &property->fvalue, property->max, property->incStep, property->incPerPixel);
         } else if (property->type == UIProperty::Double) {
             nk_property_double(ctx, property->text.c_str(), property->min, &property->dvalue, property->max, property->incStep, property->incPerPixel);
+        }
+        if (property->oldValue != property->Value() && property->callback) {
+            property->callback(entity, property);
         }
     }
 }

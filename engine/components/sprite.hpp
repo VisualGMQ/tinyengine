@@ -22,6 +22,7 @@ public:
     Rect region;
     Color color;
     Size size;
+    Vec2 offset;
     uint32_t flip;
 };
 

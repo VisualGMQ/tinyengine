@@ -1,15 +1,15 @@
 #include "engine/renderer/render_system.hpp"
 #include "engine/components/sprite.hpp"
-#include "engine/components/transform2d.hpp"
 #include "engine/renderer/renderer.hpp"
+#include "engine/components/node.hpp"
 
 namespace engine {
 
 Mat4 RenderSystem::Update(Entity* entity, const Mat4& parentTransform) {
-    auto newTransform = parentTransform;
-    if (auto transform2d = entity->GetComponent<Transform2DComponent>(); transform2d) {
-        transform2d->TryUpdateTransform();
-		newTransform = transform2d->GetTransform() * parentTransform;
+    auto curTransform = IdentityMat4;
+    if (auto node2d = entity->GetComponent<Node2DComponent>(); node2d) {
+        node2d->TryUpdateTransform();
+        curTransform = node2d->GetTransform();
     }
 
     if (auto sprite = entity->GetComponent<SpriteComponent>(); sprite && sprite->texture) {
@@ -34,9 +34,9 @@ Mat4 RenderSystem::Update(Entity* entity, const Mat4& parentTransform) {
         Renderer::DrawTexture(*sprite->texture,
                                sprite->region.size == Vec2(0, 0) ? nullptr : &sprite->region,
                                size,
-                               newTransform);
+                               parentTransform * curTransform * CreateTranslate(Vec3(sprite->offset.x, sprite->offset.y, 0)));
     }
-    return newTransform;
+    return parentTransform * curTransform;
 }
 
 }
