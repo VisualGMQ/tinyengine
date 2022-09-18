@@ -8,6 +8,7 @@
 #include "engine/ui/ui.hpp"
 #include "engine/ui/window.hpp"
 #include "engine/ui/button.hpp"
+#include "engine/ui/option.hpp"
 #include "engine/ui/checkbox.hpp"
 #include "engine/ui/layout.hpp"
 #include "engine/ui/tree.hpp"

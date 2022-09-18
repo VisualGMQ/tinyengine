@@ -30,6 +30,7 @@ aux_source_directory(src/renderer ENGINE_RENDERER_SRC)
 aux_source_directory(src/input ENGINE_INPUT_SRC)
 aux_source_directory(src/ecs ENGINE_ECS_SRC)
 aux_source_directory(src/ui ENGINE_UI_SRC)
+aux_source_directory(src/components ENGINE_COMPONENTS_SRC)
 aux_source_directory(src/sound ENGINE_SOUND_SRC)
 aux_source_directory(src/debug ENGINE_DEBUG_SRC)
 
@@ -40,6 +41,7 @@ target_sources(${ENGINE_NAME} PRIVATE
                 ${ENGINE_INPUT_SRC}
                 ${ENGINE_ECS_SRC}
                 ${ENGINE_UI_SRC}
+                ${ENGINE_COMPONENTS_SRC}
                 ${ENGINE_SOUND_SRC}
                 ${ENGINE_DEBUG_SRC}
                 src/entry.cpp)

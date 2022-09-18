@@ -26,7 +26,7 @@
 
 #include "engine/ui/ui.hpp"
 #include "engine/ui/button.hpp"
-#include "engine/ui/checkbox.hpp"
+#include "engine/ui/option.hpp"
 #include "engine/ui/layout.hpp"
 #include "engine/ui/text.hpp"
 #include "engine/ui/window.hpp"
@@ -35,10 +35,13 @@
 #include "engine/ui/edit.hpp"
 #include "engine/ui/property.hpp"
 #include "engine/ui/group.hpp"
+#include "engine/ui/checkbox.hpp"
 
 #include "engine/sound/sound.hpp"
 
 #include "engine/components/node.hpp"
+#include "engine/components/transform2d.hpp"
+#include "engine/components/sprite.hpp"
 
 #include "engine/animation/animation.hpp"
 

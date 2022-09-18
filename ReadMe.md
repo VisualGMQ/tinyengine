@@ -65,6 +65,9 @@ MinGW由于自己有一套库，发布的时候要带这些库，所以最后结
   * [ ] 2D 物理系统
   * [ ] 制作编辑器
 
+* 优化：
+  * [ ] 优化RenderImageSystem的效率
+
 ## 目前效果
 
 ![snapshots](./snapshots/snapshot.png)

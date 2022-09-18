@@ -8,7 +8,7 @@ namespace engine {
 
 class UIText: public Component {
 public:
-    UIText(ComponentID id): Component(id) {}
+    UIText(ComponentID id) : Component(id) { Reset(); }
 
     void Reset() override;
 

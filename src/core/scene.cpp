@@ -102,4 +102,41 @@ void SceneMgr::QuitOldScene() {
     World::Instance()->DestroyEntity(entity);
 }
 
+Entity* doFindEntity(Entity* entity, const std::string& name) {
+    if (!entity) return nullptr;
+    if (entity->Name() == name) {
+        return entity;
+    }
+    if (auto node = entity->GetComponent<NodeComponent>(); node) {
+        for (auto& child : node->children) {
+            auto result = doFindEntity(child, name);
+            if (result) return result;
+        }
+    }
+    return nullptr;
+}
+
+Entity* Scene::FindEntity(const std::string& name) {
+    return doFindEntity(root_, name);
+}
+
+void doFindEntities(Entity* entity, const std::string& name, std::vector<Entity*>& result) {
+    if (!entity) return;
+
+    if (entity->Name() == name) {
+        result.push_back(entity);
+    }
+    if (auto node = entity->GetComponent<NodeComponent>(); node) {
+        for (auto& child : node->children) {
+            doFindEntities(child, name, result);
+        }
+    }
+}
+
+std::vector<Entity*> Scene::FindEntities(const std::string& name) {
+    std::vector<Entity*> result;
+    doFindEntities(root_, name, result);
+    return result;
+}
+
 }

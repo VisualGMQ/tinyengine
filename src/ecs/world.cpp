@@ -4,6 +4,9 @@
 #include "engine/core/scene.hpp"
 #include "engine/ui/ui_system.hpp"
 #include "engine/components/node.hpp"
+#include "engine/renderer/render_system.hpp"
+#include "engine/components/sprite.hpp"
+#include "engine/components/transform2d.hpp"
 
 namespace engine {
 
@@ -11,10 +14,12 @@ std::unique_ptr<World> World::instance_;
 
 World::World() {
     uiSystem_ = new UISystem(this);
+    renderSystem_ = new RenderSystem(this);
 }
 
 World::~World() {
     delete uiSystem_;
+    delete renderSystem_;
 }
 
 World* World::Instance() {
@@ -120,9 +125,9 @@ void World::Update() {
     auto node = scene->GetRootEntity()->GetComponent<NodeComponent>();
 
     for (auto& entity : node->children) {
-        updateEntity(entity);
+        updateEntity(entity, IdentityMat4);
     }
-    
+ 
     for (auto& entity : node->children) {
         if (entity->GetComponent<NodeUIRoot>()) {
             updateUIEntity(entity);
@@ -139,7 +144,7 @@ void World::Update() {
     }
 }
 
-void World::updateEntity(Entity* entity) {
+void World::updateEntity(Entity* entity, const Mat4& parentTransform) {
     if (!entity) return;
 
     if (entity->GetComponent<Node2DRoot>()) {
@@ -157,9 +162,11 @@ void World::updateEntity(Entity* entity) {
         system->Update(entity);
     }
 
+    auto newTransform = renderSystem_->Update(entity, parentTransform);
+
     if (auto node = entity->GetComponent<NodeComponent>(); node != nullptr) {
         for (auto& ent : node->children) {
-            updateEntity(ent);
+            updateEntity(ent, newTransform);
         }
     }
 }

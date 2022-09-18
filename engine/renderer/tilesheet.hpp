@@ -8,10 +8,15 @@ namespace engine {
 
 class DLLEXPORT TileSheet final {
 public:
+    struct Tile {
+        Texture* texture;
+        Rect region;
+    };
+
     TileSheet(const std::string& name, int col, int row);
     TileSheet(TextureID id, int col, int row);
 
-    std::shared_ptr<Image> Get(int col, int row);
+    Tile Get(int col, int row);
 
 private:
     Texture* texture_; 

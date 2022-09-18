@@ -13,8 +13,11 @@ TileSheet::TileSheet(TextureID id, int col, int row)
        tileWidth_(texture_->Width() / col), tileHeight_(texture_->Height() / row) {
 }
 
-std::shared_ptr<Image> TileSheet::Get(int col, int row) {
-    return std::make_shared<Image>(texture_, Rect(col * tileWidth_, (row_ - row) * tileHeight_, tileWidth_, tileHeight_));
+TileSheet::Tile TileSheet::Get(int col, int row) {
+    Tile tile;
+    tile.texture = texture_;
+    tile.region = Rect(col * tileWidth_, (row_ - row - 1) * tileHeight_, tileWidth_, tileHeight_);
+    return tile;
 }
 
 }

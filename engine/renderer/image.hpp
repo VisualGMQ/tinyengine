@@ -8,19 +8,20 @@ class DLLEXPORT Image final {
 public:
     Image(Texture* texture, const Rect& rect);
     Image(Texture* texture);
-    void SetColor(const Color& color) { color_ = color; }
+    Image& SetColor(const Color& color) { color_ = color; }
     const Color& GetColor() const { return color_; }
 
-    void SetSize(const Size& size) { size_ = size; }
+    Image& SetSize(const Size& size) { size_ = size; }
     const Size& GetSize() const { return size_; }
-    void SetPosition(const Vec2&);
+    Image& SetPosition(const Vec2&);
     const Vec2& GetPosition() const { return position_; }
-    void SetRotation(float);
+    Image& SetRotation(float);
     float GetRotation() const { return rotation_; }
-    void SetScale(const Vec2&);
+    Image& SetScale(const Vec2&);
     const Vec2& GetScale() const { return scale_; }
-    void SetAnchor(const Vec2&);
+    Image& SetAnchor(const Vec2&);
     const Vec2& GetAnchor() const { return anchor_; }
+    const Mat4& GetTransform() const { return transform_; }
 
     void Draw(const Mat4& = IdentityMat4);
 
@@ -40,19 +41,19 @@ private:
     Mat4 transform_;
     Mat4 rotationMat_;
     Mat4 translateMat_;
-    Mat4 anchorMat_;
     Mat4 scaleMat_;
+    Mat4 anchorMat_;
 
     Rect srcrect_;
     Vec2 position_;
-    Vec2 size_;
-    Vec2 anchor_;
-    Vec2 scale_;
     float rotation_ = 0;
+    Vec2 size_;
+    Vec2 scale_;
+    Vec2 anchor_;
 
     Image();
-    void tryCalcTranslateMat();
     void tryCalcAnchorMat();
+    void tryCalcTranslateMat();
     void tryCalcScaleMat();
     void tryCalcRotateMat();
     void tryCalcTransformMat();

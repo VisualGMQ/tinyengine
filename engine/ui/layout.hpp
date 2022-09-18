@@ -9,7 +9,7 @@ namespace engine {
 
 class DLLEXPORT UIStaticRowLayout final: public Component {
 public:
-    UIStaticRowLayout(ComponentID id): Component(id) {}
+    UIStaticRowLayout(ComponentID id) : Component(id) { Reset(); }
     void Reset() override;
 
     float height;
@@ -19,7 +19,7 @@ public:
 
 class DLLEXPORT UIDynamicRowLayout final: public Component {
 public:
-    UIDynamicRowLayout(ComponentID id): Component(id) {}
+    UIDynamicRowLayout(ComponentID id) : Component(id) { Reset(); }
     void Reset() override;
 
     float height;

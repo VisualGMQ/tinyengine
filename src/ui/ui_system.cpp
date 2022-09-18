@@ -45,12 +45,16 @@ void UISystem::Update(Entity* entity) {
     nk_context* ctx = UI::NkContext();
 
     if (auto button = entity->GetComponent<UIButton>(); button) {
-        if (nk_button_label(UI::NkContext(), button->text.c_str())) {
+        if (nk_button_label(ctx, button->text.c_str())) {
             if (button->onClick) button->onClick(entity, button->param);
         }
     } else if (auto checkbox = entity->GetComponent<UICheckbox>(); checkbox) {
-        if (nk_option_label(ctx, checkbox->text.c_str(), checkbox->isSelected)) {
-            if (checkbox->callback) checkbox->callback(entity);
+        if (nk_checkbox_label(ctx, checkbox->text.c_str(), &checkbox->isSelected)) {
+            if (checkbox->callback) checkbox->callback(entity, checkbox);
+        }
+    } else if (auto option = entity->GetComponent<UIOption>(); option) {
+        if (nk_option_label(ctx, option->text.c_str(), option->isSelected)) {
+            if (option->callback) option->callback(entity, option);
         }
     } else if (auto label = entity->GetComponent<UILabel>(); label) {
         nk_label(ctx, label->text.c_str(), label->align);

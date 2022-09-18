@@ -51,7 +51,7 @@ void update(Entity* root) {
 Entity* createDebugSceneTree() {
     auto window = engine::CreateUIWindow(DebugSceneTreeWindowName, "scene tree",
                                          NK_WINDOW_TITLE|NK_WINDOW_MOVABLE|NK_WINDOW_SCALABLE,
-                                         engine::Rect(300, 50, 230, 300), nullptr);
+                                         engine::Rect(300, 50, 230, 300));
     auto windowLayout = engine::CreateUIDynamicRowLayout("layout", 20, 1, window);
 
     auto root = engine::CreateUITreeTab("debug scene tree root", SceneMgr::CurrentScene()->GetRootEntity()->Name(), NK_MINIMIZED, nullptr);

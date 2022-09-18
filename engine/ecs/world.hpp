@@ -9,6 +9,7 @@
 namespace engine {
 
 class UISystem;
+class RenderSystem;
 
 class DLLEXPORT World final {
 public:
@@ -55,6 +56,8 @@ private:
 
     // special for UI
     UISystem* uiSystem_;
+    // special for render
+    RenderSystem* renderSystem_;
 
     std::vector<std::unique_ptr<Entity>> entities_;
     std::stack<std::unique_ptr<Entity>> entityTrashes_;
@@ -69,7 +72,7 @@ private:
     static std::unique_ptr<World> instance_;
 
     void destroyEntity(const std::vector<std::unique_ptr<Entity>>::const_iterator& it);
-    void updateEntity(Entity*);
+    void updateEntity(Entity*, const Mat4&);
     void updateUIEntity(Entity*);
     void initEntity(Entity*);
     void dispatchEvent2Entity(Entity*);

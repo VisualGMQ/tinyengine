@@ -9,7 +9,7 @@ namespace engine {
 
 class UILabel: public Component {
 public:
-    UILabel(ComponentID id): Component(id) {}
+    UILabel(ComponentID id) : Component(id) { Reset(); }
     void Reset() override;
 
     std::string text;

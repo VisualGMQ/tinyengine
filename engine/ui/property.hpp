@@ -15,7 +15,7 @@ public:
         Double,
     };
 
-    UIProperty(ComponentID id): Component(id) {}
+    UIProperty(ComponentID id) : Component(id) { Reset(); }
 
     void Reset() override;
     double Value() { 

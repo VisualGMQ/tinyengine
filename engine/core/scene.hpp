@@ -27,6 +27,9 @@ public:
     void AttachUI(Entity*);
     void Attach(Entity*);
 
+    Entity* FindEntity(const std::string& name);
+    std::vector<Entity*> FindEntities(const std::string& name);
+
     virtual void OnInit() {}
     virtual void OnQuit() {}
 
