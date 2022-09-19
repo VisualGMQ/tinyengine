@@ -8,7 +8,7 @@ namespace engine {
 
 class DLLEXPORT UIButton: public Component {
 public:
-    using CallbackType = std::function<void(Entity*, void*)>;
+    using CallbackType = std::function<void(Entity*, UIButton*, void*)>;
     UIButton(ComponentID id) : Component(id) { Reset(); }
 
     void Reset() override;

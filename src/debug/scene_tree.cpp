@@ -57,7 +57,7 @@ Entity* createDebugSceneTree() {
     auto root = engine::CreateUITreeTab("debug scene tree root", SceneMgr::CurrentScene()->GetRootEntity()->Name(), NK_MINIMIZED, nullptr);
 
     engine::CreateUIButton("refresh button", "Refresh",
-    [](Entity*, void* param) {
+    [](Entity*, UIButton*, void* param) {
         update((engine::Entity*)param);
     }, (void*)root, windowLayout);
 

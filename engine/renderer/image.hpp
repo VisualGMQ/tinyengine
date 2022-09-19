@@ -8,10 +8,10 @@ class DLLEXPORT Image final {
 public:
     Image(Texture* texture, const Rect& rect);
     Image(Texture* texture);
-    Image& SetColor(const Color& color) { color_ = color; }
+    Image& SetColor(const Color& color) { color_ = color; return *this; }
     const Color& GetColor() const { return color_; }
 
-    Image& SetSize(const Size& size) { size_ = size; }
+    Image& SetSize(const Size& size) { size_ = size; return *this; }
     const Size& GetSize() const { return size_; }
     Image& SetPosition(const Vec2&);
     const Vec2& GetPosition() const { return position_; }

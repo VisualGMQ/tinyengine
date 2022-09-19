@@ -39,6 +39,9 @@ private:
     Entity* node2d_;
     Entity* node3d_;
     Entity* nodeUI_;
+
+    void beforeInit();
+    void beforeQuit();
 };
 
 

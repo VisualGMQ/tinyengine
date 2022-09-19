@@ -46,7 +46,7 @@ void UISystem::Update(Entity* entity) {
 
     if (auto button = entity->GetComponent<UIButton>(); button) {
         if (nk_button_label(ctx, button->text.c_str())) {
-            if (button->onClick) button->onClick(entity, button->param);
+            if (button->onClick) button->onClick(entity, button, button->param);
         }
     } else if (auto checkbox = entity->GetComponent<UICheckbox>(); checkbox) {
         if (nk_checkbox_label(ctx, checkbox->text.c_str(), &checkbox->isSelected)) {

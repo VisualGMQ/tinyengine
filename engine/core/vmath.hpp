@@ -149,7 +149,7 @@ DLLEXPORT inline auto operator/(const Mat<T, W, H>& m, const U& value) {
 
 template <typename T, typename U, unsigned int W, unsigned int H, unsigned int UW>
 DLLEXPORT inline auto operator*(const Mat<T, W, H>& m, const Mat<U, UW, W>& o) {
-    Mat<std::common_type_t<U, T>, H, UW> result;
+    Mat<std::common_type_t<U, T>, UW, H> result;
     for (int i = 0; i < H; i++) {
         for (int j = 0 ; j < UW; j++) {
             result(j, i) = 0;

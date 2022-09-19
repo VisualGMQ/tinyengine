@@ -7,26 +7,37 @@ Scene* SceneMgr::oldScene_ = nullptr;
 std::unordered_map<std::string, std::unique_ptr<Scene>> SceneMgr::scenes_;
 
 Scene::Scene(const std::string& name): name_(name) {
+}
+
+void Scene::beforeInit() {
     auto world = World::Instance();
-    root_ = world->CreateEntity(name + " root");
+    root_ = world->CreateEntity(name_ + " root");
     auto node = World::Instance()->CreateComponent<NodeComponent>();
     root_->SetComponent<NodeComponent>(node);
 
-    node2d_ = world->CreateEntity(name + " 2d root");
+    node2d_ = world->CreateEntity(name_ + " 2d root");
     node2d_->SetComponent(world->CreateComponent<NodeComponent>());
     node2d_->SetComponent(world->CreateComponent<Node2DRoot>());
 
-    node3d_ = world->CreateEntity(name + " 3d root");
+    node3d_ = world->CreateEntity(name_ + " 3d root");
     node3d_->SetComponent(world->CreateComponent<NodeComponent>());
     node3d_->SetComponent(world->CreateComponent<Node3DRoot>());
 
-    nodeUI_ = world->CreateEntity(name + " ui root");
+    nodeUI_ = world->CreateEntity(name_ + " ui root");
     nodeUI_ ->SetComponent(world->CreateComponent<NodeComponent>());
     nodeUI_->SetComponent(world->CreateComponent<NodeUIRoot>());
 
     Attach(node3d_);
     Attach(node2d_);
     Attach(nodeUI_);
+
+}
+
+void Scene::beforeQuit() {
+    if (root_) {
+        World::Instance()->DestroyEntity(root_);
+        root_ = nullptr;
+    }
 }
 
 void SceneMgr::Init() {}
@@ -62,12 +73,14 @@ void SceneMgr::ChangeScene(const std::string& name) {
         curScene_ = nullptr;
     } else {
         curScene_ = it->second.get();
+        curScene_->beforeInit();
         curScene_->OnInit();
     }
 }
 
 void SceneMgr::QuitOldScene() {
     if (oldScene_) {
+        oldScene_->beforeQuit();
         oldScene_->OnQuit();
     } else {
         return;
@@ -75,15 +88,6 @@ void SceneMgr::QuitOldScene() {
 
     static std::queue<Entity*> entityQueue;
     while (entityQueue.size() > 0) entityQueue.pop();
-
-    if (auto node = oldScene_->root_->GetComponent<NodeComponent>(); node != nullptr) {
-        for (auto& entity : node->children) {
-            entityQueue.push(entity);
-        }
-        node->children.clear();
-    } else {
-        return;
-    }
 
     if (entityQueue.empty()) return;
 
