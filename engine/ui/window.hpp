@@ -9,7 +9,7 @@ namespace engine {
 
 class DLLEXPORT UIWindow final: public Component {
 public:
-    UIWindow(ComponentID id): Component(id) {}
+    UIWindow(ComponentID id): Component(id) { Reset(); }
     void Reset() override;
 
     std::string title;
@@ -17,6 +17,6 @@ public:
     Rect rect;
 };
 
-Entity* CreateUIWindow(const std::string& name, const std::string& title, nk_flags flags, const Rect& rect, Entity* parent);
+Entity* CreateUIWindow(const std::string& name, const std::string& title, nk_flags flags, const Rect& rect);
 
 };

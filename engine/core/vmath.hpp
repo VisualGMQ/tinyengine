@@ -149,7 +149,7 @@ DLLEXPORT inline auto operator/(const Mat<T, W, H>& m, const U& value) {
 
 template <typename T, typename U, unsigned int W, unsigned int H, unsigned int UW>
 DLLEXPORT inline auto operator*(const Mat<T, W, H>& m, const Mat<U, UW, W>& o) {
-    Mat<std::common_type_t<U, T>, H, UW> result;
+    Mat<std::common_type_t<U, T>, UW, H> result;
     for (int i = 0; i < H; i++) {
         for (int j = 0 ; j < UW; j++) {
             result(j, i) = 0;
@@ -492,6 +492,16 @@ DLLEXPORT inline Vec3 Cross(const Vec3& v1, const Vec3& v2) {
     return Vec3(v1.y * v2.z - v1.z * v2.y,
                 v1.z * v2.x - v1.x * v2.z,
                 v1.x * v2.y - v1.y * v2.x);
+}
+
+DLLEXPORT inline float Distance(const Vec2& v1, const Vec2& v2) {
+    Vec2 dir = v1 - v2;
+    return std::sqrt(dir.x * dir.x + dir.y * dir.y);
+}
+
+DLLEXPORT inline float Distance(const Vec3& v1, const Vec3& v2) {
+    Vec3 dir = v1 - v2;
+    return std::sqrt(dir.x * dir.x + dir.y * dir.y + dir.z * dir.z);
 }
 
 template <typename T, unsigned int N>

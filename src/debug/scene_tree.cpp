@@ -51,13 +51,13 @@ void update(Entity* root) {
 Entity* createDebugSceneTree() {
     auto window = engine::CreateUIWindow(DebugSceneTreeWindowName, "scene tree",
                                          NK_WINDOW_TITLE|NK_WINDOW_MOVABLE|NK_WINDOW_SCALABLE|NK_WINDOW_MINIMIZABLE,
-                                         engine::Rect(300, 50, 230, 300), nullptr);
+                                         engine::Rect(300, 50, 230, 300));
     auto windowLayout = engine::CreateUIDynamicRowLayout("layout", 20, 1, window);
 
     auto root = engine::CreateUITreeTab("debug scene tree root", SceneMgr::CurrentScene()->GetRootEntity()->Name(), NK_MINIMIZED, nullptr);
 
     engine::CreateUIButton("refresh button", "Refresh",
-    [](Entity*, void* param) {
+    [](Entity*, UIButton*, void* param) {
         update((engine::Entity*)param);
     }, (void*)root, windowLayout);
 
@@ -70,4 +70,5 @@ void DebugAttachSceneTree() {
     SceneMgr::CurrentScene()->AttachUI(createDebugSceneTree());
 }
 
+>>>>>>> f4195731f29807bd516816ad85576615ae70d1ec
 }

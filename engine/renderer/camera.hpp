@@ -32,6 +32,12 @@ private:
 class DLLEXPORT PerspCamera: public Camera {
 public:
     PerspCamera(float fov, float aspect, float znear, float zfar);
+
+    void SetFov(float);
+    void SetAspect(float);
+    void SetNear(float);
+    void SetFar(float);
+
     const Mat4& Project() override;
     const Mat4& View() override;
 
@@ -47,6 +53,12 @@ public:
     void Lookat(const Vec3& position);
 
 private:
+    bool needRecalcProject_;
+    float fov_;
+    float aspect_;
+    float znear_;
+    float zfar_;
+
     Vec3 front_;
     Vec3 right_;
     Vec3 up_;

@@ -33,24 +33,28 @@ Image::Image(Texture* texture): Image() {
     size_ = srcrect_.size;
 }
 
-void Image::SetPosition(const Vec2& position) {
+Image& Image::SetPosition(const Vec2& position) {
     position_ = position;
     dirt_ |= Dirt::Translate;
+    return *this;
 }
 
-void Image::SetRotation(float rotation) {
+Image& Image::SetRotation(float rotation) {
     rotation_ = rotation;
     dirt_ |= Dirt::Rotation;
+    return *this;
 }
 
-void Image::SetScale(const Vec2& scale) {
+Image& Image::SetScale(const Vec2& scale) {
     scale_ = scale;
     dirt_ |= Dirt::Scale;
+    return *this;
 }
 
-void Image::SetAnchor(const Vec2& anchor) {
+Image& Image::SetAnchor(const Vec2& anchor) {
     anchor_ = anchor;
     dirt_ |= Dirt::Anchor;
+    return *this;
 }
 
 void Image::tryCalcTranslateMat() {
@@ -70,7 +74,7 @@ void Image::tryCalcAnchorMat() {
 void Image::tryCalcScaleMat() {
     if (dirt_ & Dirt::Scale) {
         scaleMat_ = CreateScale(Vec3(scale_.x, scale_.y, 1));
-        dirt_ &= ~Dirt::Anchor;
+        dirt_ &= ~Dirt::Scale;
     }
 }
 
@@ -94,6 +98,7 @@ void Image::tryCalcTransformMat() {
 void Image::Draw(const Mat4& parentTransform) {
     if (!texture_) return;
     tryCalcTransformMat();
+    Renderer::SetDrawColor(color_);
     Renderer::DrawTexture(*texture_, &srcrect_, size_, transform_ * parentTransform);
 }
 

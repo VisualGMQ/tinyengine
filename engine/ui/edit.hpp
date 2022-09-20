@@ -9,7 +9,7 @@ namespace engine {
 
 class UIEdit: public Component {
 public:
-    UIEdit(ComponentID id): Component(id) {}
+    UIEdit(ComponentID id) : Component(id) { Reset(); }
 
     void Reset() override;
 

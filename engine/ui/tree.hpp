@@ -9,7 +9,7 @@ namespace engine {
 
 class UITree: public Component {
 public:
-    UITree(ComponentID id): Component(id), treeID_(curId_++) {}
+    UITree(ComponentID id) : Component(id) { Reset(); }
 
     void Reset() override;
     int TreeID() const { return treeID_; }

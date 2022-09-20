@@ -6,7 +6,7 @@ SDL_Window* Video::window_ = nullptr;
 bool Video::shouldClose_ = false;
 Vec2 Video::initSize_;
 
-void Video::Init(const std::string& title, int w, int h, bool resizable) {
+void Video::Init(std::string_view title, int w, int h, bool resizable) {
     initSize_.Set(w, h);
 
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
@@ -25,7 +25,7 @@ void Video::Init(const std::string& title, int w, int h, bool resizable) {
     if (resizable) {
         flags |= SDL_WINDOW_RESIZABLE;
     }
-    window_ = SDL_CreateWindow(title.c_str(),
+    window_ = SDL_CreateWindow(title.data(),
                               SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                               w, h,
                               flags);

@@ -1,19 +1,19 @@
-#include "engine/ui/checkbox.hpp"
+#include "engine/ui/option.hpp"
 
 namespace engine {
 
-void UICheckbox::Reset() {
+void UIOption::Reset() {
     text = "checkbox";
     isSelected = false;
     callback = nullptr;
 }
 
-Entity* CreateUICheckbox(const std::string& name, const std::string& text, UICheckbox::CallbackType callback, Entity* parent) {
+Entity* CreateUIOption(const std::string& name, const std::string& text, UIOption::CallbackType callback, Entity* parent) {
     Entity* entity = World::Instance()->CreateEntity(name);
-    auto checkbox = World::Instance()->CreateComponent<UICheckbox>();
-    checkbox->text = text;
-    checkbox->callback = callback;
-    entity->SetComponent(checkbox);
+    auto option = World::Instance()->CreateComponent<UIOption>();
+    option->text = text;
+    option->callback = callback;
+    entity->SetComponent(option);
 
     if (parent) {
         auto node = parent->GetComponent<NodeComponent>();

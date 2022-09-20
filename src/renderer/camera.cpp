@@ -38,11 +38,45 @@ void OrthoCamera::tryCalcViewMat() {
 
 
 PerspCamera::PerspCamera(float fov, float aspect, float znear, float zfar)
-    : isDirt_(true), project_(CreatePersp(fov, aspect, znear, zfar)), transform_(CreateIdentityMat<4>()),
+    : fov_(fov), aspect_(aspect), znear_(znear), zfar_(zfar),
+      needRecalcProject_(true),
+      isDirt_(true), transform_(CreateIdentityMat<4>()),
       front_(0, 0, 1) {
 }
 
+void PerspCamera::SetFov(float fov) {
+    if (fov_ != fov) {
+        fov_ = fov;
+        needRecalcProject_ = true;
+    }
+}
+
+void PerspCamera::SetAspect(float aspect) {
+    if (aspect != aspect_) {
+        aspect_ = aspect;
+        needRecalcProject_ = true;
+    }
+}
+
+void PerspCamera::SetNear(float znear) {
+    if (znear != znear_) {
+        znear_ = znear;
+        needRecalcProject_ = true;
+    }
+}
+
+void PerspCamera::SetFar(float zfar) {
+    if (zfar != zfar_) {
+        zfar_ = zfar;
+        needRecalcProject_ = true;
+    }
+}
+
 const Mat4& PerspCamera::Project() {
+    if (needRecalcProject_) {
+        needRecalcProject_ = false;
+        project_ = CreatePersp(fov_, aspect_, znear_, zfar_);
+    }
     return project_;
 }
 

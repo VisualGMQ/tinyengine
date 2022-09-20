@@ -9,7 +9,7 @@ namespace engine {
 
 class DLLEXPORT UIGroup final: public Component {
 public:
-    UIGroup(ComponentID id): Component(id) {}
+    UIGroup(ComponentID id) : Component(id) { Reset(); }
     void Reset() override;
 
     std::string title;

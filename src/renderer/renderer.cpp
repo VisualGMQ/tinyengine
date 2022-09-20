@@ -40,9 +40,9 @@ void Renderer::Init(int w, int h) {
 void Renderer::ResestState() {
     GL_CALL(glEnable(GL_BLEND));
     GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-    GL_CALL(glEnable(GL_CULL_FACE));
-    GL_CALL(glCullFace(GL_BACK));
-    GL_CALL(glFrontFace(GL_CW));
+    // GL_CALL(glEnable(GL_CULL_FACE));
+    // GL_CALL(glCullFace(GL_BACK));
+    // GL_CALL(glFrontFace(GL_CW));
 }
 
 void Renderer::Quit() {
@@ -295,10 +295,12 @@ void Renderer::DrawTexture(const Texture& texture, Rect* src, const Size& size, 
     mesh_->GetIndices().clear();
     Rect srcrect = src ? *src : Rect(0, 0, texture.Width(), texture.Height());
 
-    Vec3 posLeftTop(0, 0, 0),
-         posRightTop(size.w, 0, 0),
-         posRightBottom(size.w, size.h, 0),
-         posLeftBottom(0, size.h, 0);
+    float half_w = size.w / 2.0,
+          half_h = size.h / 2.0;
+    Vec3 posLeftTop(-half_w, -half_h, 0),
+         posRightTop(half_w, -half_h, 0),
+         posRightBottom(half_w, half_h, 0),
+         posLeftBottom(-half_w, half_h, 0);
 
     Vec2 texLeftTop(srcrect.position.x / texture.Width(), srcrect.position.y / texture.Height()),
          texRightTop((srcrect.position.x + srcrect.size.w) / texture.Width(), srcrect.position.y / texture.Height()),

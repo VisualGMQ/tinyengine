@@ -1,7 +1,7 @@
 #pragma once
 
 #include "engine/core/vmath.hpp"
-#include "engine/core/configer.hpp"
+#include "engine/core/init_config.hpp"
 #include "engine/core/log.hpp"
 #include "engine/core/scene.hpp"
 #include "engine/core/timer.hpp"
@@ -27,7 +27,7 @@
 
 #include "engine/ui/ui.hpp"
 #include "engine/ui/button.hpp"
-#include "engine/ui/checkbox.hpp"
+#include "engine/ui/option.hpp"
 #include "engine/ui/layout.hpp"
 #include "engine/ui/text.hpp"
 #include "engine/ui/window.hpp"
@@ -36,11 +36,14 @@
 #include "engine/ui/edit.hpp"
 #include "engine/ui/property.hpp"
 #include "engine/ui/group.hpp"
+#include "engine/ui/checkbox.hpp"
 
 #include "engine/sound/sound.hpp"
 
 #include "engine/components/node.hpp"
+#include "engine/components/sprite.hpp"
 
 #include "engine/animation/animation.hpp"
 
 #include "engine/debug/scene_tree.hpp"
+#include "engine/debug/property_watcher.hpp"

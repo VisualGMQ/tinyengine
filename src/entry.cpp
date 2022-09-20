@@ -8,16 +8,11 @@ __declspec(dllexport) extern void GameInit(void);
 int main(int argc, char** argv) {
     engine::Logger::Init();
 
-    engine::Configer configReader("init.cfg");
-    auto title = configReader.GetOr<std::string>("title", "engine");
-    auto width = configReader.GetOr<float>("width", WindowWidth);
-    auto height = configReader.GetOr<float>("height", WindowHeight);
-    auto resizable = configReader.GetOr<bool>("resizable", false);
+    auto& config = engine::InitConfig::Instance();
 
-    engine::Random::Init();
-    engine::Video::Init(title, width, height, resizable);
+    engine::Video::Init(config.Title(), config.WindowSize().w, config.WindowSize().h, config.Resizable());
     engine::Event::Init();
-    engine::Renderer::Init(width, height);
+    engine::Renderer::Init(config.WindowSize().w, config.WindowSize().h);
     engine::FontFactory::Init();
     engine::TextureFactory::Init();
     engine::UI::Init();
@@ -59,6 +54,6 @@ int main(int argc, char** argv) {
     engine::Event::Quit();
     engine::Video::Quit();
     engine::Logger::Quit();
-    engine::Random::Quit();
     return 0;
+>>>>>>> f4195731f29807bd516816ad85576615ae70d1ec
 }

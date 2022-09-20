@@ -4,6 +4,8 @@
 #include "engine/core/scene.hpp"
 #include "engine/ui/ui_system.hpp"
 #include "engine/components/node.hpp"
+#include "engine/renderer/render_system.hpp"
+#include "engine/components/sprite.hpp"
 
 namespace engine {
 
@@ -11,10 +13,12 @@ std::unique_ptr<World> World::instance_;
 
 World::World() {
     uiSystem_ = new UISystem(this);
+    renderSystem_ = new RenderSystem(this);
 }
 
 World::~World() {
     delete uiSystem_;
+    delete renderSystem_;
 }
 
 World* World::Instance() {
@@ -112,6 +116,11 @@ void World::initEntity(Entity* entity) {
             initEntity(ent);
         }
     }
+    if (auto node = entity->GetComponent<Node2DComponent>(); node != nullptr) {
+        for (auto& ent : node->children) {
+            initEntity(ent);
+        }
+    }
 }
 
 void World::Update() {
@@ -120,9 +129,9 @@ void World::Update() {
     auto node = scene->GetRootEntity()->GetComponent<NodeComponent>();
 
     for (auto& entity : node->children) {
-        updateEntity(entity);
+        updateEntity(entity, IdentityMat4);
     }
-    
+ 
     for (auto& entity : node->children) {
         if (entity->GetComponent<NodeUIRoot>()) {
             updateUIEntity(entity);
@@ -139,7 +148,7 @@ void World::Update() {
     }
 }
 
-void World::updateEntity(Entity* entity) {
+void World::updateEntity(Entity* entity, const Mat4& parentTransform) {
     if (!entity) return;
 
     if (entity->GetComponent<Node2DRoot>()) {
@@ -157,9 +166,16 @@ void World::updateEntity(Entity* entity) {
         system->Update(entity);
     }
 
+    auto newTransform = renderSystem_->Update(entity, parentTransform);
+
     if (auto node = entity->GetComponent<NodeComponent>(); node != nullptr) {
         for (auto& ent : node->children) {
-            updateEntity(ent);
+            updateEntity(ent, newTransform);
+        }
+    }
+    if (auto node = entity->GetComponent<Node2DComponent>(); node != nullptr) {
+        for (auto& ent : node->children) {
+            updateEntity(ent, newTransform);
         }
     }
 }
@@ -172,6 +188,11 @@ void World::updateUIEntity(Entity* entity) {
 
     if (!windowState.has_value() || windowState.value() == true) {
         if (auto node = entity->GetComponent<NodeComponent>(); node != nullptr) {
+            for (auto& ent : node->children) {
+                updateUIEntity(ent);
+            }
+        }
+        if (auto node = entity->GetComponent<Node2DComponent>(); node != nullptr) {
             for (auto& ent : node->children) {
                 updateUIEntity(ent);
             }
@@ -189,6 +210,11 @@ void World::dispatchEvent2Entity(Entity* entity) {
         Event::GetDispatcher().Dispatch(entity->GetBehavior());
     }
     if (auto node = entity->GetComponent<NodeComponent>(); node) {
+        for (auto& child : node->children) {
+            dispatchEvent2Entity(child);
+        }
+    }
+    if (auto node = entity->GetComponent<Node2DComponent>(); node) {
         for (auto& child : node->children) {
             dispatchEvent2Entity(child);
         }

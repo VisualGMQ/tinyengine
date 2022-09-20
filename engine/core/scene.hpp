@@ -3,6 +3,8 @@
 #include "engine/core/pch.hpp"
 #include "engine/components/node.hpp"
 #include "engine/ecs/entity.hpp"
+#include "engine/core/init_config.hpp"
+#include "engine/debug/scene_tree.hpp"
 
 namespace engine {
 
@@ -27,6 +29,9 @@ public:
     void AttachUI(Entity*);
     void Attach(Entity*);
 
+    Entity* FindEntity(const std::string& name);
+    std::vector<Entity*> FindEntities(const std::string& name);
+
     virtual void OnInit() {}
     virtual void OnQuit() {}
 
@@ -36,6 +41,9 @@ private:
     Entity* node2d_;
     Entity* node3d_;
     Entity* nodeUI_;
+
+    void beforeInit();
+    void beforeQuit();
 };
 
 
