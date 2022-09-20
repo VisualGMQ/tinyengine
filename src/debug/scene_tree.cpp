@@ -70,5 +70,4 @@ void DebugAttachSceneTree() {
     SceneMgr::CurrentScene()->AttachUI(createDebugSceneTree());
 }
 
->>>>>>> f4195731f29807bd516816ad85576615ae70d1ec
 }

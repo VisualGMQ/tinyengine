@@ -55,5 +55,4 @@ int main(int argc, char** argv) {
     engine::Video::Quit();
     engine::Logger::Quit();
     return 0;
->>>>>>> f4195731f29807bd516816ad85576615ae70d1ec
 }
