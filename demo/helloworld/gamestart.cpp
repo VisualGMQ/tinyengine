@@ -34,8 +34,6 @@ void GameStart::initUI() {
     auto tree = engine::CreateUITreeTab("scene tree", "root tree", NK_MINIMIZED, windowLayout);
     engine::CreateUITreeNode("node1", "node1", NK_MINIMIZED, tree);
     engine::CreateUITreeNode("node2", "node2", NK_MINIMIZED, tree);
-
-    engine::debug::DebugAttachSceneTree();
 }
 
 void GameStart::loadResources() {

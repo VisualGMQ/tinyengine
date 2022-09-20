@@ -19,7 +19,7 @@ enum class DLLEXPORT DrawType {
     Fans = GL_TRIANGLE_FAN,
 };
 
-class DLLEXPORT Renderer final {
+class DLLEXPORT Renderer {
 public:
     Renderer() = delete;
 

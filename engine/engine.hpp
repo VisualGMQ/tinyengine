@@ -1,7 +1,7 @@
 #pragma once
 
 #include "engine/core/vmath.hpp"
-#include "engine/core/configer.hpp"
+#include "engine/core/init_config.hpp"
 #include "engine/core/log.hpp"
 #include "engine/core/scene.hpp"
 #include "engine/core/timer.hpp"

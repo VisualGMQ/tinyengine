@@ -8,7 +8,7 @@ class DLLEXPORT Video final {
 public:
     Video() = delete;
 
-    static void Init(const std::string& title, int w, int h, bool resizable);
+    static void Init(std::string_view title, int w, int h, bool resizable);
     static void Quit();
     
     static void SwapBuffers();

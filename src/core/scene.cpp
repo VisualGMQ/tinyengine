@@ -30,7 +30,6 @@ void Scene::beforeInit() {
     Attach(node3d_);
     Attach(node2d_);
     Attach(nodeUI_);
-
 }
 
 void Scene::beforeQuit() {
@@ -75,6 +74,9 @@ void SceneMgr::ChangeScene(const std::string& name) {
         curScene_ = it->second.get();
         curScene_->beforeInit();
         curScene_->OnInit();
+        if (InitConfig::Instance().IsUseSceneTree()) {
+            debug::DebugAttachSceneTree();
+        }
     }
 }
 

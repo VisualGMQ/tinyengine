@@ -494,6 +494,16 @@ DLLEXPORT inline Vec3 Cross(const Vec3& v1, const Vec3& v2) {
                 v1.x * v2.y - v1.y * v2.x);
 }
 
+DLLEXPORT inline float Distance(const Vec2& v1, const Vec2& v2) {
+    Vec2 dir = v1 - v2;
+    return std::sqrt(dir.x * dir.x + dir.y * dir.y);
+}
+
+DLLEXPORT inline float Distance(const Vec3& v1, const Vec3& v2) {
+    Vec3 dir = v1 - v2;
+    return std::sqrt(dir.x * dir.x + dir.y * dir.y + dir.z * dir.z);
+}
+
 template <typename T, unsigned int N>
 DLLEXPORT inline T Length2(const Vec<T, N>& v) {
     T sum = 0;

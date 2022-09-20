@@ -13,8 +13,10 @@ include(cmake/FindSDL2_ttf.cmake)
 add_subdirectory(3rdlibs/glad)
 add_subdirectory(3rdlibs/stb)
 add_subdirectory(3rdlibs/nuklear)
+add_subdirectory(3rdlibs/tomlplusplus)
 
 include(cmake/shader2inc.cmake)
+include(cmake/init_config2inc.cmake)
 include(cmake/copydll.cmake)
 
 ############# build options ##############
@@ -24,6 +26,7 @@ option(ENGINE_BUILD_DEMOS "do you want to build demos" OFF)
 set(ENGINE_NAME "tinyengine")
 
 Shader2Inc()
+InitConfig2Inc()
 
 aux_source_directory(src/core ENGINE_CORE_SRC)
 aux_source_directory(src/renderer ENGINE_RENDERER_SRC)
@@ -45,7 +48,7 @@ target_sources(${ENGINE_NAME} PRIVATE
                 ${ENGINE_SOUND_SRC}
                 ${ENGINE_DEBUG_SRC}
                 src/entry.cpp)
-target_link_libraries(${ENGINE_NAME} PUBLIC glad SDL2 SDL2_ttf SDL2_mixer nuklear stb_image)
+target_link_libraries(${ENGINE_NAME} PUBLIC glad SDL2 SDL2_ttf SDL2_mixer nuklear toml++ stb_image)
 target_compile_features(${ENGINE_NAME} PUBLIC cxx_std_17)
 target_include_directories(${ENGINE_NAME} PUBLIC ./)
 target_precompile_headers(${ENGINE_NAME} PUBLIC "engine/core/pch.hpp")

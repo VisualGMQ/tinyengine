@@ -3,6 +3,8 @@
 #include "engine/core/pch.hpp"
 #include "engine/components/node.hpp"
 #include "engine/ecs/entity.hpp"
+#include "engine/core/init_config.hpp"
+#include "engine/debug/scene_tree.hpp"
 
 namespace engine {
 
