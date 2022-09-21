@@ -38,6 +38,25 @@ void Mouse::ToggleRelativeMode() {
     }
 }
 
+Cursor::Cursor(std::string_view filename, int x, int y, const Color& keyColor) {
+    auto surface = SDL_LoadBMP(filename.data());
+    SDL_SetColorKey(surface, 1, SDL_MapRGB(surface->format, keyColor.r, keyColor.g, keyColor.b));
+    cursor_ = SDL_CreateColorCursor(surface, x, y);
+    SDL_FreeSurface(surface);
+}
+
+Cursor::Cursor(SDL_SystemCursor id) {
+    cursor_ = SDL_CreateSystemCursor(id);
+}
+
+Cursor::~Cursor() {
+    SDL_FreeCursor(cursor_);
+}
+
+void Mouse::SetCursor(const Cursor& cursor) {
+    SDL_SetCursor(cursor.cursor_);
+}
+
 void Mouse::ToggleShow() {
     if (IsShowing()) {
         Hide();
