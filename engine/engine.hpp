@@ -6,6 +6,7 @@
 #include "engine/core/scene.hpp"
 #include "engine/core/timer.hpp"
 #include "engine/core/tool.hpp"
+#include "engine/core/random.hpp"
 
 #include "engine/ecs/entity.hpp"
 #include "engine/ecs/component.hpp"
