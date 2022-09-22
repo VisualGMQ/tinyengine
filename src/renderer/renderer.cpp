@@ -1,6 +1,8 @@
 #include "engine/renderer/renderer.hpp"
 
+#ifndef IS_DEBUG
 #include "shader.inc"
+#endif
 
 namespace engine {
 
@@ -21,11 +23,16 @@ void Renderer::Init(int w, int h) {
     if (TTF_Init() != 0) {
         Loge("SDL ttf init failed: {}", TTF_GetError());
     }
-    stbi_set_flip_vertically_on_load(true);
-    // ShaderModule vertexModule(ReadWholeFile("shader/shader.vert"), ShaderModule::Type::Vertex);
-    // ShaderModule fragModule(ReadWholeFile("shader/shader.frag"), ShaderModule::Type::Fragment);
+    if (IMG_Init(IMG_INIT_JPG|IMG_INIT_PNG|IMG_INIT_TIF) == 0) {
+        Loge("SDL image init failed: {}", IMG_GetError());
+    }
+#ifdef IS_DEBUG
+    ShaderModule vertexModule(ReadWholeFile("shader/shader.vert"), ShaderModule::Type::Vertex);
+    ShaderModule fragModule(ReadWholeFile("shader/shader.frag"), ShaderModule::Type::Fragment);
+#else
     ShaderModule vertexModule(VertexShaderSource, ShaderModule::Type::Vertex);
     ShaderModule fragModule(FragShaderSource, ShaderModule::Type::Fragment);
+#endif
     shader_ = std::make_unique<Shader>(vertexModule, fragModule);
     unsigned char value[4] = {0x00, 0x00, 0x00, 0xFF};
     blackTexture_ = TextureFactory::Create("Engine::Renderer::Black", value, 1, 1);
@@ -46,6 +53,7 @@ void Renderer::ResestState() {
 }
 
 void Renderer::Quit() {
+    IMG_Quit();
     TTF_Quit();
     shader_.reset();
     mesh_.reset();
@@ -302,10 +310,10 @@ void Renderer::DrawTexture(const Texture& texture, Rect* src, const Size& size, 
          posRightBottom(half_w, half_h, 0),
          posLeftBottom(-half_w, half_h, 0);
 
-    Vec2 texLeftTop(srcrect.position.x / texture.Width(), srcrect.position.y / texture.Height()),
-         texRightTop((srcrect.position.x + srcrect.size.w) / texture.Width(), srcrect.position.y / texture.Height()),
-         texRightBottom((srcrect.position.x + srcrect.size.w) / texture.Width(), (srcrect.position.y + srcrect.size.h) / texture.Height()),
-         texLeftBottom(srcrect.position.x / texture.Width(), (srcrect.position.y + srcrect.size.h) / texture.Height());
+    Vec2 texLeftBottom(srcrect.position.x / texture.Width(), srcrect.position.y / texture.Height()),
+         texRightTop((srcrect.position.x + srcrect.size.w) / texture.Width(), (srcrect.position.y + srcrect.size.h) / texture.Height()),
+         texRightBottom((srcrect.position.x + srcrect.size.w) / texture.Width(), srcrect.position.y / texture.Height()),
+         texLeftTop(srcrect.position.x / texture.Width(), (srcrect.position.y + srcrect.size.h) / texture.Height());
 
     vertices[0].position = posLeftTop;
     vertices[0].texcoord = texLeftBottom;
@@ -339,8 +347,8 @@ void Renderer::DrawText(Font* font, const std::string& text, const Vec2& pos) {
     DrawTexture(texture,
                 nullptr,
                 Size(cvtSurface->w, cvtSurface->h),
-                CreateTranslate(Vec3(pos.x, pos.y + cvtSurface->h, 0)) *
-                CreateScale(Vec3(1, -1, 1)));
+                CreateTranslate(Vec3(pos.x, pos.y + cvtSurface->h / 2.0f, 0)) *
+                CreateScale(Vec3(1, 1, 1)));
 
     SDL_FreeSurface(cvtSurface);
 }

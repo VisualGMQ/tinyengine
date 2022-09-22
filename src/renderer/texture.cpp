@@ -39,15 +39,18 @@ void TextureFactory::Quit() {
     textureMap_.clear();
 }
 
-Texture* TextureFactory::Create(const std::string& filename, const std::string& name) {
+Texture* TextureFactory::Create(std::string_view filename, const std::string& name) {
     if (auto texture = Find(name); texture) {
         Logw("texture {} already exists, don't load again", name);
         return texture;
     }
     int channel, w, h;
-    unsigned char* data = stbi_load(filename.c_str(), &w, &h, &channel, STBI_rgb_alpha);
-    auto texture = std::make_unique<Texture>(name, data, w, h);
-    stbi_image_free(data);
+    SDL_Surface* surface = IMG_Load(filename.data());
+    SDL_Surface* cvtSurface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGBA32, 0);
+    SDL_FreeSurface(surface);
+    unsigned char* data = (unsigned char*)cvtSurface->pixels;
+    auto texture = std::make_unique<Texture>(name, data, cvtSurface->w, cvtSurface->h);
+    SDL_FreeSurface(cvtSurface);
     TextureID id = curId_++;
     texture->myId_ = id;
     Texture* result = texture.get();

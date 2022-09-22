@@ -27,6 +27,7 @@ public:
 
     TextureID ID() const { return myId_; }
     const std::string& Name() const { return name_; }
+    Size GetSize() const { return Size(w_, h_); }
 
 private:
     GLuint id_;
@@ -41,7 +42,7 @@ public:
     static void Init();
     static void Quit();
 
-    static Texture* Create(const std::string& filename, const std::string& name);
+    static Texture* Create(std::string_view filename, const std::string& name);
     static Texture* Create(const std::string& name, unsigned char* data, int w, int h);
     static Texture* Find(TextureID id);
     static Texture* Find(const std::string& name);

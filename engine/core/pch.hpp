@@ -21,9 +21,8 @@
 #include "SDL.h"
 #include "SDL_ttf.h"
 #include "SDL_mixer.h"
+#include "SDL_image.h"
 #include "toml.hpp"
-
-#include "stb_image.h"
 
 #include "engine/core/dllexport.hpp"
 #include "engine/core/log.hpp"
