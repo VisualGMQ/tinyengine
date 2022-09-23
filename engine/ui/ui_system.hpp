@@ -16,6 +16,8 @@
 #include "engine/ui/edit.hpp"
 #include "engine/ui/property.hpp"
 #include "engine/ui/group.hpp"
+#include "engine/ui/image.hpp"
+#include "engine/ui/area.hpp"
 
 namespace engine {
 
@@ -29,6 +31,8 @@ public:
 
 private:
     void judgeEventOnUI();
+
+    bool inFreeLayout_;
 };
 
 }

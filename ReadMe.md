@@ -4,7 +4,7 @@
 
 TinyEngine是一个为编写1MGames而搭建的底层（我实在是不想每次参赛都写新底层了）。
 
-在Release模式下，helloworld的Demo编译出来有400+KB。但使用UPX压一压能压到100+KB。
+在Release模式下，helloworld的Demo编译出来有500+KB。但使用UPX压一压能压到200+KB。
 
 ## 目录结构
 
@@ -15,6 +15,7 @@ TinyEngine是一个为编写1MGames而搭建的底层（我实在是不想每次
   * glad：用于导入OpenGL
   * nuklear：用于绘制GUI
   * stb：用于加载图片
+  * tomlplusplus：用于读写TOML文件
 * demo：一些Demo，指定`ENGINE_BUILD_DEMOS=ON`可以编译Demo。请在工程跟目录下运行Demo
 * engine：底层的头文件
 * src：底层的源文件
@@ -67,6 +68,9 @@ MinGW由于自己有一套库，发布的时候要带这些库，所以最后结
   * [ ] 2D 物理系统
   * [ ] 加入反射，制作编辑器
   * [ ] 完善3D渲染部分
+
+* 问题：
+  * UI部分绘制图片是颠倒的
 
 ## 目前效果
 

@@ -30,6 +30,8 @@ public:
 
     Node2DComponent& SetPosition(const Vec2&);
     const Vec2& GetPosition() const { return position_; }
+    void SetZIndex(float z);
+    float GetZIndex() const { return zIndex_; }
     Node2DComponent& SetRotation(float);
     float GetRotation() const { return rotation_; }
     Node2DComponent& SetScale(const Vec2&);
@@ -55,6 +57,7 @@ private:
     float rotation_;
     Vec2 scale_;
     Vec2 position_;
+    float zIndex_;
 
     void tryCalcScaleMat();
     void tryCalcTranslateMat();

@@ -26,6 +26,7 @@ public:
     void Unbind() const;
 
     TextureID ID() const { return myId_; }
+    GLuint GLID() const { return id_; }
     const std::string& Name() const { return name_; }
 
 private:

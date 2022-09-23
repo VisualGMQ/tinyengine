@@ -17,6 +17,10 @@ void Node2DComponent::Reset() {
     position_.Set(0,0);
 } 
 
+void Node2DComponent::SetZIndex(float z) {
+    zIndex_ = z;
+}
+
 Node2DComponent& Node2DComponent::SetPosition(const Vec2& position) {
     position_ = position;
     dirt_ |= Dirt::Translate;
