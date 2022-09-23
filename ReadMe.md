@@ -12,14 +12,13 @@ TinyEngine是一个为编写1MGames而搭建的底层（我实在是不想每次
   * SDL：用于搭建窗口
   * SDL_mixer: 用于播放声音
   * SDL_ttf：用于绘制TTF
+  * SDL_image：用于加载图片
   * glad：用于导入OpenGL
   * nuklear：用于绘制GUI
-  * stb：用于加载图片
-  * tomlplusplus：用于读写TOML文件
 * demo：一些Demo，指定`ENGINE_BUILD_DEMOS=ON`可以编译Demo。请在工程跟目录下运行Demo
 * engine：底层的头文件
 * src：底层的源文件
-* shader：底层的着色器
+* shader：底层的着色器（Debug模式下会读取shader文件夹下的文件。Release模式下会嵌入程序中，无需随程序发布）
 * resources：测试使用的资源
 * snapshots：截图
 * init.toml：\[可选\]程序初始化的一些设置（Debug模式下，会读取`init.toml`文件。Release模式下则会在编译时打包进程序，无需随程序发布）

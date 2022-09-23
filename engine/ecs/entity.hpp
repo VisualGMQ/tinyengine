@@ -22,6 +22,9 @@ public:
     void SetComponent(T*);
 
     template <typename T>
+    void SetComponent();
+
+    template <typename T>
     T* GetComponent();
 
     template <typename T>
@@ -66,6 +69,11 @@ void Entity::SetComponent(T* comp) {
     }
     components_[id] = comp;
     comp->parent_ = this;
+}
+
+template <typename T>
+void Entity::SetComponent() {
+    SetComponent(World::Instance()->CreateComponent<T>());
 }
 
 template <typename T>

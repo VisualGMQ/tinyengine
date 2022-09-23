@@ -23,6 +23,10 @@ public:
     World& operator=(const World&) = delete;
 
     Entity* CreateEntity(const std::string& name);
+
+    template <typename... Args>
+    Entity* CreateEntity(const std::string& name);
+
     void DestroyEntity(unsigned int id);
     void DestroyEntity(Entity* entity);
 
@@ -76,6 +80,8 @@ private:
     void updateUIEntity(Entity*);
     void initEntity(Entity*);
     void dispatchEvent2Entity(Entity*);
+    template <typename T, typename... Args>
+    void doCreateEntity(Entity* entity);
 };
 
 template <typename T>
@@ -117,6 +123,22 @@ void World::RemoveComponent(T* component) {
 template <typename T>
 void World::AddSystem() {
     systems_.push_back(std::make_unique<T>(this));
+}
+
+
+template <typename T, typename... Args>
+void World::doCreateEntity(Entity* entity) {
+    entity->SetComponent(CreateComponent<T>());
+    if constexpr (sizeof...(Args) != 0) {
+        doCreateEntity<Args...>(entity);
+    }
+}
+
+template <typename... Args>
+Entity* World::CreateEntity(const std::string& name) {
+    Entity* entity = CreateEntity(name);
+    doCreateEntity<Args...>(entity);
+    return entity;
 }
 
 }

@@ -10,8 +10,9 @@ project(
 include(cmake/FindSDL2.cmake)
 include(cmake/FindSDL2_mixer.cmake)
 include(cmake/FindSDL2_ttf.cmake) 
+include(cmake/FindSDL2_image.cmake) 
+
 add_subdirectory(3rdlibs/glad)
-add_subdirectory(3rdlibs/stb)
 add_subdirectory(3rdlibs/nuklear)
 add_subdirectory(3rdlibs/tomlplusplus)
 
@@ -48,7 +49,7 @@ target_sources(${ENGINE_NAME} PRIVATE
                 ${ENGINE_SOUND_SRC}
                 ${ENGINE_DEBUG_SRC}
                 src/entry.cpp)
-target_link_libraries(${ENGINE_NAME} PUBLIC glad SDL2 SDL2_ttf SDL2_mixer nuklear toml++ stb_image)
+target_link_libraries(${ENGINE_NAME} PUBLIC glad SDL2 SDL2_ttf SDL2_mixer nuklear toml++ SDL2_image)
 target_compile_features(${ENGINE_NAME} PUBLIC cxx_std_17)
 target_include_directories(${ENGINE_NAME} PUBLIC ./)
 target_precompile_headers(${ENGINE_NAME} PUBLIC "engine/core/pch.hpp")
