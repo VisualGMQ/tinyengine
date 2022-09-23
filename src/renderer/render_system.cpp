@@ -9,9 +9,10 @@ Mat4 RenderSystem::Update(Entity* entity, const Mat4& parentTransform) {
     auto curTransform = IdentityMat4;
     float zIndex = 0;
     if (auto node2d = entity->GetComponent<Node2DComponent>(); node2d) {
+        node2d->DetectDirt();
         node2d->TryUpdateTransform();
         curTransform = node2d->GetTransform();
-        zIndex = node2d->GetZIndex();
+        zIndex = node2d->zIndex;
     }
 
     if (auto sprite = entity->GetComponent<SpriteComponent>(); sprite && sprite->texture) {

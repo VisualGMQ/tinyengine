@@ -75,6 +75,6 @@ void GameStart::initOtherNode() {
     sprite->texture = tile.texture;
     sprite->region = tilesheet->Get(0, 0).region;
     sprite->offset.Set(tilesheet->TileSize().w / 2.0, tilesheet->TileSize().h / 2.0);
-    node->SetPosition(engine::Vec2(600, 100));
+    node->position.Set(600, 100);
     Attach2D(image);
 }

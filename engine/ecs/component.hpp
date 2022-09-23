@@ -17,7 +17,7 @@ public:
     Component(ComponentID id): id_(id) {}
     virtual ~Component() = default;
 
-    Component(const Component&) = delete;
+    Component(const Component&) = default;
     Component& operator=(const Component&) = delete;
 
     virtual void Reset() {}

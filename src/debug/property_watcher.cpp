@@ -34,7 +34,7 @@ void PropertyWatcher::Attach2Scene() {
                                                 if (!watchedEntity_) return;
                                                 auto node2d = watchedEntity_->GetComponent<Node2DComponent>();
                                                 if (!node2d) return;
-                                                node2d->SetPosition(Vec2(self->Value(), node2d->GetPosition().y));
+                                                node2d->position.x = self->Value();
                                               },
                                               engine::UIProperty::Type::Float, 0, windowSize.w,
                                               0, 1, 1,
@@ -44,7 +44,7 @@ void PropertyWatcher::Attach2Scene() {
                                           if (!watchedEntity_) return;
                                           auto node2d = watchedEntity_->GetComponent<Node2DComponent>();
                                           if (!node2d) return;
-                                          node2d->SetPosition(Vec2(node2d->GetPosition().x, self->Value()));
+                                          node2d->position.y = self->Value();
                                       },
                                       engine::UIProperty::Type::Float, 0, windowSize.h,
                                       0, 1, 1,
@@ -54,7 +54,7 @@ void PropertyWatcher::Attach2Scene() {
                                               if (!watchedEntity_) return;
                                               auto node2d = watchedEntity_->GetComponent<Node2DComponent>();
                                               if (!node2d) return;
-                                              node2d->SetRotation(Radians(self->Value()));
+                                              node2d->rotation = Radians(self->Value());
                                           },
                                           engine::UIProperty::Type::Float, 0, 360,
                                           0, 1, 1,
@@ -64,7 +64,7 @@ void PropertyWatcher::Attach2Scene() {
                                             if (!watchedEntity_) return;
                                             auto node2d = watchedEntity_->GetComponent<Node2DComponent>();
                                             if (!node2d) return;
-                                            node2d->SetScale(Vec2(self->Value(), node2d->GetScale().y));
+                                            node2d->scale.x = self->Value();
                                         },
                                         engine::UIProperty::Type::Float, -100, 100,
                                         0, 1, 1,
@@ -74,7 +74,7 @@ void PropertyWatcher::Attach2Scene() {
                                             if (!watchedEntity_) return;
                                             auto node2d = watchedEntity_->GetComponent<Node2DComponent>();
                                             if (!node2d) return;
-                                            node2d->SetScale(Vec2(node2d->GetScale().x, self->Value()));
+                                            node2d->scale.y = self->Value();
                                         },
                                         engine::UIProperty::Type::Float, -100, 100,
                                         0, 1, 1,
@@ -101,11 +101,11 @@ void PropertyWatcher::WatcherBehavior::OnUpdate() {
     auto node2d = watchedEntity_->GetComponent<Node2DComponent>();
     if (!node2d) return;
 
-    posX->fvalue = node2d->GetPosition().x;
-    posY->fvalue = node2d->GetPosition().y;
-    scaleX->fvalue = node2d->GetScale().x;
-    scaleY->fvalue = node2d->GetScale().y;
-    rotation->fvalue = Degrees(node2d->GetRotation());
+    posX->fvalue = node2d->position.x;
+    posY->fvalue = node2d->position.y;
+    scaleX->fvalue = node2d->scale.x;
+    scaleY->fvalue = node2d->scale.y;
+    rotation->fvalue = Degrees(node2d->rotation);
 }
 
 }

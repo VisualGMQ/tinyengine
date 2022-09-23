@@ -45,6 +45,7 @@ public:
 
     static Texture* Create(std::string_view filename, const std::string& name);
     static Texture* Create(const std::string& name, unsigned char* data, int w, int h);
+    static Texture* CreateFromXpm(const std::string& name, char** xpmData);
     static Texture* Find(TextureID id);
     static Texture* Find(const std::string& name);
 

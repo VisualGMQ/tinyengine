@@ -71,6 +71,26 @@ Texture* TextureFactory::Create(const std::string& name, unsigned char* data, in
     return result;
 }
 
+Texture* TextureFactory::CreateFromXpm(const std::string& name, char** xpmData) {
+    if (auto texture = Find(name); texture) {
+        Logw("texture {} already exists, don't load again", name);
+        return texture;
+    }
+    int channel, w, h;
+    SDL_Surface* surface = IMG_ReadXPMFromArray(xpmData);
+    SDL_Surface* cvtSurface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGBA32, 0);
+    SDL_FreeSurface(surface);
+    unsigned char* data = (unsigned char*)cvtSurface->pixels;
+    auto texture = std::make_unique<Texture>(name, data, cvtSurface->w, cvtSurface->h);
+    SDL_FreeSurface(cvtSurface);
+    TextureID id = curId_++;
+    texture->myId_ = id;
+    Texture* result = texture.get();
+    textureMap_[id] = std::move(texture);
+    return result;
+
+}
+
 Texture* TextureFactory::Find(TextureID id) {
     auto it = textureMap_.find(id);
     if (textureMap_.end() == it) {
