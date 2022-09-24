@@ -15,6 +15,8 @@ include(cmake/FindSDL2_image.cmake)
 add_subdirectory(3rdlibs/glad)
 add_subdirectory(3rdlibs/nuklear)
 add_subdirectory(3rdlibs/tomlplusplus)
+set(BUILD_TESTING OFF)
+add_subdirectory(3rdlibs/meta)
 
 include(cmake/shader2inc.cmake)
 include(cmake/init_config2inc.cmake)
@@ -22,6 +24,7 @@ include(cmake/copydll.cmake)
 
 ############# build options ##############
 option(ENGINE_BUILD_DEMOS "do you want to build demos" OFF)
+option(ENGINE_BUILD_TOOLS "do you want to build tools" ON)
 
 ############# build engine ##############
 set(ENGINE_NAME "tinyengine")
@@ -57,4 +60,9 @@ target_precompile_headers(${ENGINE_NAME} PUBLIC "engine/core/pch.hpp")
 ############# build demo ##############
 if (${ENGINE_BUILD_DEMOS})
     add_subdirectory(demo)
+endif()
+
+############# build tools ##############
+if (${ENGINE_BUILD_TOOLS})
+    add_subdirectory(tools)
 endif()

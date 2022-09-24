@@ -37,6 +37,8 @@
 #include "engine/ui/property.hpp"
 #include "engine/ui/group.hpp"
 #include "engine/ui/checkbox.hpp"
+#include "engine/ui/image.hpp"
+#include "engine/ui/area.hpp"
 
 #include "engine/sound/sound.hpp"
 

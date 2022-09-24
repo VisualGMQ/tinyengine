@@ -32,6 +32,8 @@ public:
     static void SetClearColor(const Color&);
     static void Clear();
     static void SetDrawColor(const Color&);
+    static void EnableDepthTest() { GL_CALL(glEnable(GL_DEPTH_TEST)); }
+    static void DisableDepthTest() { GL_CALL(glDisable(GL_DEPTH_TEST)); }
 
     static void SetOrthoCamera(const std::shared_ptr<OrthoCamera>&);
     static void SetPerspCamera(const std::shared_ptr<PerspCamera>&);
@@ -52,28 +54,28 @@ public:
     static void DrawGrid();
 
     // 2D draw functions
-    static void DrawRect(const Rect&);
-    static void DrawLine(const Vec2&, const Vec2&);
+    static void DrawRect(const Rect&, float zIndex = 0);
+    static void DrawLine(const Vec2&, const Vec2&, float zIndex = 0);
 
-    static void DrawLines(const std::vector<Vec2>&);
-    static void DrawLineLoop(const std::vector<Vec2>&);
+    static void DrawLines(const std::vector<Vec2>&, float zIndex = 0);
+    static void DrawLineLoop(const std::vector<Vec2>&, float zIndex = 0);
 
     template <size_t N>
-    static void DrawLines(const std::array<Vec2, N>& points) {
+    static void DrawLines(const std::array<Vec2, N>& points, float zIndex = 0) {
         auto& vertices = mesh_->GetVertices();
         vertices.clear();
         vertices.resize(N);
         for (int i = 0; i < N; i++) {
-            vertices[i].position.Set(points[i].x, points[i].y, 0);
+            vertices[i].position.Set(points[i].x, points[i].y, zIndex);
             vertices[i].texcoord.Set(0, 0);
         }
         mesh_->Update2GPU();
         drawMeshSolid(*mesh_, DrawType::LineLoop, CreateIdentityMat<4>(), orthoCamera_.get());
     }
 
-    static void FillRect(const Rect& rect);
-    static void DrawTexture(const Texture& texture, Rect* src, const Size& size, const Mat4& transform = CreateIdentityMat<4>());
-    static void DrawText(Font* font, const std::string& text, const Vec2& pos);
+    static void FillRect(const Rect& rect, float zIndedx = 0);
+    static void DrawTexture(const Texture& texture, Rect* src, const Size& size, const Mat4& transform = CreateIdentityMat<4>(), float zIndedx = 0);
+    static void DrawText(Font* font, const std::string& text, const Vec2& pos, float zIndex = 0);
 
 private:
     static std::unique_ptr<Shader> shader_;

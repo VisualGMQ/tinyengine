@@ -34,6 +34,14 @@ void GameStart::initUI() {
     auto tree = engine::CreateUITreeTab("scene tree", "root tree", NK_MINIMIZED, windowLayout);
     engine::CreateUITreeNode("node1", "node1", NK_MINIMIZED, tree);
     engine::CreateUITreeNode("node2", "node2", NK_MINIMIZED, tree);
+    auto texture = engine::TextureFactory::Find("tilesheet");
+    engine::CreateUIRowLayout("row layout", NK_DYNAMIC, texture->Height(), {1}, windowLayout);
+    engine::CreateUIImage("image",
+                          texture,
+                          texture->Width(), texture->Height(),
+                          engine::Rect(0, 0, texture->Width(), texture->Height()),
+                          engine::Color(1, 1, 1),
+                          windowLayout);
 }
 
 void GameStart::loadResources() {
@@ -67,6 +75,6 @@ void GameStart::initOtherNode() {
     sprite->texture = tile.texture;
     sprite->region = tilesheet->Get(0, 0).region;
     sprite->offset.Set(tilesheet->TileSize().w / 2.0, tilesheet->TileSize().h / 2.0);
-    node->SetPosition(engine::Vec2(600, 100));
+    node->position.Set(600, 100);
     Attach2D(image);
 }
