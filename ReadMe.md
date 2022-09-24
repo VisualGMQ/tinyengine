@@ -49,7 +49,6 @@ MinGW由于自己有一套库，发布的时候要带这些库，所以最后结
 * [x] ECS
 * [x] 场景
 * [x] 2D/3D摄像机
-* [x] Configer
 * [x] 定时器
 * [x] TileSheet
 * [x] GUI (使用nuklear)
