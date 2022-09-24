@@ -3,6 +3,7 @@
 namespace engine {
 
 void UIButton::Reset() {
+    Component::Reset();
     text = "button";
     onClick = nullptr;
     param = nullptr;

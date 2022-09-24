@@ -42,6 +42,9 @@ public:
     void SetBehavior(std::unique_ptr<Behavior>& behavior) { behavior_ = std::move(behavior); }
     Behavior* GetBehavior() { return behavior_.get(); }
 
+    bool IsActive() const { return isActive_; }
+    void SetActive(bool active) { isActive_ = active; }
+
 private:
     std::unordered_map<unsigned int, Component*> components_;
     class World* world_;
@@ -49,6 +52,7 @@ private:
     EntityID id_;
     std::string name_;
     bool shouldBeCleanUp_ = false;
+    bool isActive_ = true;
 
     std::unique_ptr<Behavior> behavior_ = nullptr;
 };

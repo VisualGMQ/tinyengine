@@ -3,6 +3,7 @@
 namespace engine {
 
 void UIProperty::Reset() {
+    Component::Reset();
     type = UIProperty::Int;
     min = 0;
     max = 100;

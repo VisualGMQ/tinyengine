@@ -13,7 +13,7 @@ TileSheet::TileSheet(TileSheetID id, const std::string& name, Texture* texture, 
 TileSheet::Tile TileSheet::Get(int col, int row) {
     Tile tile;
     tile.texture = texture_;
-    tile.region = Rect(col * tileWidth_, row_ * tileHeight_, tileWidth_, tileHeight_);
+    tile.region = Rect(col * tileWidth_, row * tileHeight_, tileWidth_, tileHeight_);
     return tile;
 }
 

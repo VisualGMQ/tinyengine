@@ -12,6 +12,7 @@ public:
     virtual ~NodeComponent() = default;
 
     virtual void Reset() override {
+        Component::Reset();
         for (auto& child : children) {
             World::Instance()->DestroyEntity(child);
         }
@@ -65,19 +66,19 @@ private:
 class Node2DRoot: public Component {
 public:
     Node2DRoot(ComponentID id): Component(id) {}
-    void Reset() override {}
+    void Reset() override { Component::Reset(); }
 };
 
 class Node3DRoot: public Component {
 public:
     Node3DRoot(ComponentID id): Component(id) {}
-    void Reset() override {}
+    void Reset() override { Component::Reset(); }
 };
 
 class NodeUIRoot final: public Component {
 public:
     NodeUIRoot(ComponentID id): Component(id) {}
-    void Reset() override {}
+    void Reset() override { Component::Reset(); }
 };
 
 }

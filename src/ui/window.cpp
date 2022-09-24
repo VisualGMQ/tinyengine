@@ -3,6 +3,7 @@
 namespace engine {
 
 void UIWindow::Reset() {
+    Component::Reset();
     title.clear();
     flags = 0;
     rect.position.Set(0, 0);

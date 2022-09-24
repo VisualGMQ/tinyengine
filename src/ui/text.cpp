@@ -3,6 +3,7 @@
 namespace engine {
 
 void UIText::Reset() {
+    Component::Reset();
     text = "text";
     flags = 0;
 }

@@ -3,6 +3,7 @@
 namespace engine {
 
 void UIGroup::Reset() {
+    Component::Reset();
     options = NK_WINDOW_BORDER | NK_WINDOW_NO_SCROLLBAR;
 }
 

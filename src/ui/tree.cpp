@@ -5,6 +5,7 @@ namespace engine {
 int UITree::curId_ = 0;
 
 void UITree::Reset() {
+    Component::Reset();
     type = NK_TREE_TAB;
     state = NK_MINIMIZED;
     text = "tree node";

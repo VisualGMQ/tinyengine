@@ -3,6 +3,7 @@
 namespace engine {
 
 void UILabel::Reset() {
+    Component::Reset();
     text = "label";
     align = NK_TEXT_ALIGN_LEFT;
 }

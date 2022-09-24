@@ -20,13 +20,19 @@ public:
     Component(const Component&) = delete;
     Component& operator=(const Component&) = delete;
 
-    virtual void Reset() {}
+    virtual void Reset() {
+        parent_ = nullptr;
+        isActive_ = true;
+    }
     Entity* Parent() const { return parent_; }
+    bool IsActive() const { return isActive_; }
+    void Active(bool active) { isActive_ = active; }
 
     unsigned int ID() const { return id_; }
 
 private:
     ComponentID id_;
+    bool isActive_;
     Entity* parent_ = nullptr;
 };
 

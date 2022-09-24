@@ -149,12 +149,12 @@ void World::Update() {
 }
 
 void World::updateEntity(Entity* entity, const Mat4& parentTransform) {
-    if (!entity) return;
+    if (!entity || !entity->IsActive()) return;
 
-    if (entity->GetComponent<Node2DRoot>()) {
+    if (auto node = entity->GetComponent<Node2DRoot>(); node && node->IsActive()) {
         Renderer::Begin2D();
     }
-    if (entity->GetComponent<Node3DRoot>()) {
+    if (auto node = entity->GetComponent<Node3DRoot>(); node && node->IsActive()) {
         Renderer::Begin3D();
     }
 
@@ -181,7 +181,7 @@ void World::updateEntity(Entity* entity, const Mat4& parentTransform) {
 }
 
 void World::updateUIEntity(Entity* entity) {
-    if (!entity) return;
+    if (!entity || !entity->IsActive()) return;
 
     auto windowState = uiSystem_->BeginContainer(entity);
     uiSystem_->Update(entity);
@@ -204,7 +204,7 @@ void World::updateUIEntity(Entity* entity) {
 }
 
 void World::dispatchEvent2Entity(Entity* entity) {
-    if (!entity) return;
+    if (!entity || !entity->IsActive()) return;
 
     if (entity->GetBehavior()) {
         Event::GetDispatcher().Dispatch(entity->GetBehavior());

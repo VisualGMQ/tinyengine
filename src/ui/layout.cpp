@@ -3,6 +3,7 @@
 namespace engine {
 
 void UIStaticRowLayout::Reset() {
+    Component::Reset();
     height = 30;
     itemWidth = 50;
     cols = 1;

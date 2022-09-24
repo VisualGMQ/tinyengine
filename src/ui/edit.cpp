@@ -3,6 +3,7 @@
 namespace engine {
 
 void UIEdit::Reset() {
+    Component::Reset();
     options = NK_EDIT_FIELD;
     len = 0;
     maxLength = 1023;

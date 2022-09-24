@@ -3,6 +3,7 @@
 namespace engine {
 
 void UIOption::Reset() {
+    Component::Reset();
     text = "checkbox";
     isSelected = false;
     callback = nullptr;
