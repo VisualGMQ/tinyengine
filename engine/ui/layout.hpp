@@ -26,20 +26,29 @@ public:
     int cols;
 };
 
-Entity* CreateUIStaticRowLayout(const std::string& name, float height, int widgetWidth, int cols, Entity* parent);
-Entity* CreateUIDynamicRowLayout(const std::string& name, float height, int cols, Entity* parent);
-
-/*
-class UIRowLayout final: public Component {
+class DLLEXPORT UIRowLayout final: public Component {
 public:
-    UIRowLayout(ComponentID id): Component(id) {}
+    UIRowLayout(ComponentID id) : Component(id) { Reset(); }
     void Reset() override;
 
     nk_layout_format format;
     float height;
-    int col;
     std::vector<float> ratio;
 };
-*/
+
+class DLLEXPORT UIFreeLayout final: public Component {
+public:
+    UIFreeLayout(ComponentID id): Component(id) { Reset(); }
+    void Reset() override;
+
+    nk_layout_format format;
+    float height;
+    int widgetCount;
+};
+
+Entity* CreateUIStaticRowLayout(const std::string& name, float height, int widgetWidth, int cols, Entity* parent);
+Entity* CreateUIDynamicRowLayout(const std::string& name, float height, int cols, Entity* parent);
+Entity* CreateUIRowLayout(const std::string& name, nk_layout_format, float height, const std::vector<float> ratio, Entity* parent);
+Entity* CreateUIFreeLayout(const std::string& name, nk_layout_format, float height, int widgetCount, Entity* parent);
 
 }

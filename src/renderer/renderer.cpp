@@ -187,7 +187,7 @@ void Renderer::DrawGrid() {
     }
 }
 
-void Renderer::DrawRect(const Rect& rect) {
+void Renderer::DrawRect(const Rect& rect, float zIndex) {
     std::array<Vec2, 4> points{{
         Vec2(rect.position.x, rect.position.y),
         Vec2(rect.position.x + rect.size.w, rect.position.y),
@@ -198,20 +198,20 @@ void Renderer::DrawRect(const Rect& rect) {
     vertices.clear();
     vertices.resize(points.size());
     for (int i = 0; i < points.size(); i++) {
-        vertices[i].position.Set(points[i].x, points[i].y, 0);
+        vertices[i].position.Set(points[i].x, points[i].y, zIndex);
         vertices[i].texcoord.Set(0, 0);
     }
     mesh_->Update2GPU();
     drawMeshSolid(*mesh_, DrawType::LineLoop, CreateIdentityMat<4>());
 }
 
-void Renderer::DrawLine(const Vec2& p1, const Vec2& p2) {
+void Renderer::DrawLine(const Vec2& p1, const Vec2& p2, float zIndex) {
     auto& vertices = mesh_->GetVertices();
     mesh_->GetIndices().clear();
     vertices.clear();
     vertices.resize(2);
-    vertices[0].position.Set(p1.x, p1.y, 0);
-    vertices[1].position.Set(p2.x, p2.y, 0);
+    vertices[0].position.Set(p1.x, p1.y, zIndex);
+    vertices[1].position.Set(p2.x, p2.y, zIndex);
     for (auto& p : vertices) {
         p.texcoord.Set(0, 0);
     }
@@ -245,16 +245,16 @@ void Renderer::DrawLineLoop(const std::vector<Vec3>& points) {
     drawMeshSolid(*mesh_, DrawType::LineLoop, CreateIdentityMat<4>());
 }
 
-void Renderer::FillRect(const Rect& rect) {
+void Renderer::FillRect(const Rect& rect, float zIndex) {
     auto& vertices = mesh_->GetVertices();
     mesh_->GetIndices().clear();
     vertices.clear();
     vertices.resize(6);
 
-    Vec3 posLeftTop(rect.position.x, rect.position.y, 0),
-         posRightTop(rect.position.x + rect.size.w, rect.position.y, 0),
-         posRightBottom(rect.position.x + rect.size.w, rect.position.y + rect.size.h, 0),
-         posLeftBottom(rect.position.x, rect.position.y + rect.size.h, 0);
+    Vec3 posLeftTop(rect.position.x, rect.position.y, zIndex),
+         posRightTop(rect.position.x + rect.size.w, rect.position.y, zIndex),
+         posRightBottom(rect.position.x + rect.size.w, rect.position.y + rect.size.h, zIndex),
+         posLeftBottom(rect.position.x, rect.position.y + rect.size.h, zIndex);
 
     vertices[0].position = posLeftTop;
     vertices[1].position = posRightTop;
@@ -270,33 +270,33 @@ void Renderer::FillRect(const Rect& rect) {
     drawMeshSolid(*mesh_, DrawType::Triangles, CreateIdentityMat<4>());
 }
 
-void Renderer::DrawLines(const std::vector<Vec2>& points) {
+void Renderer::DrawLines(const std::vector<Vec2>& points, float zIndex) {
     if (points.empty()) return;
     auto& vertices = mesh_->GetVertices();
     vertices.clear();
     vertices.resize(points.size());
     for (int i = 0; i < points.size(); i++) {
-        vertices[i].position.Set(points[i].x, points[i].y, 0);
+        vertices[i].position.Set(points[i].x, points[i].y, zIndex);
         vertices[i].texcoord.Set(0, 0);
     }
     mesh_->Update2GPU();
     drawMeshSolid(*mesh_, DrawType::LineStrip, CreateIdentityMat<4>());
 }
 
-void Renderer::DrawLineLoop(const std::vector<Vec2>& points) {
+void Renderer::DrawLineLoop(const std::vector<Vec2>& points, float zIndex) {
     if (points.empty()) return;
     auto& vertices = mesh_->GetVertices();
     vertices.clear();
     vertices.resize(points.size());
     for (int i = 0; i < points.size(); i++) {
-        vertices[i].position.Set(points[i].x, points[i].y, 0);
+        vertices[i].position.Set(points[i].x, points[i].y, zIndex);
         vertices[i].texcoord.Set(0, 0);
     }
     mesh_->Update2GPU();
     drawMeshSolid(*mesh_, DrawType::LineLoop, CreateIdentityMat<4>());
 }
 
-void Renderer::DrawTexture(const Texture& texture, Rect* src, const Size& size, const Mat4& transform) {
+void Renderer::DrawTexture(const Texture& texture, Rect* src, const Size& size, const Mat4& transform, float zIndex) {
     auto& vertices = mesh_->GetVertices();
     vertices.clear();
     vertices.resize(6);
@@ -305,10 +305,10 @@ void Renderer::DrawTexture(const Texture& texture, Rect* src, const Size& size, 
 
     float half_w = size.w / 2.0,
           half_h = size.h / 2.0;
-    Vec3 posLeftTop(-half_w, -half_h, 0),
-         posRightTop(half_w, -half_h, 0),
-         posRightBottom(half_w, half_h, 0),
-         posLeftBottom(-half_w, half_h, 0);
+    Vec3 posLeftTop(-half_w, -half_h, zIndex),
+         posRightTop(half_w, -half_h, zIndex),
+         posRightBottom(half_w, half_h, zIndex),
+         posLeftBottom(-half_w, half_h, zIndex);
 
     Vec2 texLeftBottom(srcrect.position.x / texture.Width(), srcrect.position.y / texture.Height()),
          texRightTop((srcrect.position.x + srcrect.size.w) / texture.Width(), (srcrect.position.y + srcrect.size.h) / texture.Height()),
@@ -334,7 +334,7 @@ void Renderer::DrawTexture(const Texture& texture, Rect* src, const Size& size, 
     drawMeshSolid(*mesh_, DrawType::Triangles, transform, &texture);
 }
 
-void Renderer::DrawText(Font* font, const std::string& text, const Vec2& pos) {
+void Renderer::DrawText(Font* font, const std::string& text, const Vec2& pos, float zIndex) {
     if (!font) return;
 
     SDL_Surface* surface = TTF_RenderUTF8_Blended(font->font_, text.c_str(), SDL_Color{255, 255, 255, 255});

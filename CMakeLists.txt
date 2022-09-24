@@ -22,6 +22,7 @@ include(cmake/copydll.cmake)
 
 ############# build options ##############
 option(ENGINE_BUILD_DEMOS "do you want to build demos" OFF)
+option(ENGINE_BUILD_TOOLS "do you want to build tools" ON)
 
 ############# build engine ##############
 set(ENGINE_NAME "tinyengine")

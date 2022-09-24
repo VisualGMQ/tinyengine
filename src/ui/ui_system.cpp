@@ -5,6 +5,7 @@ namespace engine {
 std::optional<bool> UISystem::BeginContainer(Entity* entity) {
     nk_context* ctx = UI::NkContext();
 
+    inFreeLayout_ = false;
     if (nk_window_is_any_hovered(ctx)) {
         Event::GetDispatcher().EventedTriggedOnUI();
     }
@@ -17,6 +18,13 @@ std::optional<bool> UISystem::BeginContainer(Entity* entity) {
     } else if (auto layout = entity->GetComponent<UIDynamicRowLayout>(); layout && layout->IsActive()) {
         nk_layout_row_dynamic(ctx, layout->height, layout->cols);
         return std::nullopt;
+    } else if (auto layout = entity->GetComponent<UIRowLayout>(); layout && layout->IsActive()) {
+        nk_layout_row(ctx, layout->format, layout->height, layout->ratio.size(), layout->ratio.data());
+        return std::nullopt;
+    } else if (auto layout = entity->GetComponent<UIFreeLayout>(); layout && layout->IsActive()) {
+        nk_layout_space_begin(ctx, layout->format, layout->height, layout->widgetCount);
+        inFreeLayout_ = true;
+        return true;
     } else if (auto tree = entity->GetComponent<UITree>(); tree && tree->IsActive()) {
         return nk_tree_push_id(ctx, tree->type, tree->text.c_str(), tree->state, tree->TreeID());
     } else if (auto group = entity->GetComponent<UIGroup>(); group && group->IsActive()) {
@@ -36,6 +44,10 @@ void UISystem::EndContainer(Entity* entity, bool isShowed) {
         if (isShowed) {
             nk_group_end(ctx);
         }
+    } else if (auto layout = entity->GetComponent<UIFreeLayout>(); layout) {
+        if (isShowed) {
+            nk_layout_space_end(ctx);
+        }
     } else {
         nk_end(ctx);
     }
@@ -43,6 +55,10 @@ void UISystem::EndContainer(Entity* entity, bool isShowed) {
 
 void UISystem::Update(Entity* entity) {
     nk_context* ctx = UI::NkContext();
+
+    if (auto area = entity->GetComponent<UIAreaComponent>(); area && inFreeLayout_) {
+        nk_layout_space_push(ctx, {area->area.position.x, area->area.position.y, area->area.size.w, area->area.size.h});
+    }
 
     if (auto button = entity->GetComponent<UIButton>(); button && button->IsActive()) {
         if (nk_button_label(ctx, button->text.c_str())) {
@@ -72,6 +88,13 @@ void UISystem::Update(Entity* entity) {
         if (property->oldValue != property->Value() && property->callback) {
             property->callback(entity, property);
         }
+    } else if (auto image = entity->GetComponent<UIImage>(); image && image->texture) {
+        struct nk_image img = nk_subimage_id(image->texture->GLID(),
+                                             image->w, image->h,
+                                             {image->region.position.x, image->region.position.y,
+                                              image->region.size.w, image->region.size.h});
+        nk_image_color(ctx, img, nk_color{nk_byte(image->color.r * 255), nk_byte(image->color.g * 255), nk_byte(image->color.b * 255), nk_byte(image->color.a * 255)});
+        nk_image(ctx, img);
     }
 }
 

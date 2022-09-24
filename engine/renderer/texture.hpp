@@ -26,6 +26,7 @@ public:
     void Unbind() const;
 
     TextureID ID() const { return myId_; }
+    GLuint GLID() const { return id_; }
     const std::string& Name() const { return name_; }
     Size GetSize() const { return Size(w_, h_); }
 
@@ -44,6 +45,7 @@ public:
 
     static Texture* Create(std::string_view filename, const std::string& name);
     static Texture* Create(const std::string& name, unsigned char* data, int w, int h);
+    static Texture* CreateFromXpm(const std::string& name, char** xpmData);
     static Texture* Find(TextureID id);
     static Texture* Find(const std::string& name);
 

@@ -222,6 +222,10 @@ public:
         Set(x, y, z);
     }
 
+    explicit Mat(const Mat<T, 1, 2>& v2) {
+        Set(v2.x, v2.y, 0);
+    }
+
     void Set(T x, T y, T z){
         data_[0] = x;
         data_[1] = y;
@@ -394,6 +398,14 @@ public:
 
     Mat(T x, T y, T z, T w = 1) {
         Set(x, y, z, w);
+    }
+
+    explicit Mat(const Mat<T, 1, 2>& v2) {
+        Set(v2.x, v2.y, 0, 1);
+    }
+
+    explicit Mat(const Mat<T, 1, 3>& v3) {
+        Set(v3.x, v3.y, v3.z, 1);
     }
 
     void Set(T x, T y, T z, T w = 1) {

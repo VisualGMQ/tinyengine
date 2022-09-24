@@ -29,15 +29,14 @@ public:
     Node2DComponent(ComponentID id): NodeComponent(id) { Reset(); }
     void Reset() override;
 
-    Node2DComponent& SetPosition(const Vec2&);
-    const Vec2& GetPosition() const { return position_; }
-    Node2DComponent& SetRotation(float);
-    float GetRotation() const { return rotation_; }
-    Node2DComponent& SetScale(const Vec2&);
-    const Vec2& GetScale() const { return scale_; }
-
+    void DetectDirt();
     bool TryUpdateTransform();
     const Mat4& GetTransform() const { return transform_; }
+
+    float rotation;
+    Vec2 scale;
+    Vec2 position;
+    float zIndex;
 
 private:
     enum Dirt {
@@ -48,19 +47,18 @@ private:
     };
     uint32_t dirt_ = None;
 
+    float oldRotation_;
+    Vec2 oldScale_;
+    Vec2 oldPosition_;
+    float oldZIndex_;
+
     Mat4 transform_;
     Mat4 rotationMat_;
     Mat4 translateMat_;
     Mat4 scaleMat_;
-
-    float rotation_;
-    Vec2 scale_;
-    Vec2 position_;
-
     void tryCalcScaleMat();
     void tryCalcTranslateMat();
     void tryCalcRotateMat();
-
 };
 
 class Node2DRoot: public Component {

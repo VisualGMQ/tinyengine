@@ -4,7 +4,7 @@
 
 TinyEngine是一个为编写1MGames而搭建的底层（我实在是不想每次参赛都写新底层了）。
 
-在Release模式下，helloworld的Demo编译出来有400+KB。但使用UPX压一压能压到100+KB。
+在Release模式下，helloworld的Demo编译出来有500+KB。但使用UPX压一压能压到200+KB。
 
 ## 目录结构
 
@@ -49,7 +49,6 @@ MinGW由于自己有一套库，发布的时候要带这些库，所以最后结
 * [x] ECS
 * [x] 场景
 * [x] 2D/3D摄像机
-* [x] Configer
 * [x] 定时器
 * [x] TileSheet
 * [x] GUI (使用nuklear)
@@ -67,6 +66,9 @@ MinGW由于自己有一套库，发布的时候要带这些库，所以最后结
   * [ ] 2D 物理系统
   * [ ] 加入反射，制作编辑器
   * [ ] 完善3D渲染部分
+
+* 问题：
+  * UI部分绘制图片是颠倒的
 
 ## 目前效果
 
