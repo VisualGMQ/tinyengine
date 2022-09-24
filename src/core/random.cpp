@@ -3,7 +3,7 @@
 namespace engine {
 
 Lcg::Lcg(int k, int c): n_(1), c_(c) {
-    lambda_ = 2 << k + 1;
+    lambda_ = 2 << (k + 1);
     m_ = 2 << n_;
 }
 
