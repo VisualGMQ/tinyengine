@@ -18,6 +18,7 @@ Mat4 Renderer::oldViewMat_;
 Mat4 Renderer::oldModelMat_;
 GLenum Renderer::oldPolygonMode_ = GL_FILL;
 Camera* Renderer::camera_ = nullptr;
+Color Renderer::keyColor_ = engine::Color(1, 1, 1);
 
 void Renderer::Init(int w, int h) {
     if (TTF_Init() != 0) {
@@ -40,16 +41,16 @@ void Renderer::Init(int w, int h) {
     whiteTexture_ = TextureFactory::Create("Engine::Renderer::White", value, 1, 1);
     mesh_ = std::make_unique<Mesh>();
 
-    orthoCamera_ = std::make_unique<OrthoCamera>(w, h, 1.0f);
+    orthoCamera_ = std::make_unique<OrthoCamera>(w, h, -1.1, 1.1);
     perspCamera_ = std::make_unique<PerspCamera>(Radians(45), w / h, 0.1f, 100.f);
+
+    shader_->Use();
+    shader_->SetVec4("keycolor", keyColor_);
 }
 
 void Renderer::ResestState() {
-    GL_CALL(glEnable(GL_BLEND));
-    GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-    // GL_CALL(glEnable(GL_CULL_FACE));
-    // GL_CALL(glCullFace(GL_BACK));
-    // GL_CALL(glFrontFace(GL_CW));
+    // GL_CALL(glEnable(GL_BLEND));
+    // GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 }
 
 void Renderer::Quit() {
@@ -65,6 +66,14 @@ void Renderer::SetClearColor(const Color& color) {
 
 void Renderer::Clear() {
     GL_CALL(glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT));
+}
+
+
+void Renderer::SetKeyColor(const engine::Color& keycolor) {
+    if (keycolor != keyColor_) {
+        keyColor_ = keycolor;
+        shader_->SetVec4("keycolor", keyColor_);
+    }
 }
 
 void Renderer::SetDrawColor(const Color& color) {
@@ -92,7 +101,7 @@ std::shared_ptr<PerspCamera>& Renderer::GetPerspCamera() {
 }
 
 void Renderer::Begin2D() {
-    GL_CALL(glDisable(GL_DEPTH_TEST));
+    GL_CALL(glEnable(GL_DEPTH_TEST));
     GL_CALL(glDisable(GL_CULL_FACE));
     camera_ = orthoCamera_.get();
 }

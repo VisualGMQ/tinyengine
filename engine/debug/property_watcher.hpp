@@ -36,6 +36,7 @@ private:
         UIProperty* scaleX;
         UIProperty* scaleY;
         UIProperty* rotation;
+        UIProperty* zIndex;
     };
 
     static WatcherBehavior* behavior_;

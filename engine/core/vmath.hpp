@@ -546,11 +546,11 @@ DLLEXPORT inline auto Transpose(const Mat<T, W, H>& m) {
     return result;
 }
 
-DLLEXPORT inline Mat4 CreateOrtho(float w, float h, float depth) {
+DLLEXPORT inline Mat4 CreateOrtho(float w, float h, float znear, float zfar) {
     return Mat4({
         2 / w,     0,         0, -1,
             0,-2 / h,         0,  1,
-            0,     0, 2 / depth,  0,
+            0,     0, 2 / (znear - zfar),  - (znear + zfar) / (znear - zfar),
             0,     0,         0,  1,
         });
 }
@@ -795,7 +795,7 @@ DLLEXPORT inline Mat4 CreateRotationZ(float angle) {
     return Mat4 {
         cz, -sz, 0, 0,
         sz, cz, 0, 0,
-        0, 0, 0, 0,
+        0, 0, 1, 0,
         0, 0, 0, 1,
     };
 }

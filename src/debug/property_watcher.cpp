@@ -10,6 +10,7 @@ namespace engine::debug {
 #define WATCHER_ROTATION_NAME "Debug::PropertyWatcher::Rotation"
 #define WATCHER_SCALEX_NAME "Debug::PropertyWatcer::ScaleX"
 #define WATCHER_SCALEY_NAME "Debug::PropertyWatcer::ScaleY"
+#define WATCHER_ZINDEX_NAME "Debug::PropertyWatcer::ZIndex"
 
 Entity* PropertyWatcher::entity_ = nullptr;
 Entity* PropertyWatcher::watchedEntity_ = nullptr;
@@ -79,6 +80,17 @@ void PropertyWatcher::Attach2Scene() {
                                         engine::UIProperty::Type::Float, -100, 100,
                                         0, 1, 1,
                                         layout)->GetComponent<UIProperty>();
+    behavior->zIndex = CreateUIProperty(WATCHER_ZINDEX_NAME, "z index",
+                                        [](Entity*, UIProperty* self) {
+                                            if (!watchedEntity_) return;
+                                            auto node2d = watchedEntity_->GetComponent<Node2DComponent>();
+                                            if (!node2d) return;
+                                            node2d->zIndex = self->Value();
+                                        },
+                                        engine::UIProperty::Type::Float, -1, 1,
+                                        0, 0.01, 0.01,
+                                        layout)->GetComponent<UIProperty>();
+
     SceneMgr::CurrentScene()->AttachUI(window);
 }
 

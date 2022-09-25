@@ -40,6 +40,8 @@ public:
     static std::shared_ptr<OrthoCamera>& GetOrthoCamera();
     static std::shared_ptr<PerspCamera>& GetPerspCamera();
 
+    static void SetKeyColor(const engine::Color& keycolor);
+
     static void Begin2D();
     static void Begin3D();
 
@@ -83,6 +85,7 @@ private:
     static Texture* blackTexture_;
     static Texture* whiteTexture_;
     static Color currentColor_;
+    static Color keyColor_;
     static std::unique_ptr<Mesh> mesh_;
     static std::shared_ptr<OrthoCamera> orthoCamera_;
     static std::shared_ptr<PerspCamera> perspCamera_;

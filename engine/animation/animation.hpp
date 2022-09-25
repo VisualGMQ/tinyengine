@@ -20,26 +20,29 @@ private:
 };
 
 template <typename T>
-class Animation final {
+class AnimationBase {
 public:
-    Animation(const std::initializer_list<KeyFrame<T>>& frames, T& attribute, bool shouldInterpolation = true);
-    ~Animation() = default;
+    AnimationBase(const std::initializer_list<KeyFrame<T>>& frames, T& attribute, bool shouldRevertFirstFrame = true);
+    virtual ~AnimationBase() = default;
 
     void Play();
     void Pause();
     void Stop();
     void Rewind();
     bool IsPlay() const { return isPlay_; }
-    bool WillInterpolation() const { return shouldInterpolation_; }
-
-    void Update();
+    bool ShouldRevertFirstFrame() const { return shouldRevertFirstFrame_; }
+    void EnableRevertFirstFrame() { shouldRevertFirstFrame_ = true; }
+    void DisableRevertFirstFrame() { shouldRevertFirstFrame_ = false; }
 
     void SetLoop(int loop) {
         loop_ = loop;
         curLoop_ = loop;
     }
 
-private:
+    virtual bool WillInterpolate() const = 0;
+    virtual void Update() = 0;
+
+protected:
     struct KeyFrameOrderByTime {
         bool operator()(const KeyFrame<T>& f1, const KeyFrame<T>& f2) const {
             return f1.Time() < f2.Time();
@@ -51,82 +54,141 @@ private:
     uint32_t curTime_ = 0;
     uint32_t curFrameIdx_ = 0;
     T& attribute_;
-    T initAttr_;
+    bool shouldRevertFirstFrame_ = true;
     int loop_ = 0;
     int curLoop_ = 0;
-    bool shouldInterpolation_;
 };
 
 template <typename T>
-Animation<T>::Animation(const std::initializer_list<KeyFrame<T>>& frames, T& attribute, bool shouldInterpolation)
-: attribute_(attribute), shouldInterpolation_(shouldInterpolation) {
+AnimationBase<T>::AnimationBase(const std::initializer_list<KeyFrame<T>>& frames, T& attribute, bool shouldRevertFirstFrame)
+: attribute_(attribute), shouldRevertFirstFrame_(shouldRevertFirstFrame) {
     std::set<KeyFrame<T>, KeyFrameOrderByTime> keyframeSet(frames);
     for (auto& frame : keyframeSet) {
         keyframes_.push_back(frame);
     }
-    initAttr_ = attribute;
 }
 
 template <typename T>
-void Animation<T>::Play() {
+void AnimationBase<T>::Play() {
     isPlay_ = true;
     Rewind();
 }
 
 template <typename T>
-void Animation<T>::Pause() {
+void AnimationBase<T>::Pause() {
     isPlay_ = false;
 }
 
 template <typename T>
-void Animation<T>::Stop() {
+void AnimationBase<T>::Stop() {
     Pause();
     Rewind();
 }
 
 template <typename T>
-void Animation<T>::Rewind() {
+void AnimationBase<T>::Rewind() {
     curTime_ = 0;
     curFrameIdx_ = 0;
-    attribute_ = initAttr_;
+    attribute_ = keyframes_[0].Data();
     curLoop_ = loop_;
 }
 
+template <typename T, bool ShouldInterploate>
+class Animation: public AnimationBase<T> {
+public:
+    Animation(const std::initializer_list<KeyFrame<T>>& frames, T& attribute, bool shouldRevertFirstFrame = true);
+    void Update() override;
+    bool WillInterpolate() const override { return ShouldInterploate; }
+};
+
 template <typename T>
-void Animation<T>::Update() {
-    if (!IsPlay()) return;
+class Animation<T, true>: public AnimationBase<T> {
+public:
+    Animation(const std::initializer_list<KeyFrame<T>>& frames, T& attribute, bool shouldRevertFirstFrame = true): AnimationBase<T>(frames, attribute, shouldRevertFirstFrame) {}
+    void Update() override;
+    bool WillInterpolate() const override { return true; }
+};
 
-    curTime_ += Timer::GetElapse();
+template <typename T>
+class Animation<T, false>: public AnimationBase<T> {
+public:
+    Animation(const std::initializer_list<KeyFrame<T>>& frames, T& attribute, bool shouldRevertFirstFrame = true): AnimationBase<T>(frames, attribute, shouldRevertFirstFrame) {}
+    void Update() override;
+    bool WillInterpolate() const override { return true; }
+};
 
-    while (curFrameIdx_ < keyframes_.size() && 
-           keyframes_[curFrameIdx_].Time() < curTime_) {
-        curFrameIdx_++;
+template <typename T>
+void Animation<T, true>::Update() {
+    if (!this->IsPlay()) return;
+
+    this->curTime_ += Timer::GetElapse();
+
+    while (this->curFrameIdx_ < this->keyframes_.size() && 
+           this->keyframes_[this->curFrameIdx_].Time() < this->curTime_) {
+        this->curFrameIdx_++;
     }
 
-    if (curFrameIdx_ >= keyframes_.size()) {
-        if (curLoop_ == -1 || curLoop_ > 0) {
-            if (curLoop_ > 0) curLoop_ --;
-            int tmpLoop = curLoop_;
-            Rewind();
-            curLoop_ = tmpLoop;
+    if (this->curFrameIdx_ >= this->keyframes_.size()) {
+        if (this->curLoop_ == -1 || this->curLoop_ > 0) {
+            if (this->curLoop_ > 0) this->curLoop_ --;
+            int tmpLoop = this->curLoop_;
+            this->Rewind();
+            this->curLoop_ = tmpLoop;
         } else {
-            Pause();
-            attribute_ = keyframes_.back().Data();
+            if (this->ShouldRevertFirstFrame()) {
+                this->Stop();
+            } else {
+                this->Pause();
+                this->attribute_ = this->keyframes_.back().Data();
+            }
             return;
         }
     }
 
-    uint32_t prevFrameIdx = curFrameIdx_ - 1;
-    if (WillInterpolation()) {
-        const T& curAttr = keyframes_[curFrameIdx_].Data();
-        T prevAttr = curFrameIdx_ == 0 ? initAttr_ : keyframes_[prevFrameIdx].Data();
-        uint32_t curFrameTime = keyframes_[curFrameIdx_].Time(),
-                 prevFrameTime = curFrameIdx_ == 0 ? 0 : keyframes_[prevFrameIdx].Time();
-        uint32_t deltaTime = curFrameTime - prevFrameTime;
-        attribute_ = Lerp<T, T>(prevAttr, curAttr, (float)(curTime_ - prevFrameTime) / float(deltaTime));
-    } else {
-        attribute_ = curFrameIdx_ == 0 ? initAttr_ : keyframes_[prevFrameIdx].Data();
+    uint32_t prevFrameIdx = this->curFrameIdx_ - 1;
+    const T& curAttr = this->keyframes_[this->curFrameIdx_].Data();
+    T prevAttr = this->curFrameIdx_ == 0 ? this->keyframes_[0].Data() : this->keyframes_[prevFrameIdx].Data();
+    uint32_t curFrameTime = this->keyframes_[this->curFrameIdx_].Time(),
+             prevFrameTime = this->curFrameIdx_ == 0 ? 0 : this->keyframes_[prevFrameIdx].Time();
+    uint32_t deltaTime = curFrameTime - prevFrameTime;
+    this->attribute_ = Lerp<T, T>(prevAttr, curAttr, (float)(this->curTime_ - prevFrameTime) / float(deltaTime));
+}
+
+template <typename T>
+void Animation<T, false>::Update() {
+    if (!this->IsPlay()) return;
+
+    this->curTime_ += Timer::GetElapse();
+
+    while (this->curFrameIdx_ < this->keyframes_.size() && 
+           this->keyframes_[this->curFrameIdx_].Time() < this->curTime_) {
+        this->curFrameIdx_++;
     }
+
+    if (this->curFrameIdx_ >= this->keyframes_.size()) {
+        if (this->curLoop_ == -1 || this->curLoop_ > 0) {
+            if (this->curLoop_ > 0) this->curLoop_ --;
+            int tmpLoop = this->curLoop_;
+            this->Rewind();
+            this->curLoop_ = tmpLoop;
+        } else {
+            if (this->ShouldRevertFirstFrame()) {
+                this->Stop();
+            } else {
+                this->Pause();
+                this->attribute_ = this->keyframes_.back().Data();
+            }
+            return;
+        }
+    }
+
+    uint32_t prevFrameIdx = this->curFrameIdx_ - 1;
+    const T& curAttr = this->keyframes_[this->curFrameIdx_].Data();
+    T prevAttr = this->curFrameIdx_ == 0 ? this->keyframes_[0].Data() : this->keyframes_[prevFrameIdx].Data();
+    uint32_t curFrameTime = this->keyframes_[this->curFrameIdx_].Time(),
+             prevFrameTime = this->curFrameIdx_ == 0 ? 0 : this->keyframes_[prevFrameIdx].Time();
+    uint32_t deltaTime = curFrameTime - prevFrameTime;
+    this->attribute_ = this->curFrameIdx_ == 0 ? this->keyframes_[0].Data() : this->keyframes_[prevFrameIdx].Data();
 }
 
 }

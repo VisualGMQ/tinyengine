@@ -14,7 +14,7 @@ public:
 
 class DLLEXPORT OrthoCamera: public Camera {
 public:
-    OrthoCamera(float w, float h, float near);
+    OrthoCamera(float w, float h, float near, float far);
     const Mat4& Project() override;
     const Mat4& View() override;
     void MoveTo(const Vec3& pos);

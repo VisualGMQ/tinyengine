@@ -10,6 +10,8 @@ void Node2DComponent::Reset() {
     scale.Set(1, 1);
     rotation = 0;
 
+    zIndex = 0;
+
     transform_ = IdentityMat4;
     rotationMat_ = IdentityMat4;
     translateMat_ = IdentityMat4;

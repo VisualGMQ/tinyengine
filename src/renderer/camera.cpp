@@ -2,9 +2,9 @@
 
 namespace engine {
 
-OrthoCamera::OrthoCamera(float w, float h, float near)
+OrthoCamera::OrthoCamera(float w, float h, float near, float far)
     : isDirt_(true), position_(0, 0, 0),
-      project_(CreateOrtho(w, h, near)),
+      project_(CreateOrtho(w, h, near, far)),
       transform_(CreateIdentityMat<4>()) {
 }
 
