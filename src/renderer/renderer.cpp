@@ -176,7 +176,10 @@ void Renderer::drawMeshSolid(const Mesh& mesh, DrawType type, const Mat4& transf
     drawMesh(mesh, type, transform, texture);
 }
 
+const Color NoneKeyColor(-1, -1, -1);
+
 void Renderer::DrawLine(const Vec3& p1, const Vec3& p2) {
+    Renderer::SetKeyColor(NoneKeyColor);
     auto& vertices = mesh_->GetVertices();
     vertices.clear();
     mesh_->GetIndices().clear();
@@ -190,6 +193,7 @@ void Renderer::DrawLine(const Vec3& p1, const Vec3& p2) {
 }
 
 void Renderer::DrawGrid() {
+    Renderer::SetKeyColor(NoneKeyColor);
     for (int i = -100; i <= 100; i++) {
         DrawLine(Vec3(i * 1, 0, -100), Vec3(i * 1, 0, 100));
         DrawLine(Vec3(-100, 0, i * 1), Vec3(100, 0, i * 1));
@@ -197,6 +201,7 @@ void Renderer::DrawGrid() {
 }
 
 void Renderer::DrawRect(const Rect& rect, float zIndex) {
+    Renderer::SetKeyColor(NoneKeyColor);
     std::array<Vec2, 4> points{{
         Vec2(rect.position.x, rect.position.y),
         Vec2(rect.position.x + rect.size.w, rect.position.y),
@@ -215,6 +220,7 @@ void Renderer::DrawRect(const Rect& rect, float zIndex) {
 }
 
 void Renderer::DrawLine(const Vec2& p1, const Vec2& p2, float zIndex) {
+    Renderer::SetKeyColor(NoneKeyColor);
     auto& vertices = mesh_->GetVertices();
     mesh_->GetIndices().clear();
     vertices.clear();
@@ -230,6 +236,7 @@ void Renderer::DrawLine(const Vec2& p1, const Vec2& p2, float zIndex) {
 
 void Renderer::DrawLines(const std::vector<Vec3>& points) {
     if (points.empty()) return;
+    Renderer::SetKeyColor(NoneKeyColor);
     auto& vertices = mesh_->GetVertices();
     vertices.clear();
     vertices.resize(points.size());
@@ -243,6 +250,7 @@ void Renderer::DrawLines(const std::vector<Vec3>& points) {
 
 void Renderer::DrawLineLoop(const std::vector<Vec3>& points) {
     if (points.empty()) return;
+    Renderer::SetKeyColor(NoneKeyColor);
     auto& vertices = mesh_->GetVertices();
     vertices.clear();
     vertices.resize(points.size());
@@ -255,6 +263,7 @@ void Renderer::DrawLineLoop(const std::vector<Vec3>& points) {
 }
 
 void Renderer::FillRect(const Rect& rect, float zIndex) {
+    Renderer::SetKeyColor(NoneKeyColor);
     auto& vertices = mesh_->GetVertices();
     mesh_->GetIndices().clear();
     vertices.clear();
@@ -281,6 +290,7 @@ void Renderer::FillRect(const Rect& rect, float zIndex) {
 
 void Renderer::DrawLines(const std::vector<Vec2>& points, float zIndex) {
     if (points.empty()) return;
+    Renderer::SetKeyColor(NoneKeyColor);
     auto& vertices = mesh_->GetVertices();
     vertices.clear();
     vertices.resize(points.size());
@@ -294,6 +304,7 @@ void Renderer::DrawLines(const std::vector<Vec2>& points, float zIndex) {
 
 void Renderer::DrawLineLoop(const std::vector<Vec2>& points, float zIndex) {
     if (points.empty()) return;
+    Renderer::SetKeyColor(NoneKeyColor);
     auto& vertices = mesh_->GetVertices();
     vertices.clear();
     vertices.resize(points.size());
@@ -345,8 +356,9 @@ void Renderer::DrawTexture(const Texture& texture, Rect* src, const Size& size, 
 
 void Renderer::DrawText(Font* font, const std::string& text, const Vec2& pos, float zIndex) {
     if (!font) return;
+    Renderer::SetKeyColor(Color{0, 0, 0});
 
-    SDL_Surface* surface = TTF_RenderUTF8_Blended(font->font_, text.c_str(), SDL_Color{255, 255, 255, 255});
+    SDL_Surface* surface = TTF_RenderUTF8_Shaded(font->font_, text.c_str(), SDL_Color{255, 255, 255, 255}, SDL_Color{0, 0, 0, 255});
     SDL_Surface* cvtSurface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGBA32, 0);
     SDL_FreeSurface(surface);
 
