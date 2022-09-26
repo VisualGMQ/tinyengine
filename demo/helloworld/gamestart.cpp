@@ -72,8 +72,8 @@ void GameStart::initOtherNode() {
     auto node = image->GetComponent<engine::Node2DComponent>();
     auto tilesheet = engine::TileSheetFactory::Create("tilesheet", engine::TextureFactory::Find("tilesheet"), 3, 13);
     auto tile = tilesheet->Get(0, 0);
-    sprite->texture = tile.texture;
-    sprite->region = tilesheet->Get(0, 0).region;
+    sprite->image.texture = tile.texture;
+    sprite->image.region = tilesheet->Get(0, 0).region;
     sprite->offset.Set(tilesheet->TileSize().w / 2.0, tilesheet->TileSize().h / 2.0);
     node->position.Set(600, 100);
     Attach2D(image);
