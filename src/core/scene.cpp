@@ -77,6 +77,9 @@ void SceneMgr::ChangeScene(const std::string& name) {
         if (InitConfig::Instance().IsUseSceneTree()) {
             debug::DebugAttachSceneTree();
         }
+        if (InitConfig::Instance().IsUseConsole()) {
+            debug::DebugAttachConsole();
+        }
     }
 }
 

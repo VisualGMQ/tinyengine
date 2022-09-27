@@ -5,6 +5,7 @@
 #include "engine/ecs/entity.hpp"
 #include "engine/core/init_config.hpp"
 #include "engine/debug/scene_tree.hpp"
+#include "engine/debug/console.hpp"
 
 namespace engine {
 

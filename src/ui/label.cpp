@@ -6,6 +6,7 @@ void UILabel::Reset() {
     Component::Reset();
     text = "label";
     align = NK_TEXT_ALIGN_LEFT;
+    wrap = false;
 }
 
 Entity* CreateUILabel(const std::string& name, const std::string& text, nk_flags align, Entity* parent) {

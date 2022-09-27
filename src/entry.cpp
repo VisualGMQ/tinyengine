@@ -12,6 +12,7 @@ int main(int argc, char** argv) {
 
     engine::Video::Init(config.Title(), config.WindowSize().w, config.WindowSize().h, config.Resizable());
     engine::Event::Init();
+    engine::debug::Console::Init();
     engine::Renderer::Init(config.WindowSize().w, config.WindowSize().h);
     engine::FontFactory::Init();
     engine::TextureFactory::Init();
@@ -51,6 +52,7 @@ int main(int argc, char** argv) {
     engine::TextureFactory::Quit();
     engine::FontFactory::Quit();
     engine::Renderer::Quit();
+    engine::debug::Console::Quit();
     engine::Event::Quit();
     engine::Video::Quit();
     engine::Logger::Quit();

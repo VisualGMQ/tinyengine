@@ -8,6 +8,8 @@ void UIEdit::Reset() {
     len = 0;
     maxLength = 1023;
     filter = nullptr;
+    onEnterKeyPress = nullptr;
+    memset(buffer, 0, sizeof(buffer));
 }
 
 Entity* CreateUIEdit(const std::string& name, int options, int maxLength, nk_plugin_filter filter, Entity* parent) {

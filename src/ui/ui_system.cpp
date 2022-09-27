@@ -73,9 +73,16 @@ void UISystem::Update(Entity* entity) {
             if (option->callback) option->callback(entity, option);
         }
     } else if (auto label = entity->GetComponent<UILabel>(); label && label->IsActive()) {
-        nk_label(ctx, label->text.c_str(), label->align);
+        if (label->wrap) {
+            nk_label_wrap(ctx, label->text.c_str());
+        } else {
+            nk_label(ctx, label->text.c_str(), label->align);
+        }
     } else if (auto edit = entity->GetComponent<UIEdit>(); edit && edit->IsActive()) {
-        nk_edit_string(ctx, edit->options, edit->buffer, &edit->len, edit->maxLength, edit->filter);
+        int flag = nk_edit_string(ctx, edit->options, edit->buffer, &edit->len, edit->maxLength, edit->filter);
+        if (flag & NK_EDIT_COMMITED && edit->onEnterKeyPress) {
+            edit->onEnterKeyPress(entity, edit);
+        }
     } else if (auto property = entity->GetComponent<UIProperty>(); property && property->IsActive()) {
         property->oldValue = property->Value();
         if (property->type == UIProperty::Int) {

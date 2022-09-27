@@ -14,6 +14,7 @@ public:
 
     std::string text;
     nk_flags align;
+    bool wrap;
 };
 
 Entity* CreateUILabel(const std::string& name, const std::string& text, nk_flags align, Entity* parent);

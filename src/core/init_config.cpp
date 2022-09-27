@@ -22,6 +22,7 @@ void InitConfig::ParseFile(std::string_view name) {
     size_.h = 720;
     resizable_ = false;
     useSceneTree_ = false; 
+    useConsole_ = false;
 
     toml::table tbl;
     try {
@@ -35,6 +36,7 @@ void InitConfig::ParseFile(std::string_view name) {
         size_.h = tbl["height"].value_or(720);
         resizable_ = tbl["resizable"].value_or(false);
         useSceneTree_ = tbl["use_scene_tree"].value_or(false);
+        useConsole_ = tbl["use_console"].value_or(false);
     } catch (const toml::parse_error& err) {
         Loge("parse init.toml failed");
     }

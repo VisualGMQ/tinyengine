@@ -15,12 +15,14 @@ public:
     Size WindowSize() const { return size_; }
     bool Resizable() const { return resizable_; }
     bool IsUseSceneTree() const { return useSceneTree_; } 
+    bool IsUseConsole() const { return useConsole_; }
 
 private:
     std::string title_;
     Size size_;
     bool resizable_;
     bool useSceneTree_;
+    bool useConsole_;
 
     static std::unique_ptr<InitConfig> instance_;
 };

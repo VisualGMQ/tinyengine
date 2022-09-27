@@ -49,3 +49,4 @@
 
 #include "engine/debug/scene_tree.hpp"
 #include "engine/debug/property_watcher.hpp"
+#include "engine/debug/console.hpp"
