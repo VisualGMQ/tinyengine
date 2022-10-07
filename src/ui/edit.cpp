@@ -13,13 +13,12 @@ void UIEdit::Reset() {
 }
 
 Entity* CreateUIEdit(const std::string& name, int options, int maxLength, nk_plugin_filter filter, Entity* parent) {
-    Entity* entity = World::Instance()->CreateEntity(name);
-    auto edit = World::Instance()->CreateComponent<UIEdit>();
+    Entity* entity = World::Instance()->CreateEntity<UIEdit, NodeComponent>(name);
+    auto edit = entity->GetComponent<UIEdit>();
     edit->options = options;
     edit->len = 0;
     edit->maxLength = maxLength;
     edit->filter = filter;
-    entity->SetComponent(edit);
 
     if (parent) {
         auto node = parent->GetComponent<NodeComponent>();

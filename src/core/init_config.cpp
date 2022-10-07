@@ -38,7 +38,7 @@ void InitConfig::ParseFile(std::string_view name) {
         useSceneTree_ = tbl["use_scene_tree"].value_or(false);
         useConsole_ = tbl["use_console"].value_or(false);
     } catch (const toml::parse_error& err) {
-        Loge("parse init.toml failed");
+        Logw("parse init.toml failed, skip config");
     }
 }
 

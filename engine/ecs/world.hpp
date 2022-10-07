@@ -76,7 +76,7 @@ private:
     static std::unique_ptr<World> instance_;
 
     void destroyEntity(const std::vector<std::unique_ptr<Entity>>::const_iterator& it);
-    void updateEntity(Entity*, const Mat4&);
+    void updateEntity(Entity*);
     void updateUIEntity(Entity*);
     void initEntity(Entity*);
     void dispatchEvent2Entity(Entity*);

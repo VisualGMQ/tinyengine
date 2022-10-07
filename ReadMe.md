@@ -34,6 +34,19 @@ cmake --build build
 
 ![cmake-gui](./snapshots/cmake-gui.png)
 
+## 运行Demo
+
+使用
+
+```bash
+cmake --build build --target demo-<demo name>
+```
+
+来运行。这里的`demo-name`是Demo的名称。目前有两个：
+
+* helloworld
+* small_man
+
 ## 注意事项
 
 本框架目前只支持使用VS编译，因为VS编译出的体积最小，且VS运行库不计入空间。

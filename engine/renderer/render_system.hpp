@@ -6,8 +6,7 @@ namespace engine {
 class RenderSystem: public System {
 public:
     RenderSystem(engine::World* world): System(world) {}
-    void Update(Entity*) override {}
-    Mat4 Update(Entity*, const Mat4&);
+    void Update(Entity*) override;
 };
 
 }

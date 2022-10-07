@@ -10,12 +10,11 @@ void UIButton::Reset() {
 }
 
 Entity* CreateUIButton(const std::string& name, const std::string& text, UIButton::CallbackType callback, void* param, Entity* parent) {
-    Entity* entity = World::Instance()->CreateEntity(name);
-    auto button = World::Instance()->CreateComponent<UIButton>();
+    Entity* entity = World::Instance()->CreateEntity<UIButton, NodeComponent>(name);
+    auto button = entity->GetComponent<UIButton>();
     button->text = text;
     button->onClick = callback;
     button->param = param;
-    entity->SetComponent(button);
 
     if (parent) {
         auto node = parent->GetComponent<NodeComponent>();

@@ -8,11 +8,10 @@ void UIGroup::Reset() {
 }
 
 Entity* CreateUIGroup(const std::string& name, const std::string& title, nk_flags options, Entity* parent) {
-    Entity* entity = World::Instance()->CreateEntity(name);
-    auto group = World::Instance()->CreateComponent<UIGroup>();
+    Entity* entity = World::Instance()->CreateEntity<UIGroup, NodeComponent>(name);
+    auto group = entity->GetComponent<UIGroup>();
     group->options = options;
     group->title = title;
-    entity->SetComponent(group);
 
     if (parent) {
         auto node = parent->GetComponent<NodeComponent>();

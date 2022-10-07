@@ -11,12 +11,11 @@ void UIWindow::Reset() {
 }
 
 Entity* CreateUIWindow(const std::string& name, const std::string& title, nk_flags flags, const Rect& rect) {
-    Entity* entity = World::Instance()->CreateEntity(name);
-    auto window = World::Instance()->CreateComponent<UIWindow>();
+    Entity* entity = World::Instance()->CreateEntity<UIWindow, NodeComponent>(name);
+    auto window = entity->GetComponent<UIWindow>();
     window->title = title;
     window->flags = flags;
     window->rect = rect;
-    entity->SetComponent(window);
 
     return entity;
 }

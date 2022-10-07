@@ -11,21 +11,10 @@ Scene::Scene(const std::string& name): name_(name) {
 
 void Scene::beforeInit() {
     auto world = World::Instance();
-    root_ = world->CreateEntity(name_ + " root");
-    auto node = World::Instance()->CreateComponent<NodeComponent>();
-    root_->SetComponent<NodeComponent>(node);
-
-    node2d_ = world->CreateEntity(name_ + " 2d root");
-    node2d_->SetComponent(world->CreateComponent<NodeComponent>());
-    node2d_->SetComponent(world->CreateComponent<Node2DRoot>());
-
-    node3d_ = world->CreateEntity(name_ + " 3d root");
-    node3d_->SetComponent(world->CreateComponent<NodeComponent>());
-    node3d_->SetComponent(world->CreateComponent<Node3DRoot>());
-
-    nodeUI_ = world->CreateEntity(name_ + " ui root");
-    nodeUI_ ->SetComponent(world->CreateComponent<NodeComponent>());
-    nodeUI_->SetComponent(world->CreateComponent<NodeUIRoot>());
+    root_ = world->CreateEntity<NodeComponent>(name_ + " root");
+    node2d_ = world->CreateEntity<NodeComponent, Node2DRoot>(name_ + " 2d root");
+    node3d_ = world->CreateEntity<NodeComponent, Node3DRoot>(name_ + " 3d root");
+    nodeUI_ = world->CreateEntity<NodeComponent, NodeUIRoot>(name_ + " ui root");
 
     Attach(node3d_);
     Attach(node2d_);
@@ -53,15 +42,21 @@ void Scene::Attach(Entity* entity) {
 }
 
 void Scene::Attach2D(Entity* entity) {
+    if (!entity) return;
     node2d_->GetComponent<NodeComponent>()->Attach(entity);
+    SetNodeParent(node2d_, entity);
 }
 
 void Scene::Attach3D(Entity* entity) {
+    if (!entity) return;
     node3d_->GetComponent<NodeComponent>()->Attach(entity);
+    SetNodeParent(node3d_, entity);
 }
 
 void Scene::AttachUI(Entity* entity) {
+    if (!entity) return;
     nodeUI_->GetComponent<NodeComponent>()->Attach(entity);
+    SetNodeParent(nodeUI_, entity);
 }
 
 void SceneMgr::ChangeScene(const std::string& name) {

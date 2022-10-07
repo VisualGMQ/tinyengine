@@ -10,11 +10,10 @@ void UIOption::Reset() {
 }
 
 Entity* CreateUIOption(const std::string& name, const std::string& text, UIOption::CallbackType callback, Entity* parent) {
-    Entity* entity = World::Instance()->CreateEntity(name);
-    auto option = World::Instance()->CreateComponent<UIOption>();
+    Entity* entity = World::Instance()->CreateEntity<UIOption, NodeComponent>(name);
+    auto option = entity->GetComponent<UIOption>();
     option->text = text;
     option->callback = callback;
-    entity->SetComponent(option);
 
     if (parent) {
         auto node = parent->GetComponent<NodeComponent>();

@@ -28,12 +28,11 @@ void UIFreeLayout::Reset() {
 }
 
 Entity* CreateUIStaticRowLayout(const std::string& name, float height, int widgetWidth, int cols, Entity* parent) {
-    Entity* entity = World::Instance()->CreateEntity(name);
-    auto layout = World::Instance()->CreateComponent<UIStaticRowLayout>();
+    Entity* entity = World::Instance()->CreateEntity<UIStaticRowLayout, NodeComponent>(name);
+    auto layout = entity->GetComponent<UIStaticRowLayout>();
     layout->height = height;
     layout->itemWidth = widgetWidth;
     layout->cols = cols;
-    entity->SetComponent(layout);
 
     if (parent) {
         auto node = parent->GetComponent<NodeComponent>();
@@ -45,11 +44,10 @@ Entity* CreateUIStaticRowLayout(const std::string& name, float height, int widge
 }
 
 Entity* CreateUIDynamicRowLayout(const std::string& name, float height, int cols, Entity* parent) {
-    Entity* entity = World::Instance()->CreateEntity(name);
-    auto layout = World::Instance()->CreateComponent<UIDynamicRowLayout>();
+    Entity* entity = World::Instance()->CreateEntity<UIDynamicRowLayout, NodeComponent>(name);
+    auto layout = entity->GetComponent<UIDynamicRowLayout>();
     layout->height = height;
     layout->cols = cols;
-    entity->SetComponent(layout);
 
     if (parent) {
         auto node = parent->GetComponent<NodeComponent>();
@@ -63,12 +61,11 @@ Entity* CreateUIDynamicRowLayout(const std::string& name, float height, int cols
 }
 
 Entity* CreateUIRowLayout(const std::string& name, nk_layout_format format, float height, const std::vector<float> ratio, Entity* parent) {
-    Entity* entity = World::Instance()->CreateEntity(name);
-    auto layout = World::Instance()->CreateComponent<UIRowLayout>();
+    Entity* entity = World::Instance()->CreateEntity<UIRowLayout, NodeComponent>(name);
+    auto layout = entity->GetComponent<UIRowLayout>();
     layout->height = height;
     layout->ratio = ratio;
     layout->format = format;
-    entity->SetComponent(layout);
 
     if (parent) {
         auto node = parent->GetComponent<NodeComponent>();
@@ -82,12 +79,11 @@ Entity* CreateUIRowLayout(const std::string& name, nk_layout_format format, floa
 }
 
 Entity* CreateUIFreeLayout(const std::string& name, nk_layout_format format, float height, int widgetCount, Entity* parent) {
-    Entity* entity = World::Instance()->CreateEntity(name);
-    auto layout = World::Instance()->CreateComponent<UIFreeLayout>();
+    Entity* entity = World::Instance()->CreateEntity<UIFreeLayout, NodeComponent>(name);
+    auto layout = entity->GetComponent<UIFreeLayout>();
     layout->height = height;
     layout->widgetCount = widgetCount;
     layout->format = format;
-    entity->SetComponent(layout);
 
     if (parent) {
         auto node = parent->GetComponent<NodeComponent>();

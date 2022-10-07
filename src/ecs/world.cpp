@@ -129,7 +129,7 @@ void World::Update() {
     auto node = scene->GetRootEntity()->GetComponent<NodeComponent>();
 
     for (auto& entity : node->children) {
-        updateEntity(entity, IdentityMat4);
+        updateEntity(entity);
     }
  
     for (auto& entity : node->children) {
@@ -148,7 +148,7 @@ void World::Update() {
     }
 }
 
-void World::updateEntity(Entity* entity, const Mat4& parentTransform) {
+void World::updateEntity(Entity* entity) {
     if (!entity || !entity->IsActive()) return;
 
     if (auto node = entity->GetComponent<Node2DRoot>(); node && node->IsActive()) {
@@ -166,16 +166,14 @@ void World::updateEntity(Entity* entity, const Mat4& parentTransform) {
         system->Update(entity);
     }
 
-    auto newTransform = renderSystem_->Update(entity, parentTransform);
-
     if (auto node = entity->GetComponent<NodeComponent>(); node != nullptr) {
         for (auto& ent : node->children) {
-            updateEntity(ent, newTransform);
+            updateEntity(ent);
         }
     }
     if (auto node = entity->GetComponent<Node2DComponent>(); node != nullptr) {
         for (auto& ent : node->children) {
-            updateEntity(ent, newTransform);
+            updateEntity(ent);
         }
     }
 }
