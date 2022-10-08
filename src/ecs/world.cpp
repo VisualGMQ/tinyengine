@@ -13,12 +13,11 @@ std::unique_ptr<World> World::instance_;
 
 World::World() {
     uiSystem_ = new UISystem(this);
-    renderSystem_ = new RenderSystem(this);
+    AddSystem<RenderSystem>();
 }
 
 World::~World() {
     delete uiSystem_;
-    delete renderSystem_;
 }
 
 World* World::Instance() {

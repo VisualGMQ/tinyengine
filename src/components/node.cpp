@@ -15,8 +15,8 @@ void SetNodeParent(Entity* parent, Entity* child) {
 void Node2DComponent::Reset() {
     NodeComponent::Reset();
 
-    position.Set(0, 0);
-    scale.Set(1, 1);
+    position = Vec2(0, 0);
+    scale = Vec2(1, 1);
     rotation = 0;
 
     zIndex = 0;
@@ -28,29 +28,44 @@ void Node2DComponent::Reset() {
     scaleMat_ = IdentityMat4;
 } 
 
+void Node2DComponent::DetectDirt() {
+    if (oldPosition_ != position) {
+        dirt_ |= Dirt::Translate;
+        oldPosition_ = position;
+    }
+    if (oldRotation_ != rotation) {
+        dirt_ |= Dirt::Rotate;
+        oldRotation_ = rotation;
+    }
+    if (oldScale_ != scale) {
+        dirt_ |= Dirt::Scale;
+        oldScale_ = scale;
+    }
+}
+
 void Node2DComponent::tryCalcTranslateMat() {
-    if (position_.IsChanged()) {
+    if (dirt_ & Dirt::Translate) {
         translateMat_ = CreateTranslate(Vec3(position.x, position.y, 0));
-        position_.ClearChangeState();
+        dirt_ &= ~Dirt::Translate;
     }
 }
 
 void Node2DComponent::tryCalcScaleMat() {
-    if (scale_.IsChanged()) {
+    if (dirt_ & Dirt::Scale) {
         scaleMat_ = CreateScale(Vec3(scale.x, scale.y, 1));
-        scale_.ClearChangeState();
+        dirt_ &= ~Dirt::Scale;
     }
 }
 
 void Node2DComponent::tryCalcRotateMat() {
-    if (rotation_.IsChanged()) {
+    if (dirt_ & Dirt::Rotate) {
         rotationMat_ = CreateRotationZ(rotation);
-        rotation_.ClearChangeState();
+        dirt_ &= ~Dirt::Rotate;
     }
 }
 
 bool Node2DComponent::TryUpdateLocalTransform() {
-    if (position_.IsChanged() || rotation_.IsChanged() || scale_.IsChanged()) {
+    if (dirt_ != Dirt::None) {
         tryCalcRotateMat();
         tryCalcScaleMat();
         tryCalcTranslateMat();

@@ -60,8 +60,6 @@ private:
 
     // special for UI
     UISystem* uiSystem_;
-    // special for render
-    RenderSystem* renderSystem_;
 
     std::vector<std::unique_ptr<Entity>> entities_;
     std::stack<std::unique_ptr<Entity>> entityTrashes_;

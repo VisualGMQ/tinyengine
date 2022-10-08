@@ -14,6 +14,7 @@ void RenderSystem::Update(Entity* entity) {
         if (node2d->GetParentNode() && node2d->GetParentNode()->GetComponent<Node2DComponent>()) {
             parentTransform = node2d->GetParentNode()->GetComponent<Node2DComponent>()->GetGlobalTransform();
         }
+        node2d->DetectDirt();
         node2d->TryUpdateLocalTransform();
         curTransform = node2d->GetLocalTransform();
         globalTransform = parentTransform * curTransform;

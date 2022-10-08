@@ -2,9 +2,7 @@
 
 void StartScene::OnInit() {
     loadResources();
-    engine::debug::PropertyWatcher::Attach2Scene();
     initNodes();
-    engine::debug::DebugAttachSceneTree();
 }
 
 void StartScene::OnQuit() {
@@ -20,10 +18,9 @@ void StartScene::loadResources() {
 
 void StartScene::initNodes() {
     auto world = engine::World::Instance();
-    auto role = world->CreateEntity("role");
+    auto role = world->CreateEntity<engine::Node2DComponent>("role");
     role->SetBehavior(std::make_unique<RoleBehavior>());
-    auto node = world->CreateComponent<engine::Node2DComponent>();
-    role->SetComponent(node);
+    auto node = role->GetComponent<engine::Node2DComponent>();
     Attach2D(role);
 
     engine::debug::PropertyWatcher::SetWatchEntity(role);

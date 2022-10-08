@@ -1,7 +1,6 @@
 #pragma once
 
 #include "engine/core/dllexport.hpp"
-#include "engine/core/cache.hpp"
 #include "engine/ecs/world.hpp"
 #include "engine/ecs/component.hpp"
 
@@ -47,6 +46,7 @@ public:
     const Mat4& GetGlobalTransform() const { return globalTransform_; }
 
     void UpdateGlobalTransform(const Mat4& transform) { globalTransform_ = transform; }
+    void DetectDirt();
 
     float rotation;
     Vec2 scale;
@@ -54,10 +54,18 @@ public:
     float zIndex;
 
 private:
-    Cacher<float> rotation_;
-    Cacher<Vec2> scale_;
-    Cacher<Vec2> position_;
-    Cacher<float> zIndex_;
+    enum Dirt {
+        None = 0,
+        Translate = 0x01,
+        Scale = 0x02,
+        Rotate = 0x04,
+    };
+    uint32_t dirt_ = None;
+
+    float oldRotation_;
+    Vec2 oldScale_;
+    Vec2 oldPosition_;
+    float oldZIndex_;
 
     Mat4 globalTransform_;
     Mat4 localTransform_;
