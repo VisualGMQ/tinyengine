@@ -12,17 +12,24 @@ public:
 
     float mass;
     float damping;
+    Vec2 velocity;
+    Vec2 force;
 };
 
 class BoxColliderComponent: public Component {
 public:
+    friend class ColliderCollectSystem;
+
     BoxColliderComponent(ComponentID id): Component(id) { Reset(); }
     void Reset() override;
 
-private:
     float halfWidth;
     float halfHeight;
     Vec2 offset;
+    uint32_t layer;
+
+private:
+    bool pushedInLayer_;
 };
 
 }

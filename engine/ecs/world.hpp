@@ -45,8 +45,11 @@ public:
     void Update();
     void CleanUp();
 
-    template <typename T>
-    void AddSystem();
+    template <typename T, typename... Args>
+    System* AddSystem(Args&&... args);
+
+    void AddSystem(std::unique_ptr<PerFrameSystem>&& system) { perFrameSystems_.push_back(std::move(system)); }
+    void AddSystem(std::unique_ptr<EntityUpdateSystem>&& system) { updateEntitySystems_.push_back(std::move(system)); }
 
     void RemoveSystem(System* system);
 
@@ -123,15 +126,16 @@ void World::RemoveComponent(T* component) {
     }
 }
 
-template <typename T>
-void World::AddSystem() {
+template <typename T, typename... Args>
+System* World::AddSystem(Args&&... args) {
     if constexpr (std::is_base_of_v<PerFrameSystem, T>) {
-        perFrameSystems_.push_back(std::make_unique<T>(this));
+        perFrameSystems_.push_back(std::make_unique<T>(this, std::forward<Args>(args)...));
+        return perFrameSystems_.back().get();
     } else {
-        updateEntitySystems_.push_back(std::make_unique<T>(this));
+        updateEntitySystems_.push_back(std::make_unique<T>(this, std::forward<Args>(args)...));
+        return updateEntitySystems_.back().get();
     }
 }
-
 
 template <typename T, typename... Args>
 void World::doCreateEntity(Entity* entity) {

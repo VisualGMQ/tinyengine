@@ -15,6 +15,11 @@ std::unique_ptr<World> World::instance_;
 World::World() {
     uiSystem_ = new UISystem(this);
     AddSystem<PhysicsSystem>();
+    // auto collideSystem = std::make_unique<CollideSystem>(World::Instance());
+    // AddSystem<ColliderCollectSystem>(collideSystem.get());
+    // AddSystem(std::move(collideSystem));
+    CollideSystem* collideSystem = (CollideSystem*)AddSystem<CollideSystem>();
+    AddSystem<ColliderCollectSystem>(collideSystem);
     AddSystem<RenderSystem>();
 }
 
