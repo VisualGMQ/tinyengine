@@ -37,6 +37,24 @@ void RoleBehavior::OnUpdate() {
     auto tilesheet = engine::TileSheetFactory::Find("role");
     swordAnim_->Update();
     controller_->Update();
+
+
+    auto rigid = Parent()->GetComponent<engine::RigidBodyComponent>();
+    auto node2d = Parent()->GetComponent<engine::Node2DComponent>();
+    
+    if (engine::Input::IsKeyPressing(SDL_SCANCODE_G)) {
+        auto rigid = Parent()->GetComponent<engine::RigidBodyComponent>();
+        rigid->force.Set(-100000, 0);
+    }
+    if (engine::Input::IsKeyPressing(SDL_SCANCODE_H)) {
+        auto rigid = Parent()->GetComponent<engine::RigidBodyComponent>();
+        rigid->force.Set(100000, 0);
+    }
+
+
+    Logd("velocity = {}", rigid->velocity);
+    Logd("force = {}", rigid->force);
+    Logd("position = {}", node2d->position);
 }
 
 void RoleBehavior::OnQuit() {}
@@ -62,4 +80,5 @@ void RoleBehavior::initRoleBody() {
     sprite = hair_->GetComponent<engine::SpriteComponent>();
     sprite->image = tilesheet->Get(1, 1);
     hair_->GetComponent<engine::Node2DComponent>()->zIndex = 0.01;
+
 }

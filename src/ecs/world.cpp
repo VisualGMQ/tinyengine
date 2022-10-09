@@ -7,6 +7,8 @@
 #include "engine/renderer/render_system.hpp"
 #include "engine/components/sprite.hpp"
 #include "engine/physics/physics_system.hpp"
+#include "engine/debug/collider_outline.hpp"
+#include "engine/core/init_config.hpp"
 
 namespace engine {
 
@@ -15,12 +17,12 @@ std::unique_ptr<World> World::instance_;
 World::World() {
     uiSystem_ = new UISystem(this);
     AddSystem<PhysicsSystem>();
-    // auto collideSystem = std::make_unique<CollideSystem>(World::Instance());
-    // AddSystem<ColliderCollectSystem>(collideSystem.get());
-    // AddSystem(std::move(collideSystem));
     CollideSystem* collideSystem = (CollideSystem*)AddSystem<CollideSystem>();
     AddSystem<ColliderCollectSystem>(collideSystem);
     AddSystem<RenderSystem>();
+    if (InitConfig::Instance().IsDrawColliderOutline()) {
+        AddSystem<debug::ColliderOutlineSystem>();
+    }
 }
 
 World::~World() {

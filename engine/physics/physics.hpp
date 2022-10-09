@@ -14,6 +14,7 @@ public:
     float damping;
     Vec2 velocity;
     Vec2 force;
+    float maxSpeed;
 };
 
 class BoxColliderComponent: public Component {

@@ -3,3 +3,4 @@ width = 1024
 height = 720
 use_scene_tree = false
 use_console = false
+draw_collider_outline = true

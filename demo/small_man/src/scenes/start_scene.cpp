@@ -18,9 +18,12 @@ void StartScene::loadResources() {
 
 void StartScene::initNodes() {
     auto world = engine::World::Instance();
-    auto role = world->CreateEntity<engine::Node2DComponent>("role");
+    auto role = world->CreateEntity<engine::Node2DComponent, engine::BoxColliderComponent, engine::RigidBodyComponent>("role");
     role->SetBehavior(std::make_unique<RoleBehavior>());
     auto node = role->GetComponent<engine::Node2DComponent>();
+    auto box = role->GetComponent<engine::BoxColliderComponent>();
+    box->halfWidth = 10;
+    box->halfHeight = 20;
     Attach2D(role);
 
     engine::debug::PropertyWatcher::SetWatchEntity(role);

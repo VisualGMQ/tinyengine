@@ -16,6 +16,7 @@ public:
     bool Resizable() const { return resizable_; }
     bool IsUseSceneTree() const { return useSceneTree_; } 
     bool IsUseConsole() const { return useConsole_; }
+    bool IsDrawColliderOutline() const { return isDrawColliderOutline_; }
 
 private:
     std::string title_;
@@ -23,6 +24,7 @@ private:
     bool resizable_;
     bool useSceneTree_;
     bool useConsole_;
+    bool isDrawColliderOutline_;
 
     static std::unique_ptr<InitConfig> instance_;
 };

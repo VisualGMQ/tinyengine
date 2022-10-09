@@ -9,6 +9,7 @@ void RigidBodyComponent::Reset() {
     damping = 0;
     velocity.Set(0, 0);
     force.Set(0, 0);
+    maxSpeed = DefaultMaxSpeed;
 
     Component::Reset();
 }

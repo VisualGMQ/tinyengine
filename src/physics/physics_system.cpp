@@ -10,10 +10,19 @@ void PhysicsSystem::Update(Entity* entity) {
     acceleration -= Normalize(acceleration) * rigid->damping;
     if (Dot(acceleration, rigid->force) <= 0) acceleration.Set(0, 0);
 
-    rigid->velocity = acceleration * Timer::GetElapse() / 1000.0f;
-    if (Length2(rigid->velocity) > maxSpeed_ * maxSpeed_) {
+    double elapse = Timer::GetElapse() / 1000.0;
+
+    rigid->velocity = acceleration * elapse;
+    float maxSpeed = std::min(maxSpeed_, rigid->maxSpeed);
+    if (Length2(rigid->velocity) > maxSpeed * maxSpeed) {
         rigid->velocity = Normalize(rigid->velocity) * maxSpeed_;
     }
+
+    if (auto node2d = entity->GetComponent<Node2DComponent>(); node2d) {
+        node2d->position += rigid->velocity * elapse + 0.5 * acceleration * elapse * elapse;
+    }
+
+    rigid->force.Set(0, 0);
 }
 
 

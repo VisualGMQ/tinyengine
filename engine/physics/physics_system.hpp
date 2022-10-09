@@ -6,6 +6,8 @@
 
 namespace engine {
 
+constexpr float DefaultMaxSpeed = 100;
+
 class World;
 
 class PhysicsSystem: public EntityUpdateSystem {
@@ -16,7 +18,7 @@ public:
     void ChangeMaxSpeed(float maxSpeed) { maxSpeed_ = maxSpeed; }
 
 private:
-    float maxSpeed_ = 100;
+    float maxSpeed_ = DefaultMaxSpeed;
 };
 
 class CollideSystem: public PerFrameSystem {

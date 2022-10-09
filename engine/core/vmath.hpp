@@ -532,6 +532,8 @@ DLLEXPORT inline T Length(const Vec<T, N>& v) {
 
 template <typename T, unsigned int N>
 DLLEXPORT inline auto Normalize(const Vec<T, N>& v) {
+    auto len = Length(v);
+    if (len == 0) return v;
     return v / Length(v);
 }
 
