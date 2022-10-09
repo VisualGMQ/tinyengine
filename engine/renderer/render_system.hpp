@@ -3,9 +3,9 @@
 
 namespace engine {
 
-class RenderSystem: public System {
+class RenderSystem: public EntityUpdateSystem {
 public:
-    RenderSystem(engine::World* world): System(world) {}
+    RenderSystem(engine::World* world): EntityUpdateSystem(world) {}
     void Update(Entity*) override;
 };
 

@@ -50,7 +50,8 @@ public:
 
     void RemoveSystem(System* system);
 
-    const std::vector<std::unique_ptr<System>>& Systems() const { return systems_; }
+    const std::vector<std::unique_ptr<EntityUpdateSystem>>& EntityUpdateSystems() const { return updateEntitySystems_; }
+    const std::vector<std::unique_ptr<PerFrameSystem>>& PerFrameSystems() const { return perFrameSystems_; }
 
     void Shutdown();
 
@@ -63,7 +64,8 @@ private:
 
     std::vector<std::unique_ptr<Entity>> entities_;
     std::stack<std::unique_ptr<Entity>> entityTrashes_;
-    std::vector<std::unique_ptr<System>> systems_;
+    std::vector<std::unique_ptr<EntityUpdateSystem>> updateEntitySystems_;
+    std::vector<std::unique_ptr<PerFrameSystem>> perFrameSystems_;
 
     struct ComponentCell {
         std::vector<std::unique_ptr<Component>> components;
@@ -80,6 +82,9 @@ private:
     void dispatchEvent2Entity(Entity*);
     template <typename T, typename... Args>
     void doCreateEntity(Entity* entity);
+
+    void removePerFrameSystem(PerFrameSystem* system);
+    void removeEntityUpdateSystem(EntityUpdateSystem* system);
 };
 
 template <typename T>
@@ -120,7 +125,11 @@ void World::RemoveComponent(T* component) {
 
 template <typename T>
 void World::AddSystem() {
-    systems_.push_back(std::make_unique<T>(this));
+    if constexpr (std::is_base_of_v<PerFrameSystem, T>) {
+        perFrameSystems_.push_back(std::make_unique<T>(this));
+    } else {
+        updateEntitySystems_.push_back(std::make_unique<T>(this));
+    }
 }
 
 

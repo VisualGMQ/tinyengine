@@ -6,6 +6,7 @@
 #include "engine/components/node.hpp"
 #include "engine/renderer/render_system.hpp"
 #include "engine/components/sprite.hpp"
+#include "engine/physics/physics_system.hpp"
 
 namespace engine {
 
@@ -13,6 +14,7 @@ std::unique_ptr<World> World::instance_;
 
 World::World() {
     uiSystem_ = new UISystem(this);
+    AddSystem<PhysicsSystem>();
     AddSystem<RenderSystem>();
 }
 
@@ -137,6 +139,10 @@ void World::Update() {
         }
     }
 
+    for (auto& system : PerFrameSystems()) {
+        system->Update();
+    }
+
     auto& eventDispatcher = Event::GetDispatcher();
     if (!eventDispatcher.IsEventedTriggedOnUI()) {
         for (auto& entity : node->children) {
@@ -157,12 +163,14 @@ void World::updateEntity(Entity* entity) {
         Renderer::Begin3D();
     }
 
-    auto& systems = World::Instance()->Systems();
+    auto& systems = World::Instance()->EntityUpdateSystems();
     if (auto behavior = entity->GetBehavior(); behavior != nullptr) {
         behavior->OnUpdate();
     }
     for (auto& system : systems) {
-        system->Update(entity);
+        if (system->GetType() == System::Type::UpdateEachEntity) {
+           system->Update(entity);
+        }
     }
 
     if (auto node = entity->GetComponent<NodeComponent>(); node != nullptr) {
@@ -237,12 +245,34 @@ void World::CleanUp() {
 }
 
 void World::RemoveSystem(System* system) {
-    auto it = systems_.begin();
-    while (it != systems_.end() && it->get() != system) {
+    if (!system) return;
+
+    if (system->GetType() ==  System::Type::UpdateOncePerFrame) {
+        removePerFrameSystem((PerFrameSystem*) system);
+    } else {
+        removeEntityUpdateSystem((EntityUpdateSystem*) system);
+    }
+
+}
+
+void World::removePerFrameSystem(PerFrameSystem* system) {
+    auto it = perFrameSystems_.begin();
+    while (it != perFrameSystems_.end() && it->get() != system) {
         it ++;
     }
-    if (it != systems_.end()) {
-        systems_.erase(it);
+    if (it != perFrameSystems_.end()) {
+        perFrameSystems_.erase(it);
+    }
+
+}
+
+void World::removeEntityUpdateSystem(EntityUpdateSystem* system) {
+    auto it = updateEntitySystems_.begin();
+    while (it != updateEntitySystems_.end() && it->get() != system) {
+        it ++;
+    }
+    if (it != updateEntitySystems_.end()) {
+        updateEntitySystems_.erase(it);
     }
 }
 

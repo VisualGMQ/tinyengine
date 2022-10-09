@@ -21,9 +21,9 @@
 
 namespace engine {
 
-class DLLEXPORT UISystem final: public System {
+class DLLEXPORT UISystem final: public EntityUpdateSystem {
 public:
-    UISystem(class World* world): System(world) {}
+    UISystem(class World* world): EntityUpdateSystem(world) {}
 
     std::optional<bool> BeginContainer(Entity*);
     void EndContainer(Entity*, bool);
