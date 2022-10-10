@@ -3,6 +3,7 @@
 namespace engine {
 
 void UIImage::Reset() {
+    Component::Reset();
     texture = nullptr;
     w = 0;
     h = 0;

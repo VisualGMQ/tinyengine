@@ -10,11 +10,13 @@ void UIStaticRowLayout::Reset() {
 }
 
 void UIDynamicRowLayout::Reset() {
+    Component::Reset();
     height = 30;
     cols = 1;
 }
 
 void UIRowLayout::Reset() {
+    Component::Reset();
     format = NK_DYNAMIC;
     height = 20;
     ratio.clear();
@@ -22,6 +24,7 @@ void UIRowLayout::Reset() {
 }
 
 void UIFreeLayout::Reset() {
+    Component::Reset();
     format = NK_DYNAMIC;
     height = 20;
     widgetCount = 1;

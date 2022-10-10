@@ -166,6 +166,7 @@ void World::updateEntity(Entity* entity) {
     if (auto node = entity->GetComponent<Node2DRoot>(); node && node->IsActive()) {
         Renderer::Begin2D();
     }
+
     if (auto node = entity->GetComponent<Node3DRoot>(); node && node->IsActive()) {
         Renderer::Begin3D();
     }

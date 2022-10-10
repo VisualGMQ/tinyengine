@@ -5,13 +5,13 @@
 namespace engine {
 
 void RigidBodyComponent::Reset() {
+    Component::Reset();
+
     mass = 1;
     damping = 0;
     velocity.Set(0, 0);
     force.Set(0, 0);
     maxSpeed = DefaultMaxSpeed;
-
-    Component::Reset();
 }
 
 void BoxColliderComponent::Reset() {
