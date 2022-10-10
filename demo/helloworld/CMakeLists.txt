@@ -5,4 +5,4 @@ add_executable(helloworld ${HELLOWORLD_SRC})
 target_link_libraries(helloworld PRIVATE ${ENGINE_NAME})
 
 CopyDLL(helloworld)
-SetupDemoTarget(helloworld ${CMAKE_CURRENT_SOURCE_DIR})
+SetupDemoTarget(helloworld ${CMAKE_CURRENT_SOURCE_DIR} TRUE)

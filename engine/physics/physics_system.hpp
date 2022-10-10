@@ -31,6 +31,9 @@ public:
 
 private:
     bool isCollide(BoxColliderComponent* box1, const Vec2& pos1, BoxColliderComponent* box2, const Vec2& pos2);
+    void doCollideIter(BoxColliderComponent* box1, BoxColliderComponent* box2,
+                       RigidBodyComponent* rigid1, RigidBodyComponent* rigid2,
+                       Node2DComponent* node1, Node2DComponent* node2);
 
     std::vector<Entity*> entities_;
 };

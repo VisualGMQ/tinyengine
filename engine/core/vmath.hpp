@@ -845,4 +845,9 @@ DLLEXPORT RetT Lerp(const T& a, const T& b, float s) {
     return a + (b - a) * s;
 }
 
+template <typename T>
+int Sign(const T& value) {
+    return value > 0 ? 1 : (value < 0 ? -1 : 0);
+}
+
 }

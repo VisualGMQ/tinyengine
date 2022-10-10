@@ -17,6 +17,7 @@ public:
     bool IsUseSceneTree() const { return useSceneTree_; } 
     bool IsUseConsole() const { return useConsole_; }
     bool IsDrawColliderOutline() const { return isDrawColliderOutline_; }
+    float PhysicalMinTimeStep() const { return physicalMinTimeStep_; }
 
 private:
     std::string title_;
@@ -25,6 +26,7 @@ private:
     bool useSceneTree_;
     bool useConsole_;
     bool isDrawColliderOutline_;
+    float physicalMinTimeStep_;
 
     static std::unique_ptr<InitConfig> instance_;
 };

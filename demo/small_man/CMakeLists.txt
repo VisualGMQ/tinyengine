@@ -16,4 +16,4 @@ target_precompile_headers(${DEMO_NAME} REUSE_FROM tinyengine)
 target_include_directories(${DEMO_NAME} PRIVATE src)
 
 CopyDLL(${DEMO_NAME})
-SetupDemoTarget(${DEMO_NAME} ${CMAKE_CURRENT_SOURCE_DIR})
+SetupDemoTarget(${DEMO_NAME} ${CMAKE_CURRENT_SOURCE_DIR} TRUE)
