@@ -45,12 +45,16 @@ public:
     void Update();
     void CleanUp();
 
-    template <typename T>
-    void AddSystem();
+    template <typename T, typename... Args>
+    System* AddSystem(Args&&... args);
+
+    void AddSystem(std::unique_ptr<PerFrameSystem>&& system) { perFrameSystems_.push_back(std::move(system)); }
+    void AddSystem(std::unique_ptr<EntityUpdateSystem>&& system) { updateEntitySystems_.push_back(std::move(system)); }
 
     void RemoveSystem(System* system);
 
-    const std::vector<std::unique_ptr<System>>& Systems() const { return systems_; }
+    const std::vector<std::unique_ptr<EntityUpdateSystem>>& EntityUpdateSystems() const { return updateEntitySystems_; }
+    const std::vector<std::unique_ptr<PerFrameSystem>>& PerFrameSystems() const { return perFrameSystems_; }
 
     void Shutdown();
 
@@ -60,12 +64,11 @@ private:
 
     // special for UI
     UISystem* uiSystem_;
-    // special for render
-    RenderSystem* renderSystem_;
 
     std::vector<std::unique_ptr<Entity>> entities_;
     std::stack<std::unique_ptr<Entity>> entityTrashes_;
-    std::vector<std::unique_ptr<System>> systems_;
+    std::vector<std::unique_ptr<EntityUpdateSystem>> updateEntitySystems_;
+    std::vector<std::unique_ptr<PerFrameSystem>> perFrameSystems_;
 
     struct ComponentCell {
         std::vector<std::unique_ptr<Component>> components;
@@ -76,12 +79,15 @@ private:
     static std::unique_ptr<World> instance_;
 
     void destroyEntity(const std::vector<std::unique_ptr<Entity>>::const_iterator& it);
-    void updateEntity(Entity*, const Mat4&);
+    void updateEntity(Entity*);
     void updateUIEntity(Entity*);
     void initEntity(Entity*);
     void dispatchEvent2Entity(Entity*);
     template <typename T, typename... Args>
     void doCreateEntity(Entity* entity);
+
+    void removePerFrameSystem(PerFrameSystem* system);
+    void removeEntityUpdateSystem(EntityUpdateSystem* system);
 };
 
 template <typename T>
@@ -120,11 +126,16 @@ void World::RemoveComponent(T* component) {
     }
 }
 
-template <typename T>
-void World::AddSystem() {
-    systems_.push_back(std::make_unique<T>(this));
+template <typename T, typename... Args>
+System* World::AddSystem(Args&&... args) {
+    if constexpr (std::is_base_of_v<PerFrameSystem, T>) {
+        perFrameSystems_.push_back(std::make_unique<T>(this, std::forward<Args>(args)...));
+        return perFrameSystems_.back().get();
+    } else {
+        updateEntitySystems_.push_back(std::make_unique<T>(this, std::forward<Args>(args)...));
+        return updateEntitySystems_.back().get();
+    }
 }
-
 
 template <typename T, typename... Args>
 void World::doCreateEntity(Entity* entity) {

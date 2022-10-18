@@ -13,12 +13,11 @@ void UITree::Reset() {
 }
 
 Entity* CreateUITreeTab(const std::string& name, const std::string& text, nk_collapse_states state, Entity* parent) {
-    Entity* entity = World::Instance()->CreateEntity(name);
-    auto tree = World::Instance()->CreateComponent<UITree>();
+    Entity* entity = World::Instance()->CreateEntity<UITree, NodeComponent>(name);
+    auto tree = entity->GetComponent<UITree>();
     tree->state = state;
     tree->text = text;
     tree->type = NK_TREE_TAB;
-    entity->SetComponent(tree);
 
     if (parent) {
         auto node = parent->GetComponent<NodeComponent>();
@@ -32,12 +31,11 @@ Entity* CreateUITreeTab(const std::string& name, const std::string& text, nk_col
 }
 
 Entity* CreateUITreeNode(const std::string& name, const std::string& text, nk_collapse_states state, Entity* parent) {
-    Entity* entity = World::Instance()->CreateEntity(name);
-    auto tree = World::Instance()->CreateComponent<UITree>();
+    Entity* entity = World::Instance()->CreateEntity<UITree, NodeComponent>(name);
+    auto tree = entity->GetComponent<UITree>();
     tree->state = state;
     tree->text = text;
     tree->type = NK_TREE_NODE;
-    entity->SetComponent(tree);
 
     if (parent) {
         auto node = parent->GetComponent<NodeComponent>();

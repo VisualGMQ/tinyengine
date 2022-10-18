@@ -47,3 +47,7 @@
 
 #include "engine/debug/scene_tree.hpp"
 #include "engine/debug/property_watcher.hpp"
+#include "engine/debug/console.hpp"
+#include "engine/debug/collider_outline.hpp"
+
+#include "engine/physics/physics.hpp"

@@ -14,7 +14,7 @@ public:
     friend class Entity;
     friend class World;
 
-    Component(ComponentID id): id_(id) {}
+    Component(ComponentID id) : id_(id), parent_(nullptr), isActive_(true) { }
     virtual ~Component() = default;
 
     Component(const Component&) = delete;

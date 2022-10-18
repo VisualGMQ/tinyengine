@@ -14,8 +14,8 @@ void UIProperty::Reset() {
 }
 
 Entity* CreateUIProperty(const std::string& name, const std::string& text, UIProperty::CallbackType onValueChange, UIProperty::Type type, float min, float max, float value, float incStep, float incPerPixel, Entity* parent) {
-    Entity* entity = World::Instance()->CreateEntity(name);
-    auto property = World::Instance()->CreateComponent<UIProperty>();
+    Entity* entity = World::Instance()->CreateEntity<UIProperty, NodeComponent>(name);
+    auto property = entity->GetComponent<UIProperty>();
     property->type = type;
     property->min = min;
     property->max = max;
@@ -28,7 +28,6 @@ Entity* CreateUIProperty(const std::string& name, const std::string& text, UIPro
     property->text = text;
     property->incPerPixel = incPerPixel;
     property->callback = onValueChange;
-    entity->SetComponent(property);
 
     if (parent) {
         auto node = parent->GetComponent<NodeComponent>();

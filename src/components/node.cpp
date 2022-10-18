@@ -2,17 +2,27 @@
 
 namespace engine {
 
+void SetNodeParent(Entity* parent, Entity* child) {
+    if (auto node = child->GetComponent<NodeComponent>(); node) {
+        node->SetParentNode(parent);
+    } else if (auto node = child->GetComponent<Node2DComponent>(); node) {
+        node->SetParentNode(parent);
+    } else {
+        Loge("entity {} don't has any node component", child->Name());
+    }
+}
+
 void Node2DComponent::Reset() {
     NodeComponent::Reset();
 
-    dirt_ = None;
-    position.Set(0, 0);
-    scale.Set(1, 1);
+    position = Vec2(0, 0);
+    scale = Vec2(1, 1);
     rotation = 0;
 
     zIndex = 0;
 
-    transform_ = IdentityMat4;
+    localTransform_ = IdentityMat4;
+    globalTransform_ = IdentityMat4;
     rotationMat_ = IdentityMat4;
     translateMat_ = IdentityMat4;
     scaleMat_ = IdentityMat4;
@@ -54,12 +64,12 @@ void Node2DComponent::tryCalcRotateMat() {
     }
 }
 
-bool Node2DComponent::TryUpdateTransform() {
+bool Node2DComponent::TryUpdateLocalTransform() {
     if (dirt_ != Dirt::None) {
         tryCalcRotateMat();
         tryCalcScaleMat();
         tryCalcTranslateMat();
-        transform_ = translateMat_ * rotationMat_ * scaleMat_;
+        localTransform_ = translateMat_ * rotationMat_ * scaleMat_;
         return true;
     }
     return false;

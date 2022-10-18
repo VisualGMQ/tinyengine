@@ -7,6 +7,7 @@
 namespace engine {
 
 class Entity;
+class BoxColliderComponent;
 
 class DLLEXPORT Behavior: public EventAcceptable {
 public:
@@ -21,6 +22,8 @@ public:
     virtual void OnInit() = 0;
     virtual void OnUpdate() = 0;
     virtual void OnQuit() = 0;
+    virtual void BeforeCollide(BoxColliderComponent*) {}
+    virtual void AfterCollide(BoxColliderComponent*) {}
 
     bool IsInited() const { return isInited_; }
     void Inited() { isInited_ = true; }

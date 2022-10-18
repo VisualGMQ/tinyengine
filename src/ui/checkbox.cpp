@@ -10,11 +10,10 @@ void UICheckbox::Reset() {
 }
 
 Entity* CreateUICheckbox(const std::string& name, const std::string& text, UICheckbox::CallbackType callback, Entity* parent) {
-    Entity* entity = World::Instance()->CreateEntity(name);
-    auto checkbox = World::Instance()->CreateComponent<UICheckbox>();
+    Entity* entity = World::Instance()->CreateEntity<UICheckbox, NodeComponent>(name);
+    auto checkbox = entity->GetComponent<UICheckbox>();
     checkbox->text = text;
     checkbox->callback = callback;
-    entity->SetComponent(checkbox);
 
     if (parent) {
         auto node = parent->GetComponent<NodeComponent>();

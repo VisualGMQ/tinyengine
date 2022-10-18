@@ -22,6 +22,9 @@ void InitConfig::ParseFile(std::string_view name) {
     size_.h = 720;
     resizable_ = false;
     useSceneTree_ = false; 
+    useConsole_ = false;
+    isDrawColliderOutline_ = false;
+    physicalMinTimeStep_ = 0.01;
 
     toml::table tbl;
     try {
@@ -30,13 +33,16 @@ void InitConfig::ParseFile(std::string_view name) {
 #else
         tbl = toml::parse(InitConfigContent);
 #endif
-        title_ = tbl["title"].value_or("TinyEngine v0.1.0");
-        size_.w = tbl["width"].value_or(1024);
-        size_.h = tbl["height"].value_or(720);
-        resizable_ = tbl["resizable"].value_or(false);
-        useSceneTree_ = tbl["use_scene_tree"].value_or(false);
+        title_ = tbl["title"].value_or(title_);
+        size_.w = tbl["width"].value_or(size_.w);
+        size_.h = tbl["height"].value_or(size_.h);
+        resizable_ = tbl["resizable"].value_or(resizable_);
+        useSceneTree_ = tbl["use_scene_tree"].value_or(useSceneTree_);
+        useConsole_ = tbl["use_console"].value_or(useConsole_);
+        isDrawColliderOutline_ = tbl["draw_collider_outline"].value_or(isDrawColliderOutline_);
+        physicalMinTimeStep_ = tbl["physical_min_time_step"].value_or(physicalMinTimeStep_);
     } catch (const toml::parse_error& err) {
-        Loge("parse init.toml failed");
+        Logw("parse init.toml failed, skip config");
     }
 }
 

@@ -3,11 +3,10 @@
 
 namespace engine {
 
-class RenderSystem: public System {
+class RenderSystem: public EntityUpdateSystem {
 public:
-    RenderSystem(engine::World* world): System(world) {}
-    void Update(Entity*) override {}
-    Mat4 Update(Entity*, const Mat4&);
+    RenderSystem(engine::World* world): EntityUpdateSystem(world) {}
+    void Update(Entity*) override;
 };
 
 }

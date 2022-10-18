@@ -5,13 +5,20 @@
 
 namespace engine {
 
-Mat4 RenderSystem::Update(Entity* entity, const Mat4& parentTransform) {
+void RenderSystem::Update(Entity* entity) {
+    auto parentTransform = IdentityMat4;
     auto curTransform = IdentityMat4;
+    auto globalTransform = IdentityMat4;
     float zIndex = 0;
     if (auto node2d = entity->GetComponent<Node2DComponent>(); node2d && node2d->IsActive()) {
+        if (node2d->GetParentNode() && node2d->GetParentNode()->GetComponent<Node2DComponent>()) {
+            parentTransform = node2d->GetParentNode()->GetComponent<Node2DComponent>()->GetGlobalTransform();
+        }
         node2d->DetectDirt();
-        node2d->TryUpdateTransform();
-        curTransform = node2d->GetTransform();
+        node2d->TryUpdateLocalTransform();
+        curTransform = node2d->GetLocalTransform();
+        globalTransform = parentTransform * curTransform;
+        node2d->UpdateGlobalTransform(globalTransform);
         zIndex = node2d->zIndex;
     }
 
@@ -38,10 +45,9 @@ Mat4 RenderSystem::Update(Entity* entity, const Mat4& parentTransform) {
         Renderer::DrawTexture(*sprite->image.texture,
                                sprite->image.region.size == Vec2(0, 0) ? nullptr : &sprite->image.region,
                                size,
-                               parentTransform * curTransform * CreateTranslate(Vec3(sprite->offset.x, sprite->offset.y, 0)),
+                               globalTransform * CreateTranslate(Vec3(sprite->offset.x, sprite->offset.y, 0)),
                                zIndex);
     }
-    return parentTransform * curTransform;
 }
 
 }

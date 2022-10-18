@@ -55,15 +55,15 @@ void GameStart::loadResources() {
 void GameStart::initOtherNode() {
     auto world = engine::World::Instance();
 
-    auto node3D = world->CreateEntity("3d node");
+    auto node3D = world->CreateEntity<engine::NodeComponent>("3d node");
     node3D->SetBehavior(std::make_unique<Draw3DBehavior>());
     Attach3D(node3D);
 
-    auto node2D = world->CreateEntity("2d node");
+    auto node2D = world->CreateEntity<engine::Node2DComponent>("2d node");
     node2D->SetBehavior(std::make_unique<Draw2DBehavior>());
     Attach2D(node2D);
 
-    auto nodeSound = world->CreateEntity("sound node");
+    auto nodeSound = world->CreateEntity<engine::NodeComponent>("sound node");
     nodeSound->SetBehavior(std::make_unique<SoundBehavior>());
     Attach(nodeSound);
     
@@ -72,9 +72,9 @@ void GameStart::initOtherNode() {
     auto node = image->GetComponent<engine::Node2DComponent>();
     auto tilesheet = engine::TileSheetFactory::Create("tilesheet", engine::TextureFactory::Find("tilesheet"), 3, 13);
     auto tile = tilesheet->Get(0, 0);
-    sprite->texture = tile.texture;
-    sprite->region = tilesheet->Get(0, 0).region;
+    sprite->image.texture = tile.texture;
+    sprite->image.region = tilesheet->Get(0, 0).region;
     sprite->offset.Set(tilesheet->TileSize().w / 2.0, tilesheet->TileSize().h / 2.0);
-    node->position.Set(600, 100);
+    node->position = engine::Vec2(600, 100);
     Attach2D(image);
 }

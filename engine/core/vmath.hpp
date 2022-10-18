@@ -532,6 +532,8 @@ DLLEXPORT inline T Length(const Vec<T, N>& v) {
 
 template <typename T, unsigned int N>
 DLLEXPORT inline auto Normalize(const Vec<T, N>& v) {
+    auto len = Length(v);
+    if (len == 0) return v;
     return v / Length(v);
 }
 
@@ -841,6 +843,11 @@ DLLEXPORT extern const Mat4 IdentityMat4;
 template <typename T, typename RetT>
 DLLEXPORT RetT Lerp(const T& a, const T& b, float s) {
     return a + (b - a) * s;
+}
+
+template <typename T>
+int Sign(const T& value) {
+    return value > 0 ? 1 : (value < 0 ? -1 : 0);
 }
 
 }

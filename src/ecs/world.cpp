@@ -6,6 +6,9 @@
 #include "engine/components/node.hpp"
 #include "engine/renderer/render_system.hpp"
 #include "engine/components/sprite.hpp"
+#include "engine/physics/physics_system.hpp"
+#include "engine/debug/collider_outline.hpp"
+#include "engine/core/init_config.hpp"
 
 namespace engine {
 
@@ -13,12 +16,17 @@ std::unique_ptr<World> World::instance_;
 
 World::World() {
     uiSystem_ = new UISystem(this);
-    renderSystem_ = new RenderSystem(this);
+    AddSystem<PhysicsSystem>();
+    CollideSystem* collideSystem = (CollideSystem*)AddSystem<CollideSystem>();
+    AddSystem<ColliderCollectSystem>(collideSystem);
+    AddSystem<RenderSystem>();
+    if (InitConfig::Instance().IsDrawColliderOutline()) {
+        AddSystem<debug::ColliderOutlineSystem>();
+    }
 }
 
 World::~World() {
     delete uiSystem_;
-    delete renderSystem_;
 }
 
 World* World::Instance() {
@@ -129,13 +137,17 @@ void World::Update() {
     auto node = scene->GetRootEntity()->GetComponent<NodeComponent>();
 
     for (auto& entity : node->children) {
-        updateEntity(entity, IdentityMat4);
+        updateEntity(entity);
     }
  
     for (auto& entity : node->children) {
         if (entity->GetComponent<NodeUIRoot>()) {
             updateUIEntity(entity);
         }
+    }
+
+    for (auto& system : PerFrameSystems()) {
+        system->Update();
     }
 
     auto& eventDispatcher = Event::GetDispatcher();
@@ -148,34 +160,35 @@ void World::Update() {
     }
 }
 
-void World::updateEntity(Entity* entity, const Mat4& parentTransform) {
+void World::updateEntity(Entity* entity) {
     if (!entity || !entity->IsActive()) return;
 
     if (auto node = entity->GetComponent<Node2DRoot>(); node && node->IsActive()) {
         Renderer::Begin2D();
     }
+
     if (auto node = entity->GetComponent<Node3DRoot>(); node && node->IsActive()) {
         Renderer::Begin3D();
     }
 
-    auto& systems = World::Instance()->Systems();
+    auto& systems = World::Instance()->EntityUpdateSystems();
     if (auto behavior = entity->GetBehavior(); behavior != nullptr) {
         behavior->OnUpdate();
     }
     for (auto& system : systems) {
-        system->Update(entity);
+        if (system->GetType() == System::Type::UpdateEachEntity) {
+           system->Update(entity);
+        }
     }
-
-    auto newTransform = renderSystem_->Update(entity, parentTransform);
 
     if (auto node = entity->GetComponent<NodeComponent>(); node != nullptr) {
         for (auto& ent : node->children) {
-            updateEntity(ent, newTransform);
+            updateEntity(ent);
         }
     }
     if (auto node = entity->GetComponent<Node2DComponent>(); node != nullptr) {
         for (auto& ent : node->children) {
-            updateEntity(ent, newTransform);
+            updateEntity(ent);
         }
     }
 }
@@ -240,12 +253,34 @@ void World::CleanUp() {
 }
 
 void World::RemoveSystem(System* system) {
-    auto it = systems_.begin();
-    while (it != systems_.end() && it->get() != system) {
+    if (!system) return;
+
+    if (system->GetType() ==  System::Type::UpdateOncePerFrame) {
+        removePerFrameSystem((PerFrameSystem*) system);
+    } else {
+        removeEntityUpdateSystem((EntityUpdateSystem*) system);
+    }
+
+}
+
+void World::removePerFrameSystem(PerFrameSystem* system) {
+    auto it = perFrameSystems_.begin();
+    while (it != perFrameSystems_.end() && it->get() != system) {
         it ++;
     }
-    if (it != systems_.end()) {
-        systems_.erase(it);
+    if (it != perFrameSystems_.end()) {
+        perFrameSystems_.erase(it);
+    }
+
+}
+
+void World::removeEntityUpdateSystem(EntityUpdateSystem* system) {
+    auto it = updateEntitySystems_.begin();
+    while (it != updateEntitySystems_.end() && it->get() != system) {
+        it ++;
+    }
+    if (it != updateEntitySystems_.end()) {
+        updateEntitySystems_.erase(it);
     }
 }
 
