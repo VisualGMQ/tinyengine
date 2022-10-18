@@ -36,9 +36,9 @@ void Renderer::Init(int w, int h) {
 #endif
     shader_ = std::make_unique<Shader>(vertexModule, fragModule);
     unsigned char value[4] = {0x00, 0x00, 0x00, 0xFF};
-    blackTexture_ = TextureFactory::Create("Engine::Renderer::Black", value, 1, 1);
+    blackTexture_ = TextureFactory::Create(value, 1, 1);
     memset(value, 0xFF, sizeof(unsigned char) * 4);
-    whiteTexture_ = TextureFactory::Create("Engine::Renderer::White", value, 1, 1);
+    whiteTexture_ = TextureFactory::Create(value, 1, 1);
     mesh_ = std::make_unique<Mesh>();
 
     orthoCamera_ = std::make_unique<OrthoCamera>(w, h, -1.1, 1.1);
@@ -350,7 +350,7 @@ void Renderer::DrawText(Font* font, const std::string& text, const Vec2& pos, fl
     SDL_Surface* cvtSurface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGBA32, 0);
     SDL_FreeSurface(surface);
 
-    Texture texture("", (unsigned char*)cvtSurface->pixels, cvtSurface->w, cvtSurface->h);
+    Texture texture((unsigned char*)cvtSurface->pixels, cvtSurface->w, cvtSurface->h);
 
     texture.Bind();
     DrawTexture(texture,

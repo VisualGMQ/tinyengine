@@ -2,7 +2,7 @@
 
 namespace engine {
 
-Texture::Texture(const std::string& name, unsigned char* data, int w, int h): name_(name), w_(w), h_(h) {
+Texture::Texture(unsigned char* data, int w, int h): size_(w, h) {
 	GL_CALL(glGenTextures(1, &id_));
 	GL_CALL(glBindTexture(GL_TEXTURE_2D, id_));
 	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));   
@@ -30,83 +30,47 @@ void Texture::Unbind() const {
 }
 
 
-std::unordered_map<TextureID, std::unique_ptr<Texture>> TextureFactory::textureMap_;
+std::vector<std::unique_ptr<Texture>> TextureFactory::textures_;
 TextureID TextureFactory::curId_ = 0;
 
 void TextureFactory::Init() {}
 
 void TextureFactory::Quit() {
-    textureMap_.clear();
+    textures_.clear();
 }
 
-Texture* TextureFactory::Create(std::string_view filename, const std::string& name) {
-    if (auto texture = Find(name); texture) {
-        Logw("texture {} already exists, don't load again", name);
-        return texture;
-    }
+Texture* TextureFactory::Create(const std::string& filename) {
     int channel, w, h;
     SDL_Surface* surface = IMG_Load(filename.data());
     SDL_Surface* cvtSurface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGBA32, 0);
     SDL_FreeSurface(surface);
     unsigned char* data = (unsigned char*)cvtSurface->pixels;
-    auto texture = std::make_unique<Texture>(name, data, cvtSurface->w, cvtSurface->h);
+    textures_.push_back(std::make_unique<Texture>(data, cvtSurface->w, cvtSurface->h));
+    auto& texture = textures_.back();
+    w = cvtSurface->w;
+    h = cvtSurface->h;
     SDL_FreeSurface(cvtSurface);
-    TextureID id = curId_++;
-    texture->myId_ = id;
-    Texture* result = texture.get();
-    textureMap_[id] = std::move(texture);
-    return result;
+    texture->myId_ = curId_++;
+    return texture.get();
 }
 
-Texture* TextureFactory::Create(const std::string& name, unsigned char* data, int w, int h) {
-    if (auto texture = Find(name); texture) {
-        Logw("texture {} already exists, don't load again", name);
-        return texture;
-    }
-    auto texture = std::make_unique<Texture>(name, data, w, h);
-    TextureID id = curId_++;
-    texture->myId_ = id;
-    Texture* result = texture.get();
-    textureMap_[id] = std::move(texture);
-    return result;
+Texture* TextureFactory::Create(unsigned char* data, int w, int h) {
+    textures_.push_back(std::make_unique<Texture>(data, w, h));
+    auto& texture = textures_.back();
+    texture->myId_ = curId_++;
+    return texture.get();
 }
 
-Texture* TextureFactory::CreateFromXpm(const std::string& name, char** xpmData) {
-    if (auto texture = Find(name); texture) {
-        Logw("texture {} already exists, don't load again", name);
-        return texture;
-    }
-    int channel, w, h;
+Texture* TextureFactory::CreateFromXpm(char** xpmData) {
     SDL_Surface* surface = IMG_ReadXPMFromArray(xpmData);
     SDL_Surface* cvtSurface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGBA32, 0);
     SDL_FreeSurface(surface);
     unsigned char* data = (unsigned char*)cvtSurface->pixels;
-    auto texture = std::make_unique<Texture>(name, data, cvtSurface->w, cvtSurface->h);
+    textures_.push_back(std::make_unique<Texture>(data, cvtSurface->w, cvtSurface->h));
+    auto& texture = textures_.back();
     SDL_FreeSurface(cvtSurface);
-    TextureID id = curId_++;
-    texture->myId_ = id;
-    Texture* result = texture.get();
-    textureMap_[id] = std::move(texture);
-    return result;
-
-}
-
-Texture* TextureFactory::Find(TextureID id) {
-    auto it = textureMap_.find(id);
-    if (textureMap_.end() == it) {
-        return nullptr;
-    } else {
-        return it->second.get();
-    }
-}
-
-Texture* TextureFactory::Find(const std::string& name) {
-    for (auto& [key, value] : textureMap_) {
-        if (value->Name() == name) {
-            return value.get();
-        }
-    }
-    return nullptr;
+    texture->myId_ = curId_++;
+    return texture.get();
 }
 
 }

@@ -22,8 +22,6 @@
 #include "engine/renderer/camera.hpp"
 #include "engine/renderer/mesh.hpp"
 #include "engine/renderer/texture.hpp"
-#include "engine/renderer/tilesheet.hpp"
-#include "engine/renderer/image.hpp"
 
 #include "engine/ui/ui.hpp"
 #include "engine/ui/button.hpp"
