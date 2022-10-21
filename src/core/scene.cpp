@@ -13,10 +13,8 @@ void Scene::beforeInit() {
     auto world = World::Instance();
     root_ = world->CreateEntity<NodeComponent>(name_ + " root");
     node2d_ = world->CreateEntity<NodeComponent, Node2DRoot>(name_ + " 2d root");
-    node3d_ = world->CreateEntity<NodeComponent, Node3DRoot>(name_ + " 3d root");
     nodeUI_ = world->CreateEntity<NodeComponent, NodeUIRoot>(name_ + " ui root");
 
-    Attach(node3d_);
     Attach(node2d_);
     Attach(nodeUI_);
 }
@@ -47,12 +45,6 @@ void Scene::Attach2D(Entity* entity) {
     SetNodeParent(node2d_, entity);
 }
 
-void Scene::Attach3D(Entity* entity) {
-    if (!entity) return;
-    node3d_->GetComponent<NodeComponent>()->Attach(entity);
-    SetNodeParent(node3d_, entity);
-}
-
 void Scene::AttachUI(Entity* entity) {
     if (!entity) return;
     nodeUI_->GetComponent<NodeComponent>()->Attach(entity);
@@ -69,12 +61,6 @@ void SceneMgr::ChangeScene(const std::string& name) {
         curScene_ = it->second.get();
         curScene_->beforeInit();
         curScene_->OnInit();
-        if (InitConfig::Instance().IsUseSceneTree()) {
-            debug::DebugAttachSceneTree();
-        }
-        if (InitConfig::Instance().IsUseConsole()) {
-            debug::DebugAttachConsole();
-        }
     }
 }
 

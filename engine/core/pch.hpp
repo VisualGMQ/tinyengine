@@ -17,7 +17,6 @@
 #include <memory>
 #include <functional>
 
-#include "glad/glad.h"
 #include "SDL.h"
 #include "SDL_ttf.h"
 #include "SDL_mixer.h"

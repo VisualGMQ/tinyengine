@@ -10,9 +10,9 @@ int main(int argc, char** argv) {
 
     auto& config = engine::InitConfig::Instance();
 
+    engine::Random::Init(engine::Random::CPP, std::time(nullptr));
     engine::Video::Init(config.Title(), config.WindowSize().w, config.WindowSize().h, config.Resizable());
     engine::Event::Init();
-    engine::debug::Console::Init();
     engine::Renderer::Init(config.WindowSize().w, config.WindowSize().h);
     engine::FontFactory::Init();
     engine::TextureFactory::Init();
@@ -26,9 +26,8 @@ int main(int argc, char** argv) {
 
     GameInit();
 
-    engine::Renderer::SetClearColor(engine::Color(0.1, 0.1, 0.1, 1));
+    engine::Renderer::SetClearColor(engine::Color(100, 100, 100, 255));
     while (!engine::Video::ShouldClose()) {
-        engine::Renderer::ResestState();
         engine::Renderer::Clear();
         engine::Event::HandleEvent();
         engine::World::Instance()->TryInitEntities();
@@ -52,7 +51,6 @@ int main(int argc, char** argv) {
     engine::TextureFactory::Quit();
     engine::FontFactory::Quit();
     engine::Renderer::Quit();
-    engine::debug::Console::Quit();
     engine::Event::Quit();
     engine::Video::Quit();
     engine::Logger::Quit();

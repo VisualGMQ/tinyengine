@@ -3,6 +3,7 @@
 namespace engine {
 
 SDL_Window* Video::window_ = nullptr;
+SDL_Renderer* Video::renderer_ = nullptr;
 bool Video::shouldClose_ = false;
 Vec2 Video::initSize_;
 
@@ -14,14 +15,7 @@ void Video::Init(std::string_view title, int w, int h, bool resizable) {
         exit(1);
     }
 
-    SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, "0");
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    SDL_GL_SetAttribute (SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-    uint32_t flags = SDL_WINDOW_OPENGL|SDL_WINDOW_SHOWN|SDL_WINDOW_ALLOW_HIGHDPI;
+    uint32_t flags = SDL_WINDOW_SHOWN|SDL_WINDOW_ALLOW_HIGHDPI;
     if (resizable) {
         flags |= SDL_WINDOW_RESIZABLE;
     }
@@ -36,20 +30,25 @@ void Video::Init(std::string_view title, int w, int h, bool resizable) {
         exit(2);
     }
 
-    SDL_GL_CreateContext(window_);
-    gladLoadGL();
+    renderer_ = SDL_CreateRenderer(window_, -1, 0);
+    if (!renderer_) {
+        SDL_DestroyWindow(window_);
+        SDL_Quit();
+        Loge("sdl renderer create failed");
+        exit(2);
+    }
 
-    glViewport(0, 0, w, h);
     shouldClose_ = false;
 }
 
 void Video::Quit() {
+    SDL_DestroyRenderer(renderer_);
     SDL_DestroyWindow(window_);
     SDL_Quit();
 }
 
 void Video::SwapBuffers() {
-    SDL_GL_SwapWindow(window_);
+    SDL_RenderPresent(renderer_);
 }
 
 bool Video::ShouldClose() {

@@ -13,6 +13,10 @@ struct DLLEXPORT Image final {
     Image(): texture(nullptr) {} // FIXME use Empty Object to replace texture
     Image(Texture* texture, const Rect& region): texture(texture), region(region) {}
     Image(Texture* texture);
+
+    operator bool() const {
+        return texture && region.size.w > 0 && region.size.h > 0;
+    }
 };
 
 class ImageFactory final {

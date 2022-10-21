@@ -47,10 +47,12 @@ public:
         CPP = 2,
     };
 
-    static void Init(Type type = LCG);
+    static void Init(Type type, uint64_t seed);
     static void Quit();
 
     static int Int(int low, int high);
+
+    static Randomer* Instance() { return randomer_.get(); }
 
 private:
     static std::unique_ptr<Randomer> randomer_;

@@ -4,8 +4,6 @@
 #include "engine/components/node.hpp"
 #include "engine/ecs/entity.hpp"
 #include "engine/core/init_config.hpp"
-#include "engine/debug/scene_tree.hpp"
-#include "engine/debug/console.hpp"
 
 namespace engine {
 
@@ -22,7 +20,6 @@ public:
     const std::string& Name() const { return name_; }
     Entity* GetRootEntity() const { return root_; }
     Entity* Get2DRoot() const { return node2d_; }
-    Entity* Get3DRoot() const { return node3d_; }
     Entity* GetUIRoot() const { return nodeUI_; }
 
     void Attach2D(Entity*);
@@ -40,7 +37,6 @@ private:
     std::string name_;
     Entity* root_;
     Entity* node2d_;
-    Entity* node3d_;
     Entity* nodeUI_;
 
     void beforeInit();

@@ -69,7 +69,7 @@ bool Input::IsButtonReleasing(MouseButton button) {
 Vec2 Input::MousePoition() {
     auto size = Video::GetWindowSize();
     auto& initSize = Video::GetInitSize();
-    return MulEach(position_, Vec2(initSize.w / size.w, initSize.h / size.h));
+    return position_ * Vec2(initSize.w / size.w, initSize.h / size.h);
 }
 
 const Vec2& Input::MouseRelative() {

@@ -31,7 +31,7 @@ double CppRandomer::Random() {
 
 std::unique_ptr<Randomer> Random::randomer_ = nullptr;
 
-void Random::Init(Type type) {
+void Random::Init(Type type, uint64_t seed) {
     switch (type) {
     case Type::LCG:
         randomer_.reset(new Lcg(34, 13));
@@ -43,7 +43,7 @@ void Random::Init(Type type) {
         randomer_.reset(new Lcg(34, 13));
         break;
     }
-    randomer_->SetSeed(time(nullptr));
+    randomer_->SetSeed(seed);
 }
 
 void Random::Quit() {

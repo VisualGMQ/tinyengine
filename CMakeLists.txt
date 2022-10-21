@@ -5,6 +5,7 @@ project(
     TinyEngine
     LANGUAGES CXX C
     VERSION 0.1.0
+    DESCRIPTION "a small game framework made for 1MGames use SDL2 & C++17"
 )
 
 include(cmake/FindSDL2.cmake)
@@ -12,11 +13,8 @@ include(cmake/FindSDL2_mixer.cmake)
 include(cmake/FindSDL2_ttf.cmake) 
 include(cmake/FindSDL2_image.cmake) 
 
-add_subdirectory(3rdlibs/glad)
-add_subdirectory(3rdlibs/nuklear)
 add_subdirectory(3rdlibs/tomlplusplus)
 
-include(cmake/shader2inc.cmake)
 include(cmake/init_config2inc.cmake)
 include(cmake/copydll.cmake)
 
@@ -27,7 +25,6 @@ option(ENGINE_BUILD_TOOLS "do you want to build tools" ON)
 ############# build engine ##############
 set(ENGINE_NAME "tinyengine")
 
-Shader2Inc()
 InitConfig2Inc()
 
 aux_source_directory(src/core ENGINE_CORE_SRC)
@@ -37,7 +34,6 @@ aux_source_directory(src/ecs ENGINE_ECS_SRC)
 aux_source_directory(src/ui ENGINE_UI_SRC)
 aux_source_directory(src/components ENGINE_COMPONENTS_SRC)
 aux_source_directory(src/sound ENGINE_SOUND_SRC)
-aux_source_directory(src/debug ENGINE_DEBUG_SRC)
 aux_source_directory(src/physics ENGINE_PHYSICS_SRC)
 
 add_library(${ENGINE_NAME} STATIC)
@@ -49,10 +45,9 @@ target_sources(${ENGINE_NAME} PRIVATE
                 ${ENGINE_UI_SRC}
                 ${ENGINE_COMPONENTS_SRC}
                 ${ENGINE_SOUND_SRC}
-                ${ENGINE_DEBUG_SRC}
                 ${ENGINE_PHYSICS_SRC}
                 src/entry.cpp)
-target_link_libraries(${ENGINE_NAME} PUBLIC glad SDL2 SDL2_ttf SDL2_mixer nuklear toml++ SDL2_image)
+target_link_libraries(${ENGINE_NAME} PUBLIC SDL2 SDL2_ttf SDL2_mixer toml++ SDL2_image)
 target_compile_features(${ENGINE_NAME} PUBLIC cxx_std_17)
 target_include_directories(${ENGINE_NAME} PUBLIC ./)
 target_precompile_headers(${ENGINE_NAME} PUBLIC "engine/core/pch.hpp")

@@ -2,7 +2,6 @@
 
 #include "engine/core/pch.hpp"
 #include "engine/core/vmath.hpp"
-#include "engine/core/glhelper.hpp"
 #include "engine/renderer/image.hpp"
 
 namespace engine {
@@ -13,8 +12,9 @@ using TextureID = int;
 class DLLEXPORT Texture final {
 public:
     friend class TextureFactory;
+    friend class Renderer;
 
-    Texture(unsigned char* data, int w, int h);
+    Texture(SDL_Surface*);
     Texture(const Texture&) = delete;
     ~Texture();
 
@@ -23,15 +23,11 @@ public:
     float Width() const { return size_.w; }
     float Height() const { return size_.h; }
 
-    void Bind(uint32_t slot = 0) const;
-    void Unbind() const;
-
     TextureID ID() const { return myId_; }
-    GLuint GLID() const { return id_; }
     Size GetSize() const { return size_; }
 
 private:
-    GLuint id_;
+    SDL_Texture* texture_ = nullptr;
     TextureID myId_ = -1;
     Size size_;
 };
@@ -42,7 +38,6 @@ public:
     static void Quit();
 
     static Texture* Create(const std::string& filename);
-    static Texture* Create(unsigned char* data, int w, int h);
     static Texture* CreateFromXpm(char** xpmData);
 
 private:

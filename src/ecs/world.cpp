@@ -4,10 +4,7 @@
 #include "engine/core/scene.hpp"
 #include "engine/ui/ui_system.hpp"
 #include "engine/components/node.hpp"
-#include "engine/renderer/render_system.hpp"
-#include "engine/components/sprite.hpp"
 #include "engine/physics/physics_system.hpp"
-#include "engine/debug/collider_outline.hpp"
 #include "engine/core/init_config.hpp"
 
 namespace engine {
@@ -19,10 +16,6 @@ World::World() {
     AddSystem<PhysicsSystem>();
     CollideSystem* collideSystem = (CollideSystem*)AddSystem<CollideSystem>();
     AddSystem<ColliderCollectSystem>(collideSystem);
-    AddSystem<RenderSystem>();
-    if (InitConfig::Instance().IsDrawColliderOutline()) {
-        AddSystem<debug::ColliderOutlineSystem>();
-    }
 }
 
 World::~World() {
@@ -163,14 +156,6 @@ void World::Update() {
 void World::updateEntity(Entity* entity) {
     if (!entity || !entity->IsActive()) return;
 
-    if (auto node = entity->GetComponent<Node2DRoot>(); node && node->IsActive()) {
-        Renderer::Begin2D();
-    }
-
-    if (auto node = entity->GetComponent<Node3DRoot>(); node && node->IsActive()) {
-        Renderer::Begin3D();
-    }
-
     auto& systems = World::Instance()->EntityUpdateSystems();
     if (auto behavior = entity->GetBehavior(); behavior != nullptr) {
         behavior->OnUpdate();
@@ -196,23 +181,17 @@ void World::updateEntity(Entity* entity) {
 void World::updateUIEntity(Entity* entity) {
     if (!entity || !entity->IsActive()) return;
 
-    auto windowState = uiSystem_->BeginContainer(entity);
     uiSystem_->Update(entity);
 
-    if (!windowState.has_value() || windowState.value() == true) {
-        if (auto node = entity->GetComponent<NodeComponent>(); node != nullptr) {
-            for (auto& ent : node->children) {
-                updateUIEntity(ent);
-            }
-        }
-        if (auto node = entity->GetComponent<Node2DComponent>(); node != nullptr) {
-            for (auto& ent : node->children) {
-                updateUIEntity(ent);
-            }
+    if (auto node = entity->GetComponent<NodeComponent>(); node != nullptr) {
+        for (auto& ent : node->children) {
+            updateUIEntity(ent);
         }
     }
-    if (windowState.has_value()) {
-        uiSystem_->EndContainer(entity, windowState.value());
+    if (auto node = entity->GetComponent<Node2DComponent>(); node != nullptr) {
+        for (auto& ent : node->children) {
+            updateUIEntity(ent);
+        }
     }
 }
 

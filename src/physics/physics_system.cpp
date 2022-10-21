@@ -62,13 +62,13 @@ void CollideSystem::doCollideIter(BoxColliderComponent* box1, BoxColliderCompone
                                   RigidBodyComponent* rigid1, RigidBodyComponent* rigid2,
                                   Node2DComponent* node1, Node2DComponent* node2) {
     float xOffset = std::min(node1->position.x + box1->offset.x + box1->halfWidth,
-                            node2->position.x + box2->offset.x + box2->halfWidth) -
+                             node2->position.x + box2->offset.x + box2->halfWidth) -
                     std::max(node1->position.x + box1->offset.x - box1->halfWidth,
-                            node2->position.x + box2->offset.x - box2->halfWidth);
+                             node2->position.x + box2->offset.x - box2->halfWidth);
     float yOffset = std::min(node1->position.y + box1->offset.y + box1->halfHeight,
-                            node2->position.y + box2->offset.y + box2->halfHeight) -
+                             node2->position.y + box2->offset.y + box2->halfHeight) -
                     std::max(node1->position.y + box1->offset.y - box1->halfHeight,
-                            node2->position.y + box2->offset.y - box2->halfHeight);
+                             node2->position.y + box2->offset.y - box2->halfHeight);
     if (xOffset > 0 && xOffset < yOffset) {
         node1->position.x -= Sign(rigid1->velocity.x) * xOffset;
         rigid1->velocity.x = 0;

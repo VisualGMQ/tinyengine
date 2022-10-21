@@ -21,9 +21,6 @@ void InitConfig::ParseFile(std::string_view name) {
     size_.w = 1024;
     size_.h = 720;
     resizable_ = false;
-    useSceneTree_ = false; 
-    useConsole_ = false;
-    isDrawColliderOutline_ = false;
     physicalMinTimeStep_ = 0.01;
 
     toml::table tbl;
@@ -37,9 +34,6 @@ void InitConfig::ParseFile(std::string_view name) {
         size_.w = tbl["width"].value_or(size_.w);
         size_.h = tbl["height"].value_or(size_.h);
         resizable_ = tbl["resizable"].value_or(resizable_);
-        useSceneTree_ = tbl["use_scene_tree"].value_or(useSceneTree_);
-        useConsole_ = tbl["use_console"].value_or(useConsole_);
-        isDrawColliderOutline_ = tbl["draw_collider_outline"].value_or(isDrawColliderOutline_);
         physicalMinTimeStep_ = tbl["physical_min_time_step"].value_or(physicalMinTimeStep_);
     } catch (const toml::parse_error& err) {
         Logw("parse init.toml failed, skip config");

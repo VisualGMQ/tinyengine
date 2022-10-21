@@ -24,8 +24,11 @@ public:
     }
     static const Vec2& GetInitSize() { return initSize_; }
 
+    static SDL_Renderer* GetRenderer() { return renderer_; }
+
 private:
     static SDL_Window* window_;
+    static SDL_Renderer* renderer_;
     static bool shouldClose_;
     static Vec2 initSize_;
 };

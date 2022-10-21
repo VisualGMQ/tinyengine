@@ -3,7 +3,6 @@
 #include "engine/core/video.hpp"
 #include "engine/input/input.hpp"
 #include "engine/core/timer.hpp"
-#include "engine/core/glhelper.hpp"
 
 namespace engine {
 
@@ -73,11 +72,6 @@ void Event::HandleEvent() {
             auto callback = param->owner->GetCallback();
             if (callback) {
                 callback(*param->owner, param->owner->Interval(), param->userParam);
-            }
-        }
-        if (event.type == SDL_WINDOWEVENT) {
-            if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
-                GL_CALL(glViewport(0, 0, event.window.data1, event.window.data2));
             }
         }
     }
