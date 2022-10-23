@@ -11,6 +11,7 @@ Texture::Texture(SDL_Surface* surface) {
         size_.w = surface->w;
         size_.h = surface->h;
     }
+    SDL_SetTextureBlendMode(texture_, SDL_BLENDMODE_BLEND);
 }
 
 Texture::~Texture() {

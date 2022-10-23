@@ -37,6 +37,7 @@ void Video::Init(std::string_view title, int w, int h, bool resizable) {
         Loge("sdl renderer create failed");
         exit(2);
     }
+    SDL_SetRenderDrawBlendMode(renderer_, SDL_BLENDMODE_BLEND);
 
     shouldClose_ = false;
 }

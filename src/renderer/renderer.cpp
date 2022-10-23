@@ -63,18 +63,25 @@ void Renderer::DrawTexture(const Texture& texture, Rect* src, const Size& size, 
     Rect dstRect;
     dstRect.position = transform.anchor + transform.position;
     dstRect.size = size * transform.scale;
+    dstRect.size.w = std::abs(dstRect.size.w);
+    dstRect.size.h = std::abs(dstRect.size.h);
 
     std::optional<SDL_Rect> srcRect;
     if (src) {
         srcRect = SDL_Rect{(int)src->position.x, (int)src->position.y, (int)src->size.w, (int)src->size.h};
     }
-    uint8_t flip = SDL_FLIP_NONE;
-    if (transform.scale.x < 0) flip |= SDL_FLIP_HORIZONTAL;
-    if (transform.scale.y < 0) flip |= SDL_FLIP_VERTICAL;
+    unsigned int flip = SDL_FLIP_NONE;
+    if (transform.scale.x < 0) {
+        flip |= SDL_FLIP_HORIZONTAL;
+    }
+    if (transform.scale.y < 0) {
+        flip |= SDL_FLIP_VERTICAL;
+    }
+    SDL_RendererFlip rflip = static_cast<SDL_RendererFlip>(flip);
     SDL_RenderCopyExF(Video::GetRenderer(), texture.texture_,
-                        srcRect ? &srcRect.value() : nullptr, &dstRect.sdl_rect,
-                        transform.rotation, &transform.anchor.sdl_point,
-                        static_cast<SDL_RendererFlip>(flip));
+                      srcRect ? &srcRect.value() : nullptr, &dstRect.sdl_rect,
+                      transform.rotation, &transform.anchor.sdl_point,
+                      static_cast<SDL_RendererFlip>(flip));
 }
 
 void Renderer::DrawText(Font* font, const std::string& text, const Vec2& pos) {
