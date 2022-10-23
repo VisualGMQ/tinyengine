@@ -90,10 +90,12 @@ void Renderer::DrawText(Font* font, const std::string& text, const Vec2& pos) {
 
     Texture texture(surface);
 
+    Transform transform;
+    transform.position = pos;
     DrawTexture(texture,
                 nullptr,
                 Size(surface->w, surface->h),
-                Transform{});
+                transform);
 
     SDL_FreeSurface(surface);
 }

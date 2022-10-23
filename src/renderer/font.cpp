@@ -5,6 +5,9 @@ namespace engine {
 Font::Font(FontID id, const std::string& filename, const std::string& name, int pt)
     : pt_(pt), name_(name) {
     font_ = TTF_OpenFont(filename.c_str(), pt);
+    if (!font_) {
+        Loge("load font {} failed", filename);
+    }
 }
 
 Font::~Font() {

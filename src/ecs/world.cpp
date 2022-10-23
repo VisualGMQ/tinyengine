@@ -182,17 +182,6 @@ void World::updateUIEntity(Entity* entity) {
     if (!entity || !entity->IsActive()) return;
 
     uiSystem_->Update(entity);
-
-    if (auto node = entity->GetComponent<NodeComponent>(); node != nullptr) {
-        for (auto& ent : node->children) {
-            updateUIEntity(ent);
-        }
-    }
-    if (auto node = entity->GetComponent<Node2DComponent>(); node != nullptr) {
-        for (auto& ent : node->children) {
-            updateUIEntity(ent);
-        }
-    }
 }
 
 void World::dispatchEvent2Entity(Entity* entity) {
