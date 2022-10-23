@@ -12,7 +12,7 @@ namespace engine {
 struct Transform {
     Vec2 position;
     Vec2 scale{1, 1};
-    float rotation; /* in radians */
+    float rotation = 0; /* in radians */
     Vec2 anchor;
 };
 
