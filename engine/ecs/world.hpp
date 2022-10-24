@@ -48,13 +48,14 @@ public:
     template <typename T, typename... Args>
     System* AddSystem(Args&&... args);
 
-    void AddSystem(std::unique_ptr<PerFrameSystem>&& system) { perFrameSystems_.push_back(std::move(system)); }
-    void AddSystem(std::unique_ptr<EntityUpdateSystem>&& system) { updateEntitySystems_.push_back(std::move(system)); }
+    void AddSystem(std::unique_ptr<System>&& system) {
+        systems_.push_back(std::move(system));
+        system = nullptr;
+    }
 
     void RemoveSystem(System* system);
 
-    const std::vector<std::unique_ptr<EntityUpdateSystem>>& EntityUpdateSystems() const { return updateEntitySystems_; }
-    const std::vector<std::unique_ptr<PerFrameSystem>>& PerFrameSystems() const { return perFrameSystems_; }
+    const std::vector<std::unique_ptr<System>>& GetSystems() const { return systems_; }
 
     void Shutdown();
 
@@ -62,13 +63,9 @@ private:
     unsigned int entityID_ = 0; 
     ComponentID componentID_ = 0; 
 
-    // special for UI
-    UISystem* uiSystem_;
-
     std::vector<std::unique_ptr<Entity>> entities_;
     std::stack<std::unique_ptr<Entity>> entityTrashes_;
-    std::vector<std::unique_ptr<EntityUpdateSystem>> updateEntitySystems_;
-    std::vector<std::unique_ptr<PerFrameSystem>> perFrameSystems_;
+    std::vector<std::unique_ptr<System>> systems_;
 
     struct ComponentCell {
         std::vector<std::unique_ptr<Component>> components;
@@ -79,15 +76,17 @@ private:
     static std::unique_ptr<World> instance_;
 
     void destroyEntity(const std::vector<std::unique_ptr<Entity>>::const_iterator& it);
-    void updateEntity(Entity*);
-    void updateUIEntity(Entity*);
+    void updateSystems(Entity*);
+    void callEntityScripts(Entity*);
+
+    void walkThroughNodeTree(engine::Entity* enitty, std::function<void(Entity*)> func);
+
     void initEntity(Entity*);
     void dispatchEvent2Entity(Entity*);
     template <typename T, typename... Args>
     void doCreateEntity(Entity* entity);
 
-    void removePerFrameSystem(PerFrameSystem* system);
-    void removeEntityUpdateSystem(EntityUpdateSystem* system);
+    void removeSystem(System* system);
 };
 
 template <typename T>
@@ -128,13 +127,8 @@ void World::RemoveComponent(T* component) {
 
 template <typename T, typename... Args>
 System* World::AddSystem(Args&&... args) {
-    if constexpr (std::is_base_of_v<PerFrameSystem, T>) {
-        perFrameSystems_.push_back(std::make_unique<T>(this, std::forward<Args>(args)...));
-        return perFrameSystems_.back().get();
-    } else {
-        updateEntitySystems_.push_back(std::make_unique<T>(this, std::forward<Args>(args)...));
-        return updateEntitySystems_.back().get();
-    }
+    systems_.push_back(std::make_unique<T>(this, std::forward<Args>(args)...));
+    return systems_.back().get();
 }
 
 template <typename T, typename... Args>
