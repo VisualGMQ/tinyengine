@@ -34,7 +34,6 @@ aux_source_directory(src/ecs ENGINE_ECS_SRC)
 aux_source_directory(src/ui ENGINE_UI_SRC)
 aux_source_directory(src/components ENGINE_COMPONENTS_SRC)
 aux_source_directory(src/sound ENGINE_SOUND_SRC)
-aux_source_directory(src/physics ENGINE_PHYSICS_SRC)
 
 add_library(${ENGINE_NAME} STATIC)
 target_sources(${ENGINE_NAME} PRIVATE
@@ -45,7 +44,6 @@ target_sources(${ENGINE_NAME} PRIVATE
                 ${ENGINE_UI_SRC}
                 ${ENGINE_COMPONENTS_SRC}
                 ${ENGINE_SOUND_SRC}
-                ${ENGINE_PHYSICS_SRC}
                 src/entry.cpp)
 target_link_libraries(${ENGINE_NAME} PUBLIC SDL2 SDL2_ttf SDL2_mixer toml++ SDL2_image)
 target_compile_features(${ENGINE_NAME} PUBLIC cxx_std_17)
